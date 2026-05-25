@@ -156,5 +156,56 @@ mod tests {
 
 			fixture.push_index();
 		}
+
+		let mut expected = 1usize;
+
+		for _ in 0..100 {
+			fixture.push_index();
+			assert_eq!(fixture.head, expected);
+			expected = (expected + 1) % BASE;
+
+			for r in 0..BASE {
+				assert_eq!(
+					fixture.real_to_virtual(r).unwrap(),
+					expected_real_to_virtual::<BASE>(r, fixture.head)
+				);
+			}
+		}
+	}
+
+	#[test]
+	fn virtual_to_real() {
+		let mut fixture = IndexCoordinator::<BASE>::new();
+
+		for i in 0..BASE {
+			for v in 0..i {
+				let act = fixture.virtual_to_real(v).unwrap();
+				assert_eq!(act, v);
+			}
+
+			for _ in i..BASE {
+				assert!(matches!(
+					fixture.virtual_to_real(i),
+					Err(Error::IndexOutOfRange { index: _, len: _ })
+				));
+			}
+
+			fixture.push_index();
+		}
+
+		let mut expected = 1usize;
+
+		for _ in 0..100 {
+			fixture.push_index();
+			assert_eq!(fixture.head, expected);
+			expected = (expected + 1) % BASE;
+
+			for v in 0..BASE {
+				assert_eq!(
+					fixture.virtual_to_real(v).unwrap(),
+					expected_virtual_to_real::<BASE>(v, fixture.head)
+				);
+			}
+		}
 	}
 }
