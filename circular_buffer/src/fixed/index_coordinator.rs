@@ -7,16 +7,25 @@ pub struct IndexCoordinator<const N: usize> {
 
 impl<const N: usize> IndexCoordinator<N> {
 	const CHECK: () = assert!(N.count_ones() == 1);
+	const MASK: usize = N - 1;
 	pub fn new() -> Self {
 		Self { head: 0, len: 0 }
 	}
 
 	pub fn push_index(&mut self) {
-		todo!()
+		if self.len < N {
+			self.len += 1;
+		} else {
+			self.head = (self.head + 1) & Self::MASK;
+		}
 	}
 
 	pub fn pop_index(&mut self) -> Result<()> {
-		todo!()
+		if self.len == 0 {
+			return Err(Error::Empty);
+		}
+		self.len -= 1;
+		Ok(())
 	}
 
 	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
@@ -41,6 +50,7 @@ mod tests {
 	use super::*;
 
 	const BASE: usize = 8;
+	const MASK: usize = BASE - 1;
 	fn expected_real_to_virtual<const N: usize>(index: usize, head: usize) -> usize {
 		(index + N - head) % N
 	}
@@ -98,7 +108,7 @@ mod tests {
 		for i in 0..BASE {
 			fixture.push_index();
 			assert_eq!(fixture.len, BASE);
-			assert_eq!(fixture.head, i + 1);
+			assert_eq!(fixture.head, (i + 1) & MASK);
 		}
 	}
 
@@ -207,5 +217,19 @@ mod tests {
 				);
 			}
 		}
+	}
+
+	#[test]
+	fn single() {
+		let mut fixture = IndexCoordinator::<1>::new();
+
+		for i in 0..100 {
+			fixture.push_index();
+			assert_eq!(fixture.len(), 1);
+			assert_eq!(fixture.head, 0);
+		}
+
+		fixture.pop_index().unwrap();
+		fixture.pop_index().unwrap_err();
 	}
 }
