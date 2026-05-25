@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = ["circular_buffer", "playground"]
