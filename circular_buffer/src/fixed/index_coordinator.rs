@@ -8,7 +8,7 @@ pub struct IndexCoordinator<const N: usize> {
 impl<const N: usize> IndexCoordinator<N> {
 	const CHECK: () = assert!(N.count_ones() == 1);
 	pub fn new() -> Self {
-		todo!()
+		Self { head: 0, len: 0 }
 	}
 
 	pub fn push_index(&mut self) {
@@ -28,11 +28,11 @@ impl<const N: usize> IndexCoordinator<N> {
 	}
 
 	pub fn capacity(&self) -> usize {
-		todo!()
+		N
 	}
 
 	pub fn len(&self) -> usize {
-		todo!()
+		self.len
 	}
 }
 
