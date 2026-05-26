@@ -29,11 +29,25 @@ impl<const N: usize> IndexCoordinator<N> {
 	}
 
 	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
-		todo!()
+		if self.len <= idx {
+			Err(Error::IndexOutOfRange {
+				index: idx,
+				len: self.len,
+			})
+		} else {
+			Ok(idx.wrapping_sub(self.head) & Self::MASK)
+		}
 	}
 
 	pub fn virtual_to_real(&self, idx: usize) -> Result<usize> {
-		todo!()
+		if self.len <= idx {
+			Err(Error::IndexOutOfRange {
+				index: idx,
+				len: self.len,
+			})
+		} else {
+			Ok((idx + self.head) & Self::MASK)
+		}
 	}
 
 	pub fn capacity(&self) -> usize {
