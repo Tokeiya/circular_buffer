@@ -8,7 +8,10 @@ pub struct IndexCoordinator<const N: usize> {
 impl<const N: usize> IndexCoordinator<N> {
 	const CHECK: () = assert!(N.count_ones() == 1);
 	const MASK: usize = N - 1;
+
+	#[allow(clippy::let_unit_value)]
 	pub fn new() -> Self {
+		_ = Self::CHECK;
 		Self { head: 0, len: 0 }
 	}
 

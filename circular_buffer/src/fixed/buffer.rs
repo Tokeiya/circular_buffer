@@ -68,20 +68,20 @@ mod tests {
 
 	#[test]
 	fn default() {
-		let fixture = Buffer::<u8, SIZE>::default();
+		let fixture = Fixture::default();
 		assert_eq!(fixture.storage.len(), 0);
 		assert_eq!(fixture.coordinator.len(), 0);
 	}
 
 	#[test]
 	fn capacity() {
-		let fixture = Buffer::<u8, SIZE>::default();
+		let fixture = Fixture::default();
 		assert_eq!(fixture.capacity(), 8);
 	}
 
 	#[test]
 	fn push_index_len() {
-		let mut fixture = Buffer::<u8, SIZE>::default();
+		let mut fixture = Fixture::default();
 		assert!(catch_unwind(|| _ = fixture[0]).is_err());
 
 		for i in 0..SIZE {
