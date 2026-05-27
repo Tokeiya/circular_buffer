@@ -86,7 +86,7 @@ mod tests {
 
 		for i in 0..SIZE {
 			fixture.push(i as u8);
-			assert_eq!(fixture.len(), (i + 1).into());
+			assert_eq!(fixture.len(), i + 1);
 		}
 
 		for i in 0..SIZE {
@@ -99,6 +99,12 @@ mod tests {
 
 		for i in 0..SIZE {
 			fixture.push(i as u8 + OFFSET);
+			assert_eq!(fixture[7], i as u8 + OFFSET);
+			if i == 7 {
+				assert_eq!(fixture[0], 100);
+			} else {
+				assert_eq!(fixture[0], (i as u8) + 1);
+			}
 		}
 
 		for i in 0..SIZE {
@@ -108,6 +114,6 @@ mod tests {
 
 		fixture.push(42);
 		assert_eq!(fixture[7], 42);
-		assert_eq!(fixture[0], 11);
+		assert_eq!(fixture[0], 101);
 	}
 }
