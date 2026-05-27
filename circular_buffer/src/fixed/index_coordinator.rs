@@ -237,7 +237,7 @@ mod tests {
 	fn single() {
 		let mut fixture = IndexCoordinator::<1>::new();
 
-		for i in 0..100 {
+		for _ in 0..100 {
 			fixture.push_index();
 			assert_eq!(fixture.len(), 1);
 			assert_eq!(fixture.head, 0);

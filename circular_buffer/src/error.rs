@@ -1,4 +1,3 @@
-use std::error::Error as StdErr;
 use thiserror::Error as ThisErr;
 
 pub type Result<T> = std::result::Result<T, Error>;

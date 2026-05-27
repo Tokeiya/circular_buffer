@@ -115,7 +115,7 @@ mod tests {
 	#[test]
 	fn verify() {
 		{
-			let drp = Dummy::default();
+			let _ = Dummy::default();
 		}
 
 		assert_eq!(
@@ -204,7 +204,7 @@ mod tests {
 		for i in 0..8 {
 			{
 				let mut fixture = Storage::<Dummy, 8>::default();
-				for j in 0..i {
+				for _ in 0..i {
 					fixture.push(Dummy::default());
 				}
 			}
@@ -230,7 +230,7 @@ mod tests {
 	fn pop() {
 		let mut fixture = Storage::<Dummy, 8>::default();
 
-		for i in 0..8 {
+		for _ in 0..8 {
 			fixture.push(Dummy::default());
 		}
 

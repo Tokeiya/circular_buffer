@@ -1,4 +1,4 @@
-use std::ops::{Index, IndexMut};
+use std::ops::Index;
 
 pub trait CircularBuffer<T>: Index<usize, Output = T> {
 	type Iter<'a>: Iterator<Item = &'a T>

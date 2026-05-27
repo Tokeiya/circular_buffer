@@ -61,7 +61,7 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use std::panic::{AssertUnwindSafe, catch_unwind};
+	use std::panic::catch_unwind;
 
 	const SIZE: usize = 8;
 	type Fixture = Buffer<u8, SIZE>;
