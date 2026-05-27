@@ -1,18 +1,19 @@
 use super::buffer::Buffer;
 use crate::circular_buffer::CircularBuffer;
+use std::iter::FusedIterator;
 
 pub struct Iter<'a, T, const N: usize> {
 	backend: &'a Buffer<T, N>,
-	index: usize,
-	len: usize,
+	head: usize,
+	tail: usize,
 }
 
 impl<'a, T, const N: usize> Iter<'a, T, N> {
 	pub(super) fn new(item: &'a Buffer<T, N>) -> Self {
 		Self {
 			backend: item,
-			index: 0,
-			len: item.len(),
+			head: 0,
+			tail: item.len(),
 		}
 	}
 }
@@ -21,21 +22,40 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
 	type Item = &'a T;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		todo!("not implemented");
+		if self.len() == 0 {
+			None
+		} else {
+			let item = &self.backend[self.head];
+			self.head += 1;
+			Some(item)
+		}
+	}
+
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		let len = self.len();
+		(len, Some(len))
 	}
 }
 
 impl<'a, T, const N: usize> ExactSizeIterator for Iter<'a, T, N> {
 	fn len(&self) -> usize {
-		todo!()
+		self.tail - self.head
 	}
 }
 
 impl<'a, T, const N: usize> DoubleEndedIterator for Iter<'a, T, N> {
 	fn next_back(&mut self) -> Option<Self::Item> {
-		todo!()
+		if self.len() == 0 {
+			None
+		} else {
+			self.tail -= 1;
+			let item = &self.backend[self.tail];
+			Some(item)
+		}
 	}
 }
+
+impl<'a, T, const N: usize> FusedIterator for Iter<'a, T, N> {}
 
 #[cfg(test)]
 mod test {
@@ -57,21 +77,82 @@ mod test {
 
 	#[test]
 	fn next() {
-		todo!();
+		let buff = fixture();
+		let mut fixture = Iter::new(&buff);
+
+		for i in 0..SIZE {
+			assert_eq!(fixture.next(), Some(&buff[i]));
+		}
+
+		for i in 0..SIZE {
+			assert_eq!(fixture.next(), None);
+		}
 	}
 
 	#[test]
 	fn len() {
-		todo!();
+		let buff = fixture();
+		let mut fixture = Iter::new(&buff);
+
+		for i in 0..SIZE {
+			assert_eq!(fixture.len(), SIZE - i);
+			fixture.next().unwrap();
+		}
+
+		assert_eq!(fixture.len(), 0);
 	}
 
 	#[test]
 	fn next_back() {
-		todo!();
+		let buff = fixture();
+		let mut fixture = Iter::new(&buff);
+
+		for i in (0..SIZE).rev() {
+			assert_eq!(fixture.next_back(), Some(&buff[i]));
+		}
+
+		assert!(fixture.next_back().is_none());
+		assert_eq!(fixture.len(), 0);
 	}
 
 	#[test]
 	fn complex() {
-		todo!();
+		let buff = fixture();
+		let mut fixture = Iter::new(&buff);
+
+		assert_eq!(fixture.next(), Some(&buff[0]));
+		assert_eq!(fixture.next_back(), Some(&buff[7]));
+		assert_eq!(fixture.next(), Some(&buff[1]));
+		assert_eq!(fixture.next_back(), Some(&buff[6]));
+		assert_eq!(fixture.next(), Some(&buff[2]));
+		assert_eq!(fixture.next_back(), Some(&buff[5]));
+		assert_eq!(fixture.next(), Some(&buff[3]));
+		assert_eq!(fixture.next_back(), Some(&buff[4]));
+
+		assert_eq!(fixture.next(), None);
+		assert_eq!(fixture.next_back(), None);
+		assert_eq!(fixture.len(), 0);
+	}
+
+	#[test]
+	fn size_hint() {
+		let buff = fixture();
+		let mut fixture = Iter::new(&buff);
+
+		for i in (1..=SIZE).rev() {
+			let expected = i;
+			assert_eq!(fixture.size_hint(), (expected, Some(expected)));
+			fixture.next().unwrap();
+		}
+
+		assert_eq!(fixture.size_hint(), (0, Some(0)));
+
+		fixture = Iter::new(&buff);
+
+		for i in (1..=SIZE).rev() {
+			assert_eq!(fixture.size_hint(), (i, Some(i)));
+			fixture.next_back().unwrap();
+		}
+		assert_eq!(fixture.size_hint(), (0, Some(0)));
 	}
 }
