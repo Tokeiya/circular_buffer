@@ -55,19 +55,6 @@ impl<T, const N: usize> Storage<T, N> {
 		self.len += 1;
 	}
 
-	pub fn pop(&mut self) -> Option<T> {
-		if self.len == 0 {
-			return None;
-		}
-
-		self.len -= 1;
-
-		let ret = unsafe {
-			std::mem::replace(&mut self.storage[self.len], MaybeUninit::uninit()).assume_init()
-		};
-		Some(ret)
-	}
-
 	pub fn len(&self) -> usize {
 		self.len
 	}
@@ -83,9 +70,7 @@ mod tests {
 		static COUNT:AtomicUsize=AtomicUsize::new(0);
 	}
 
-	static SEED: AtomicUsize = AtomicUsize::new(0);
-
-	struct Dummy(usize);
+	struct Dummy;
 	impl Drop for Dummy {
 		fn drop(&mut self) {
 			COUNT.with(|c| c.fetch_add(1, Ordering::Relaxed));
@@ -94,13 +79,7 @@ mod tests {
 
 	impl Default for Dummy {
 		fn default() -> Self {
-			Self(SEED.fetch_add(1, Ordering::Relaxed))
-		}
-	}
-
-	impl Dummy {
-		pub fn value(&self) -> usize {
-			self.0
+			Self
 		}
 	}
 
@@ -224,20 +203,5 @@ mod tests {
 		}
 
 		assert_count(1);
-	}
-
-	#[test]
-	fn pop() {
-		let mut fixture = Storage::<Dummy, 8>::default();
-
-		for _ in 0..8 {
-			fixture.push(Dummy::default());
-		}
-
-		for i in 0..8 {
-			assert_eq!(fixture.pop().unwrap().value(), 7 - i);
-		}
-
-		assert_count(8);
 	}
 }

@@ -51,9 +51,10 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 	}
 
 	fn iter(&self) -> Self::Iter<'_> {
-		todo!()
+		Iter::new(self)
 	}
 	fn len(&self) -> usize {
+		debug_assert_eq!(self.storage.len(), self.coordinator.len());
 		self.coordinator.len()
 	}
 }
@@ -115,5 +116,28 @@ mod tests {
 		fixture.push(42);
 		assert_eq!(fixture[7], 42);
 		assert_eq!(fixture[0], 101);
+	}
+
+	#[test]
+	fn iter() {
+		let mut fixture = Fixture::default();
+
+		for i in 0..SIZE {
+			{
+				assert_eq!(fixture.iter().len(), i);
+				let mut iter = fixture.iter();
+				for exp in 0..i {
+					assert_eq!(*iter.next().unwrap(), exp as u8);
+				}
+			}
+
+			fixture.push(i as u8);
+		}
+
+		assert_eq!(fixture.iter().len(), SIZE);
+
+		for (e, i) in fixture.iter().enumerate() {
+			assert_eq!(*i, e as u8);
+		}
 	}
 }

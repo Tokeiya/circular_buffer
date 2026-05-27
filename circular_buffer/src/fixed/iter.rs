@@ -84,7 +84,7 @@ mod test {
 			assert_eq!(fixture.next(), Some(&buff[i]));
 		}
 
-		for i in 0..SIZE {
+		for _ in 0..SIZE {
 			assert_eq!(fixture.next(), None);
 		}
 	}
