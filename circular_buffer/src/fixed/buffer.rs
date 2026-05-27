@@ -62,44 +62,52 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 mod tests {
 	use super::*;
 	use std::panic::{AssertUnwindSafe, catch_unwind};
-	type Fixture = Buffer<u8, 8>;
+
+	const SIZE: usize = 8;
+	type Fixture = Buffer<u8, SIZE>;
 
 	#[test]
 	fn default() {
-		let fixture = Buffer::<u8, 8>::default();
+		let fixture = Buffer::<u8, SIZE>::default();
 		assert_eq!(fixture.storage.len(), 0);
 		assert_eq!(fixture.coordinator.len(), 0);
 	}
 
 	#[test]
 	fn capacity() {
-		let fixture = Buffer::<u8, 8>::default();
+		let fixture = Buffer::<u8, SIZE>::default();
 		assert_eq!(fixture.capacity(), 8);
 	}
 
 	#[test]
-	fn push_index() {
-		let mut fixture = Buffer::<u8, 8>::default();
+	fn push_index_len() {
+		let mut fixture = Buffer::<u8, SIZE>::default();
 		assert!(catch_unwind(|| _ = fixture[0]).is_err());
 
-		for i in 0..8 {
-			fixture.push(i);
+		for i in 0..SIZE {
+			fixture.push(i as u8);
 			assert_eq!(fixture.len(), (i + 1).into());
 		}
 
-		for i in 0..8 {
+		for i in 0..SIZE {
 			assert_eq!(fixture[i], i as u8);
 		}
 
-		assert!(catch_unwind(|| _ = fixture[8]).is_err());
+		assert!(catch_unwind(|| _ = fixture[SIZE]).is_err());
 
-		for i in 10..18 {
-			fixture.push(i);
+		const OFFSET: u8 = 100;
+
+		for i in 0..SIZE {
+			fixture.push(i as u8 + OFFSET);
 		}
 
-		for i in 0..8 {
-			assert_eq!(fixture[i], (i as u8) + 10);
-			assert_eq!(fixture.len(), 8);
+		for i in 0..SIZE {
+			assert_eq!(fixture[i], (i as u8) + OFFSET);
+			assert_eq!(fixture.len(), SIZE);
 		}
+
+		fixture.push(42);
+		assert_eq!(fixture[7], 42);
+		assert_eq!(fixture[0], 11);
 	}
 }
