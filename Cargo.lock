@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "circular_buffer"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "thiserror",
 ]
@@ -12,6 +12,9 @@ dependencies = [
 [[package]]
 name = "playground"
 version = "0.1.0"
+dependencies = [
+ "circular_buffer",
+]
 
 [[package]]
 name = "proc-macro2"
