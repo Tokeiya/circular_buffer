@@ -71,7 +71,7 @@ mod tests {
 	use std::sync::atomic::{AtomicUsize, Ordering};
 
 	thread_local! {
-		static COUNT:AtomicUsize=AtomicUsize::new(0);
+		static COUNT:AtomicUsize=const { AtomicUsize::new(0) };
 	}
 
 	struct Dummy;
@@ -200,10 +200,10 @@ mod tests {
 	#[test]
 	fn swap() {
 		let mut fixture = Storage::<Dummy, 8>::default();
-		fixture.enqueue(Dummy::default());
+		fixture.enqueue(Dummy);
 
 		{
-			fixture[0] = Dummy::default();
+			fixture[0] = Dummy;
 		}
 
 		assert_count(1);
