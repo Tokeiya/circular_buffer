@@ -23,14 +23,6 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn pop_index(&mut self) -> Result<()> {
-		if self.len == 0 {
-			return Err(Error::Empty);
-		}
-		self.len -= 1;
-		Ok(())
-	}
-
 	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -100,16 +92,6 @@ mod tests {
 			fixture.push_index();
 			assert_eq!(fixture.capacity(), BASE);
 		}
-
-		for _ in 0..BASE {
-			fixture.pop_index().unwrap();
-			assert_eq!(fixture.capacity(), BASE);
-		}
-
-		for _ in 0..BASE {
-			fixture.pop_index().unwrap_err();
-			assert_eq!(fixture.capacity(), BASE);
-		}
 	}
 
 	#[test]
@@ -126,24 +108,6 @@ mod tests {
 			fixture.push_index();
 			assert_eq!(fixture.len, BASE);
 			assert_eq!(fixture.head, (i + 1) & MASK);
-		}
-	}
-
-	#[test]
-	fn pop_index() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
-		fixture.len = 8;
-		fixture.head = 4;
-
-		for i in 0..BASE {
-			fixture.pop_index().unwrap();
-			assert_eq!(fixture.head, 4);
-			assert_eq!(fixture.len, 7 - i);
-		}
-
-		for _ in 0..BASE {
-			let err = fixture.pop_index().unwrap_err();
-			assert!(matches!(err, Error::Empty));
 		}
 	}
 
@@ -245,8 +209,5 @@ mod tests {
 			assert_eq!(fixture.len(), 1);
 			assert_eq!(fixture.head, 0);
 		}
-
-		fixture.pop_index().unwrap();
-		fixture.pop_index().unwrap_err();
 	}
 }
