@@ -6,23 +6,22 @@ use std::rc::Rc;
 pub struct Probe(Rc<Item>);
 
 impl Probe {
-	pub fn new(item: Rc<Item>) -> Self {
+	pub(super) fn new(item: Rc<Item>) -> Self {
 		assert!(!item.is_dropped());
 		Self(item)
+	}
+	pub fn id(&self) -> usize {
+		self.0.id()
+	}
+
+	pub fn is_dropped(&self) -> bool {
+		self.0.is_dropped()
 	}
 }
 
 impl Drop for Probe {
 	fn drop(&mut self) {
 		self.0.mark_dropped();
-	}
-}
-
-impl Deref for Probe {
-	type Target = Item;
-
-	fn deref(&self) -> &Self::Target {
-		&self.0
 	}
 }
 

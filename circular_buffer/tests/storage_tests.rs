@@ -1,6 +1,6 @@
 mod drop_observe;
 
-use drop_observe::{Item, Monitor, MonitorGenerator};
+use drop_observe::{Monitor, MonitorGenerator};
 
 #[test]
 fn hoge() {

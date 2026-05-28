@@ -3,13 +3,13 @@ use std::cell::Cell;
 type Flag = Cell<bool>;
 
 #[derive(Debug)]
-pub struct Item {
+pub(super) struct Item {
 	id: usize,
 	flag: Flag,
 }
 
 impl Item {
-	pub(super) fn new(id: usize) -> Self {
+	pub fn new(id: usize) -> Self {
 		Self {
 			id,
 			flag: Flag::new(false),
@@ -23,7 +23,7 @@ impl Item {
 		self.flag.get()
 	}
 
-	pub(super) fn mark_dropped(&self) {
+	pub fn mark_dropped(&self) {
 		if self.flag.get() {
 			panic!("Item is already dropped");
 		}

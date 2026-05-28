@@ -18,13 +18,13 @@ impl Monitor {
 		self.1.set(true);
 		Probe::new(self.0.clone())
 	}
-}
 
-impl Deref for Monitor {
-	type Target = Item;
+	pub fn id(&self) -> usize {
+		self.0.id()
+	}
 
-	fn deref(&self) -> &Self::Target {
-		&self.0
+	pub fn is_dropped(&self) -> bool {
+		self.1.get()
 	}
 }
 
