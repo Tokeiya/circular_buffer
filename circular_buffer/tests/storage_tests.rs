@@ -1,10 +1,25 @@
 mod drop_observe;
 
-use drop_observe::{Monitor, MonitorGenerator};
+use circular_buffer::CircularBuffer;
+use circular_buffer::fixed::*;
+use drop_observe::{Monitor, MonitorGenerator, Probe};
+use rand::prelude::*;
+use rand::seq::SliceRandom;
+use std::collections::{HashMap, VecDeque};
+use std::mem::drop as consume;
+
+#[derive(Copy, Clone)]
+pub enum Process {
+	Enqueue,
+	Dequeue,
+	Index,
+}
+
+const ITERATIONS: usize = 1_000;
+type Fixture = Buffer<Probe, 1024>;
+type Expected = VecDeque<Probe>;
 
 #[test]
-fn hoge() {
-	let mut generator = MonitorGenerator::default();
-	let p = generator.generate();
-	let a = p.payout_probe();
+fn random_proc() {
+	todo!()
 }

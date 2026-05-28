@@ -50,6 +50,10 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 		}
 	}
 
+	fn dequeue(&mut self) -> Option<T> {
+		todo!()
+	}
+
 	fn iter(&self) -> Self::Iter<'_> {
 		Iter::new(self)
 	}

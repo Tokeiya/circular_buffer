@@ -7,9 +7,9 @@ pub trait CircularBuffer<T>: Index<usize, Output = T> {
 		Self: 'a;
 	fn capacity(&self) -> usize;
 	fn enqueue(&mut self, item: T);
+	fn dequeue(&mut self) -> Option<T>;
 	fn iter(&self) -> Self::Iter<'_>;
 	fn len(&self) -> usize;
-
 	fn is_empty(&self) -> bool {
 		self.len() == 0
 	}

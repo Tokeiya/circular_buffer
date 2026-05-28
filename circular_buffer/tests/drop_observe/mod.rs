@@ -5,3 +5,4 @@ mod probe;
 
 pub use monitor::Monitor;
 pub use monitor_gen::MonitorGenerator;
+pub use probe::Probe;
