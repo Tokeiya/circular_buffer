@@ -1,5 +1,7 @@
 mod item;
 mod monitor;
-pub mod monitor_gen;
+mod monitor_gen;
 mod probe;
-mod specimen;
+
+pub use monitor::Monitor;
+pub use monitor_gen::MonitorGenerator;

@@ -2,7 +2,7 @@ use super::item::Item;
 use std::rc::Rc;
 
 #[derive(Debug)]
-pub(super) struct Probe(Rc<Item>);
+pub struct Probe(Rc<Item>);
 
 impl Probe {
 	pub(super) fn new(item: Rc<Item>) -> Self {
@@ -15,7 +15,10 @@ impl Probe {
 	pub fn is_dropped(&self) -> bool {
 		self.0.is_dropped()
 	}
-	pub fn mark_dropped(&self) {
+}
+
+impl Drop for Probe {
+	fn drop(&mut self) {
 		self.0.mark_dropped();
 	}
 }
@@ -24,6 +27,7 @@ impl Probe {
 mod tests {
 	use super::super::item::Item;
 	use super::*;
+	use std::mem::{ManuallyDrop, drop as consume};
 	#[test]
 	fn new() {
 		let fixture = Probe::new(Rc::new(Item::new(42)));
@@ -47,16 +51,17 @@ mod tests {
 
 	#[test]
 	fn is_dropped() {
-		let fixture = Probe::new(Rc::new(Item::new(42)));
+		let fixture = ManuallyDrop::new(Probe::new(Rc::new(Item::new(42))));
 		assert_eq!(fixture.is_dropped(), false);
 		fixture.0.mark_dropped();
 		assert_eq!(fixture.is_dropped(), true);
 	}
 
 	#[test]
-	fn mark_dropped() {
-		let fixture = Probe::new(Rc::new(Item::new(42)));
-		fixture.mark_dropped();
-		assert_eq!(fixture.0.is_dropped(), true);
+	fn drop() {
+		let item = Rc::new(Item::new(42));
+		let probe = Probe::new(item.clone());
+		consume(probe);
+		assert_eq!(item.is_dropped(), true);
 	}
 }

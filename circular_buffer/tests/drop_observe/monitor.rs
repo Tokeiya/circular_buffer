@@ -1,5 +1,4 @@
 use super::item::Item;
-use super::specimen::Specimen;
 use crate::drop_observe::probe::Probe;
 use std::cell::Cell;
 use std::rc::Rc;
@@ -18,12 +17,12 @@ impl Monitor {
 		self.0.is_dropped()
 	}
 
-	pub fn payout_specimen(&self) -> Specimen {
+	pub fn payout_specimen(&self) -> Probe {
 		if self.1.get() {
 			panic!("Probe is already paid out");
 		}
 		self.1.set(true);
-		Specimen::new(Probe::new(self.0.clone()))
+		Probe::new(self.0.clone())
 	}
 }
 
