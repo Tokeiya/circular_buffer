@@ -24,7 +24,7 @@ impl Monitor {
 	}
 
 	pub fn is_dropped(&self) -> bool {
-		self.1.get()
+		self.0.is_dropped()
 	}
 }
 
@@ -53,6 +53,21 @@ mod tests {
 			assert_eq!(specimen.id(), i);
 			assert_eq!(specimen.is_dropped(), false);
 		}
+	}
+
+	#[test]
+	fn is_dropped() {
+		let fixture = Monitor::new(Item::new(42));
+
+		assert_eq!(fixture.is_dropped(), false);
+
+		let probe = fixture.payout_probe();
+
+		assert_eq!(fixture.is_dropped(), false);
+
+		std::mem::drop(probe);
+
+		assert_eq!(fixture.is_dropped(), true);
 	}
 
 	#[test]
