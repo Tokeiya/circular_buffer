@@ -23,8 +23,14 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn dequeue_index(&mut self) {
-		todo!()
+	pub fn dequeue_index(&mut self) -> Result<()> {
+		if self.len == 0 {
+			Err(Error::Empty)
+		} else {
+			self.head = (self.head + 1) & Self::MASK;
+			self.len -= 1;
+			Ok(())
+		}
 	}
 
 	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
@@ -117,7 +123,34 @@ mod tests {
 
 	#[test]
 	fn dequeue_index() {
-		todo!();
+		let mut fixture = IndexCoordinator::<BASE>::new();
+		assert!(matches!(fixture.dequeue_index(), Err(Error::Empty)));
+
+		fixture.head = 0;
+		fixture.len = BASE;
+
+		for i in 0..BASE {
+			assert_eq!(fixture.head, i);
+			assert_eq!(fixture.len, BASE - i);
+			fixture.dequeue_index().unwrap();
+		}
+
+		assert_eq!(fixture.head, 0);
+		assert_eq!(fixture.len, 0);
+
+		assert!(matches!(fixture.dequeue_index(), Err(Error::Empty)));
+		assert_eq!(fixture.head, 0);
+		assert_eq!(fixture.len, 0);
+
+		const INIT: usize = 4;
+		fixture.head = INIT;
+		fixture.len = BASE;
+
+		for i in 0..BASE {
+			assert_eq!(fixture.len, BASE - i);
+			assert_eq!(fixture.head, INIT.wrapping_add(i) & MASK);
+			fixture.dequeue_index().unwrap();
+		}
 	}
 
 	#[test]
@@ -218,5 +251,36 @@ mod tests {
 			assert_eq!(fixture.len(), 1);
 			assert_eq!(fixture.head, 0);
 		}
+	}
+
+	#[test]
+	fn complex() {
+		let mut fixture = IndexCoordinator::<BASE>::new();
+
+		fixture.enqueue_index();
+		fixture.enqueue_index();
+		fixture.dequeue_index().unwrap();
+
+		assert_eq!(fixture.head, 1);
+		assert_eq!(fixture.len, 1);
+
+		fixture.enqueue_index();
+		fixture.enqueue_index();
+		fixture.enqueue_index();
+		fixture.dequeue_index().unwrap();
+		fixture.dequeue_index().unwrap();
+		assert_eq!(fixture.len, 2);
+		assert_eq!(fixture.head, 3);
+
+		for _ in 0..6 {
+			fixture.enqueue_index();
+		}
+
+		for _ in 0..8 {
+			fixture.dequeue_index().unwrap();
+		}
+
+		assert_eq!(fixture.len, 0);
+		assert_eq!(fixture.head, 3);
 	}
 }
