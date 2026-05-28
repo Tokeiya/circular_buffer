@@ -62,13 +62,21 @@ impl<T, const N: usize> Storage<T, N> {
 	pub fn len(&self) -> usize {
 		self.len
 	}
+
+	pub fn is_empty(&self) -> bool {
+		self.len == 0
+	}
 }
 
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use rand::prelude::*;
+	use std::collections::VecDeque;
 	use std::panic::{AssertUnwindSafe, catch_unwind};
 	use std::sync::atomic::{AtomicUsize, Ordering};
+
+	const BASE: usize = 8;
 
 	thread_local! {
 		static COUNT:AtomicUsize=const { AtomicUsize::new(0) };
@@ -98,7 +106,7 @@ mod tests {
 	#[test]
 	fn verify() {
 		{
-			let _ = Dummy::default();
+			let _ = Dummy;
 		}
 
 		assert_eq!(
@@ -120,33 +128,33 @@ mod tests {
 	}
 
 	#[test]
-	fn push_len() {
-		let mut fixture = Storage::<usize, 8>::default();
+	fn enqueue_len() {
+		let mut fixture = Storage::<usize, BASE>::default();
 
-		for i in 0..8 {
+		for i in 0..BASE {
 			assert_eq!(fixture.len(), i);
 			fixture.enqueue(i);
 		}
 
-		assert_eq!(fixture.len(), 8);
+		assert_eq!(fixture.len(), BASE);
 	}
 
 	#[test]
-	fn push_over_flow() {
-		let mut fixture = Storage::<usize, 8>::default();
+	fn enqueue_over_flow() {
+		let mut fixture = Storage::<usize, BASE>::default();
 
-		for i in 0..8 {
+		for i in 0..BASE {
 			fixture.enqueue(i);
 		}
 
-		assert!(catch_unwind(AssertUnwindSafe(|| fixture.enqueue(8))).is_err());
+		assert!(catch_unwind(AssertUnwindSafe(|| fixture.enqueue(BASE))).is_err());
 	}
 
 	#[test]
 	fn index() {
-		let mut fixture = Storage::<usize, 8>::default();
+		let mut fixture = Storage::<usize, BASE>::default();
 
-		for i in 0..8 {
+		for i in 0..BASE {
 			for j in 0..i {
 				assert_eq!(j, fixture[j])
 			}
@@ -157,10 +165,10 @@ mod tests {
 
 	#[test]
 	fn index_out_of_range() {
-		let mut fixture = Storage::<usize, 8>::default();
+		let mut fixture = Storage::<usize, BASE>::default();
 
-		for i in 0..8 {
-			for j in i..8 {
+		for i in 0..BASE {
+			for j in i..BASE {
 				assert!(catch_unwind(AssertUnwindSafe(|| fixture[j])).is_err());
 			}
 
@@ -170,10 +178,10 @@ mod tests {
 
 	#[test]
 	fn index_mut() {
-		let mut fixture = Storage::<usize, 8>::default();
+		let mut fixture = Storage::<usize, BASE>::default();
 
-		for i in 0..8 {
-			for j in i..8 {
+		for i in 0..BASE {
+			for j in i..BASE {
 				assert!(catch_unwind(AssertUnwindSafe(|| fixture[j] = 42)).is_err())
 			}
 			fixture.enqueue(i);
@@ -184,9 +192,9 @@ mod tests {
 
 	#[test]
 	fn drop() {
-		for i in 0..8 {
+		for i in 0..BASE {
 			{
-				let mut fixture = Storage::<Dummy, 8>::default();
+				let mut fixture = Storage::<Dummy, BASE>::default();
 				for _ in 0..i {
 					fixture.enqueue(Dummy::default());
 				}
@@ -199,7 +207,7 @@ mod tests {
 
 	#[test]
 	fn swap() {
-		let mut fixture = Storage::<Dummy, 8>::default();
+		let mut fixture = Storage::<Dummy, BASE>::default();
 		fixture.enqueue(Dummy);
 
 		{
@@ -207,5 +215,49 @@ mod tests {
 		}
 
 		assert_count(1);
+	}
+
+	#[test]
+	fn is_empty() {
+		let mut fixture = Storage::<usize, BASE>::default();
+		assert!(fixture.is_empty());
+
+		for i in 0..BASE {
+			fixture.enqueue(i);
+			assert!(!fixture.is_empty());
+		}
+	}
+
+	#[test]
+	fn dequeue() {
+		let mut fixture = Storage::<usize, BASE>::default();
+		assert!(fixture.dequeue().is_none());
+
+		for i in 0..BASE {
+			fixture.enqueue(i);
+		}
+
+		for i in (0..BASE).rev() {
+			assert_eq!(fixture.dequeue().unwrap(), i);
+		}
+		assert!(fixture.dequeue().is_none());
+	}
+
+	#[test]
+	fn dequeue_drop() {
+		fn test_body(n: usize) {
+			let mut fixture = Storage::<Dummy, BASE>::default();
+			for _ in 0..n {
+				fixture.enqueue(Dummy);
+			}
+
+			fixture.dequeue().unwrap();
+		}
+
+		for i in 0..BASE {
+			COUNT.with(|c| c.fetch_add(0, Ordering::Relaxed));
+			test_body(i);
+			COUNT.with(|c| assert_eq!(c.load(Ordering::Relaxed), 0));
+		}
 	}
 }
