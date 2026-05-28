@@ -46,13 +46,17 @@ impl<T, const N: usize> Drop for Storage<T, N> {
 }
 
 impl<T, const N: usize> Storage<T, N> {
-	pub fn push(&mut self, value: T) {
+	pub fn enqueue(&mut self, value: T) {
 		if self.len >= N {
 			panic!("storage is full");
 		}
 
 		self.storage[self.len].write(value);
 		self.len += 1;
+	}
+
+	pub fn dequeue(&mut self) -> Option<T> {
+		todo!()
 	}
 
 	pub fn len(&self) -> usize {
@@ -121,7 +125,7 @@ mod tests {
 
 		for i in 0..8 {
 			assert_eq!(fixture.len(), i);
-			fixture.push(i);
+			fixture.enqueue(i);
 		}
 
 		assert_eq!(fixture.len(), 8);
@@ -132,10 +136,10 @@ mod tests {
 		let mut fixture = Storage::<usize, 8>::default();
 
 		for i in 0..8 {
-			fixture.push(i);
+			fixture.enqueue(i);
 		}
 
-		assert!(catch_unwind(AssertUnwindSafe(|| fixture.push(8))).is_err());
+		assert!(catch_unwind(AssertUnwindSafe(|| fixture.enqueue(8))).is_err());
 	}
 
 	#[test]
@@ -147,7 +151,7 @@ mod tests {
 				assert_eq!(j, fixture[j])
 			}
 
-			fixture.push(i);
+			fixture.enqueue(i);
 		}
 	}
 
@@ -160,7 +164,7 @@ mod tests {
 				assert!(catch_unwind(AssertUnwindSafe(|| fixture[j])).is_err());
 			}
 
-			fixture.push(i);
+			fixture.enqueue(i);
 		}
 	}
 
@@ -172,7 +176,7 @@ mod tests {
 			for j in i..8 {
 				assert!(catch_unwind(AssertUnwindSafe(|| fixture[j] = 42)).is_err())
 			}
-			fixture.push(i);
+			fixture.enqueue(i);
 			fixture[i] += 10;
 			assert_eq!(fixture[i], i + 10);
 		}
@@ -184,7 +188,7 @@ mod tests {
 			{
 				let mut fixture = Storage::<Dummy, 8>::default();
 				for _ in 0..i {
-					fixture.push(Dummy::default());
+					fixture.enqueue(Dummy::default());
 				}
 			}
 
@@ -196,7 +200,7 @@ mod tests {
 	#[test]
 	fn swap() {
 		let mut fixture = Storage::<Dummy, 8>::default();
-		fixture.push(Dummy::default());
+		fixture.enqueue(Dummy::default());
 
 		{
 			fixture[0] = Dummy::default();

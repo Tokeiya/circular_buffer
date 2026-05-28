@@ -40,13 +40,13 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 		N
 	}
 
-	fn push(&mut self, item: T) {
+	fn enqueue(&mut self, item: T) {
 		if self.len() < self.capacity() {
-			self.storage.push(item);
-			self.coordinator.push_index();
+			self.storage.enqueue(item);
+			self.coordinator.enqueue_index();
 		} else {
 			self.storage[self.coordinator.virtual_to_real(0).unwrap()] = item;
-			self.coordinator.push_index();
+			self.coordinator.enqueue_index();
 		}
 	}
 
@@ -86,7 +86,7 @@ mod tests {
 		assert!(catch_unwind(|| _ = fixture[0]).is_err());
 
 		for i in 0..SIZE {
-			fixture.push(i as u8);
+			fixture.enqueue(i as u8);
 			assert_eq!(fixture.len(), i + 1);
 		}
 
@@ -99,7 +99,7 @@ mod tests {
 		const OFFSET: u8 = 100;
 
 		for i in 0..SIZE {
-			fixture.push(i as u8 + OFFSET);
+			fixture.enqueue(i as u8 + OFFSET);
 			assert_eq!(fixture[7], i as u8 + OFFSET);
 			if i == 7 {
 				assert_eq!(fixture[0], 100);
@@ -113,7 +113,7 @@ mod tests {
 			assert_eq!(fixture.len(), SIZE);
 		}
 
-		fixture.push(42);
+		fixture.enqueue(42);
 		assert_eq!(fixture[7], 42);
 		assert_eq!(fixture[0], 101);
 	}
@@ -131,7 +131,7 @@ mod tests {
 				}
 			}
 
-			fixture.push(i as u8);
+			fixture.enqueue(i as u8);
 		}
 
 		assert_eq!(fixture.iter().len(), SIZE);

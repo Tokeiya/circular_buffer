@@ -6,7 +6,20 @@ pub trait CircularBuffer<T>: Index<usize, Output = T> {
 		T: 'a,
 		Self: 'a;
 	fn capacity(&self) -> usize;
-	fn push(&mut self, item: T);
+	fn enqueue(&mut self, item: T);
 	fn iter(&self) -> Self::Iter<'_>;
 	fn len(&self) -> usize;
+
+	fn is_empty(&self) -> bool {
+		self.len() == 0
+	}
+}
+
+#[cfg(test)]
+mod tests {
+
+	#[test]
+	fn test_is_empty() {
+		todo!("not implemented");
+	}
 }

@@ -69,7 +69,7 @@ mod test {
 		let mut fixture = Buffer::default();
 
 		for i in 0..SIZE {
-			fixture.push(i)
+			fixture.enqueue(i)
 		}
 
 		fixture

@@ -15,12 +15,16 @@ impl<const N: usize> IndexCoordinator<N> {
 		Self { head: 0, len: 0 }
 	}
 
-	pub fn push_index(&mut self) {
+	pub fn enqueue_index(&mut self) {
 		if self.len < N {
 			self.len += 1;
 		} else {
 			self.head = (self.head + 1) & Self::MASK;
 		}
+	}
+
+	pub fn dequeue_index(&mut self) {
+		todo!()
 	}
 
 	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
@@ -89,26 +93,31 @@ mod tests {
 		assert_eq!(fixture.capacity(), BASE);
 
 		for _ in 0..100 {
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.capacity(), BASE);
 		}
 	}
 
 	#[test]
-	fn push_index() {
+	fn enqueue_index() {
 		let mut fixture = IndexCoordinator::<BASE>::new();
 
 		for i in 0..BASE {
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.len, i + 1);
 			assert_eq!(fixture.head, 0);
 		}
 
 		for i in 0..BASE {
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.len, BASE);
 			assert_eq!(fixture.head, (i + 1) & MASK);
 		}
+	}
+
+	#[test]
+	fn dequeue_index() {
+		todo!();
 	}
 
 	#[test]
@@ -117,13 +126,13 @@ mod tests {
 
 		for i in 0..BASE {
 			assert_eq!(fixture.len(), i);
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.len(), i + 1);
 		}
 
 		for _ in 0..BASE {
 			assert_eq!(fixture.len(), BASE);
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.len(), BASE);
 		}
 	}
@@ -145,13 +154,13 @@ mod tests {
 				));
 			}
 
-			fixture.push_index();
+			fixture.enqueue_index();
 		}
 
 		let mut expected = 1usize;
 
 		for _ in 0..100 {
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.head, expected);
 			expected = (expected + 1) % BASE;
 
@@ -181,13 +190,13 @@ mod tests {
 				));
 			}
 
-			fixture.push_index();
+			fixture.enqueue_index();
 		}
 
 		let mut expected = 1usize;
 
 		for _ in 0..100 {
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.head, expected);
 			expected = (expected + 1) % BASE;
 
@@ -205,7 +214,7 @@ mod tests {
 		let mut fixture = IndexCoordinator::<1>::new();
 
 		for _ in 0..100 {
-			fixture.push_index();
+			fixture.enqueue_index();
 			assert_eq!(fixture.len(), 1);
 			assert_eq!(fixture.head, 0);
 		}
