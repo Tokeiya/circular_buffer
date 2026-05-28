@@ -1,6 +1,7 @@
 use super::item::Item;
 use crate::drop_observe::probe::Probe;
 use std::cell::Cell;
+use std::ops::Deref;
 use std::rc::Rc;
 #[derive(Debug)]
 pub struct Monitor(Rc<Item>, Cell<bool>);
@@ -9,20 +10,21 @@ impl Monitor {
 	pub(super) fn new(item: Item) -> Self {
 		Self(Rc::new(item), Cell::new(false))
 	}
-	pub fn id(&self) -> usize {
-		self.0.id()
-	}
 
-	pub fn is_dropped(&self) -> bool {
-		self.0.is_dropped()
-	}
-
-	pub fn payout_specimen(&self) -> Probe {
+	pub fn payout_probe(&self) -> Probe {
 		if self.1.get() {
 			panic!("Probe is already paid out");
 		}
 		self.1.set(true);
 		Probe::new(self.0.clone())
+	}
+}
+
+impl Deref for Monitor {
+	type Target = Item;
+
+	fn deref(&self) -> &Self::Target {
+		&self.0
 	}
 }
 
@@ -47,7 +49,7 @@ mod tests {
 
 		for i in 0..10 {
 			let fixture = Monitor::from(generator.generate());
-			let specimen = fixture.payout_specimen();
+			let specimen = fixture.payout_probe();
 			assert_eq!(specimen.id(), i);
 			assert_eq!(specimen.is_dropped(), false);
 		}
@@ -57,7 +59,7 @@ mod tests {
 	#[should_panic]
 	fn dupl_probe() {
 		let fixture = Monitor::new(Item::new(42));
-		let a = fixture.payout_specimen();
-		fixture.payout_specimen();
+		let a = fixture.payout_probe();
+		fixture.payout_probe();
 	}
 }
