@@ -46,7 +46,7 @@ impl<T, const N: usize> Drop for Storage<T, N> {
 }
 
 impl<T, const N: usize> Storage<T, N> {
-	pub fn enqueue(&mut self, value: T) {
+	pub fn push(&mut self, value: T) {
 		if self.len >= N {
 			panic!("storage is full");
 		}
@@ -55,12 +55,8 @@ impl<T, const N: usize> Storage<T, N> {
 		self.len += 1;
 	}
 
-	pub fn dequeue(&mut self) -> Option<T> {
+	pub fn take(&mut self, index: usize) -> T {
 		todo!()
-	}
-
-	pub fn len(&self) -> usize {
-		self.len
 	}
 
 	pub fn is_empty(&self) -> bool {
@@ -128,26 +124,38 @@ mod tests {
 	}
 
 	#[test]
-	fn enqueue_len() {
+	fn push() {
 		let mut fixture = Storage::<usize, BASE>::default();
 
 		for i in 0..BASE {
-			assert_eq!(fixture.len(), i);
-			fixture.enqueue(i);
+			assert_eq!(fixture.len, i);
+			fixture.push(i);
 		}
 
-		assert_eq!(fixture.len(), BASE);
+		assert_eq!(fixture.len, BASE);
 	}
 
 	#[test]
-	fn enqueue_over_flow() {
+	fn take() {
+		let mut fixture = Storage::<usize, BASE>::default();
+		for i in 0..BASE {
+			assert!(catch_unwind(AssertUnwindSafe(|| _ = fixture.take(i))).is_err());
+		}
+
+		for i in 0..BASE {
+			fixture.push(i);
+		}
+	}
+
+	#[test]
+	fn push_over_flow() {
 		let mut fixture = Storage::<usize, BASE>::default();
 
 		for i in 0..BASE {
-			fixture.enqueue(i);
+			fixture.push(i);
 		}
 
-		assert!(catch_unwind(AssertUnwindSafe(|| fixture.enqueue(BASE))).is_err());
+		assert!(catch_unwind(AssertUnwindSafe(|| fixture.push(BASE))).is_err());
 	}
 
 	#[test]
@@ -159,7 +167,7 @@ mod tests {
 				assert_eq!(j, fixture[j])
 			}
 
-			fixture.enqueue(i);
+			fixture.push(i);
 		}
 	}
 
@@ -172,7 +180,7 @@ mod tests {
 				assert!(catch_unwind(AssertUnwindSafe(|| fixture[j])).is_err());
 			}
 
-			fixture.enqueue(i);
+			fixture.push(i);
 		}
 	}
 
@@ -184,7 +192,7 @@ mod tests {
 			for j in i..BASE {
 				assert!(catch_unwind(AssertUnwindSafe(|| fixture[j] = 42)).is_err())
 			}
-			fixture.enqueue(i);
+			fixture.push(i);
 			fixture[i] += 10;
 			assert_eq!(fixture[i], i + 10);
 		}
@@ -196,7 +204,7 @@ mod tests {
 			{
 				let mut fixture = Storage::<Dummy, BASE>::default();
 				for _ in 0..i {
-					fixture.enqueue(Dummy::default());
+					fixture.push(Dummy::default());
 				}
 			}
 
@@ -208,7 +216,7 @@ mod tests {
 	#[test]
 	fn swap() {
 		let mut fixture = Storage::<Dummy, BASE>::default();
-		fixture.enqueue(Dummy);
+		fixture.push(Dummy);
 
 		{
 			fixture[0] = Dummy;
@@ -223,41 +231,8 @@ mod tests {
 		assert!(fixture.is_empty());
 
 		for i in 0..BASE {
-			fixture.enqueue(i);
+			fixture.push(i);
 			assert!(!fixture.is_empty());
-		}
-	}
-
-	#[test]
-	fn dequeue() {
-		let mut fixture = Storage::<usize, BASE>::default();
-		assert!(fixture.dequeue().is_none());
-
-		for i in 0..BASE {
-			fixture.enqueue(i);
-		}
-
-		for i in (0..BASE).rev() {
-			assert_eq!(fixture.dequeue().unwrap(), i);
-		}
-		assert!(fixture.dequeue().is_none());
-	}
-
-	#[test]
-	fn dequeue_drop() {
-		fn test_body(n: usize) {
-			let mut fixture = Storage::<Dummy, BASE>::default();
-			for _ in 0..n {
-				fixture.enqueue(Dummy);
-			}
-
-			fixture.dequeue().unwrap();
-		}
-
-		for i in 0..BASE {
-			COUNT.with(|c| c.fetch_add(0, Ordering::Relaxed));
-			test_body(i);
-			COUNT.with(|c| assert_eq!(c.load(Ordering::Relaxed), 0));
 		}
 	}
 }
