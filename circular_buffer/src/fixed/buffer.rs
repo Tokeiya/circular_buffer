@@ -2,11 +2,11 @@ use super::index_coordinator::IndexCoordinator;
 use super::iter::Iter;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
-use std::ops::{Index,IndexMut};
+use std::ops::{Index, IndexMut};
 
 pub struct Buffer<T, const N: usize> {
-	storage: [MaybeUninit<T>; N],
-	coordinator: IndexCoordinator<N>,
+	pub(super) storage: [MaybeUninit<T>; N],
+	pub(super) coordinator: IndexCoordinator<N>,
 }
 
 impl<T, const N: usize> Default for Buffer<T, N> {
@@ -65,16 +65,17 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 	}
 
 	fn dequeue(&mut self) -> Option<T> {
-		if self.coordinator.len()==0{
+		if self.coordinator.len() == 0 {
 			None
-		}else{
+		} else {
 			let index = self.coordinator.virtual_to_real(0).unwrap();
-			let ret=unsafe {
-				std::mem::replace(&mut self.storage[index], std::mem::MaybeUninit::uninit()).assume_init()
+			let ret = unsafe {
+				std::mem::replace(&mut self.storage[index], std::mem::MaybeUninit::uninit())
+					.assume_init()
 			};
-			
+
 			self.coordinator.dequeue_index().unwrap();
-			
+
 			Some(ret)
 		}
 	}
@@ -146,22 +147,21 @@ mod tests {
 		assert_eq!(fixture[7], 42);
 		assert_eq!(fixture[0], 101);
 	}
-	
+
 	#[test]
 	fn index_mut() {
 		let mut fixture = Fixture::default();
 		assert!(catch_unwind(|| _ = fixture[0]).is_err());
-		
-		for i in 0..SIZE{
+
+		for i in 0..SIZE {
 			fixture.enqueue(i as u8);
 			assert_eq!(fixture[i], i as u8);
 		}
-		
-		for i in 0..SIZE{
+
+		for i in 0..SIZE {
 			fixture[i] = i as u8 + 10;
 			assert_eq!(fixture[i], i as u8 + 10);
 		}
-		
 	}
 
 	#[test]
@@ -186,22 +186,21 @@ mod tests {
 			assert_eq!(*i, e as u8);
 		}
 	}
-	
+
 	#[test]
 	fn dequeue() {
 		let mut fixture = Fixture::default();
 		assert!(fixture.dequeue().is_none());
-		
+
 		for i in 0..SIZE {
 			fixture.enqueue(i as u8);
 		}
-		
-		
+
 		for i in 0..SIZE {
-			let act=fixture.dequeue().unwrap();
+			let act = fixture.dequeue().unwrap();
 			assert_eq!(act, i as u8);
 		}
-		
+
 		assert_eq!(fixture.dequeue(), None);
 	}
 }

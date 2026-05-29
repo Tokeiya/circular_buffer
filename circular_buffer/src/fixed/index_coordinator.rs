@@ -1,5 +1,6 @@
 use crate::error::*;
 
+#[derive(Clone)]
 pub struct IndexCoordinator<const N: usize> {
 	head: usize,
 	len: usize,
@@ -33,6 +34,17 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
+	pub fn pop_index(&mut self) -> Result<()> {
+		match self.len.checked_sub(1) {
+			Some(len) => {
+				self.len = len;
+				Ok(())
+			}
+			None => Err(Error::Empty),
+		}
+	}
+
+	#[allow(dead_code)]
 	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -55,6 +67,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
+	#[allow(dead_code)]
 	pub fn capacity(&self) -> usize {
 		N
 	}
@@ -67,6 +80,7 @@ impl<const N: usize> IndexCoordinator<N> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use std::assert_matches;
 
 	const BASE: usize = 8;
 	const MASK: usize = BASE - 1;
@@ -150,6 +164,25 @@ mod tests {
 			assert_eq!(fixture.len, BASE - i);
 			assert_eq!(fixture.head, INIT.wrapping_add(i) & MASK);
 			fixture.dequeue_index().unwrap();
+		}
+	}
+
+	#[test]
+	fn pop_index() {
+		let mut fixture = IndexCoordinator::<BASE>::new();
+		assert_matches!(fixture.pop_index(), Err(Error::Empty));
+
+		fixture.head = 0;
+		fixture.len = BASE;
+
+		for i in 0..BASE {
+			assert_eq!(fixture.len, BASE - i);
+			assert_eq!(fixture.head, 0);
+			assert_eq!(
+				fixture.real_to_virtual(fixture.len - 1).unwrap(),
+				expected_real_to_virtual::<BASE>(fixture.len - 1, 0)
+			);
+			fixture.pop_index().unwrap();
 		}
 	}
 
