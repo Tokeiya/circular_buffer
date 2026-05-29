@@ -16,6 +16,22 @@ impl<const N: usize> IndexCoordinator<N> {
 		Self { head: 0, len: 0 }
 	}
 
+	fn head_index(&self) -> Result<usize> {
+		if self.len == 0 {
+			Err(Error::Empty)
+		} else {
+			Ok(self.head)
+		}
+	}
+
+	fn tail_index(&self) -> Result<usize> {
+		if self.len == 0 {
+			Err(Error::Empty)
+		} else {
+			Ok((self.head + self.len - 1) & Self::MASK)
+		}
+	}
+
 	pub fn enqueue_index(&mut self) {
 		if self.len < N {
 			self.len += 1;
@@ -90,6 +106,40 @@ mod tests {
 
 	fn expected_virtual_to_real<const N: usize>(index: usize, head: usize) -> usize {
 		(index + head) % N
+	}
+
+	#[test]
+	fn head_index() {
+		let mut fixture = IndexCoordinator::<BASE>::new();
+		assert_matches!(fixture.head_index(), Err(Error::Empty));
+
+		fixture.head = 0;
+		fixture.len = 8;
+
+		assert_eq!(fixture.head_index().unwrap(), 0);
+		fixture.pop_index().unwrap();
+		assert_eq!(fixture.head_index().unwrap(), 0);
+		fixture.dequeue_index().unwrap();
+		assert_eq!(fixture.head_index().unwrap(), 1);
+		fixture.enqueue_index();
+		assert_eq!(fixture.head_index().unwrap(), 1);
+	}
+
+	#[test]
+	fn tail_index() {
+		let mut fixture = IndexCoordinator::<BASE>::new();
+		assert_matches!(fixture.tail_index(), Err(Error::Empty));
+
+		fixture.head = 0;
+		fixture.len = 8;
+
+		assert_eq!(fixture.tail_index().unwrap(), 7);
+		fixture.pop_index().unwrap();
+		assert_eq!(fixture.tail_index().unwrap(), 6);
+		fixture.dequeue_index().unwrap();
+		assert_eq!(fixture.tail_index().unwrap(), 6);
+		fixture.enqueue_index();
+		assert_eq!(fixture.tail_index().unwrap(), 7);
 	}
 
 	#[test]
@@ -182,6 +232,15 @@ mod tests {
 				fixture.real_to_virtual(fixture.len - 1).unwrap(),
 				expected_real_to_virtual::<BASE>(fixture.len - 1, 0)
 			);
+			fixture.pop_index().unwrap();
+		}
+
+		fixture.head = 4;
+		fixture.len = BASE;
+
+		for i in 0..BASE {
+			assert_eq!(fixture.len, BASE - i);
+			assert_eq!(fixture.head, 4);
 			fixture.pop_index().unwrap();
 		}
 	}
