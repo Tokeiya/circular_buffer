@@ -128,4 +128,24 @@ mod tests {
 
 		assert!(fixture.next_back().is_none());
 	}
+
+	#[test]
+	fn complex_next() {
+		let mut buff = gen_sample();
+
+		for i in 10..100 {
+			buff.enqueue(i);
+		}
+
+		print!("vec![");
+		for i in IterMut::new(&mut buff) {
+			print!("{},", i);
+		}
+		println!("]");
+
+		let iter = IterMut::new(&mut buff);
+		for i in iter.zip(92..100) {
+			assert_eq!(i.0, &i.1);
+		}
+	}
 }

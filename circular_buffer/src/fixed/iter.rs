@@ -24,7 +24,7 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
 		if self.len() == 0 {
 			None
 		} else {
-			let item = &self.backend[self.coordinator.head_index().unwrap()];
+			let item = &self.backend.get_raw(self.coordinator.head_index().unwrap());
 			self.coordinator.dequeue_index().unwrap();
 			Some(item)
 		}
@@ -153,5 +153,24 @@ mod test {
 			fixture.next_back().unwrap();
 		}
 		assert_eq!(fixture.size_hint(), (0, Some(0)));
+	}
+
+	#[test]
+	fn complex_next() {
+		let mut buff = fixture();
+
+		for i in 10..100 {
+			buff.enqueue(i);
+		}
+
+		print!("vec![");
+		for i in buff.iter() {
+			print!("{},", i);
+		}
+		println!("]");
+
+		for i in buff.iter().zip(92..100) {
+			assert_eq!(i.0, &i.1);
+		}
 	}
 }

@@ -33,7 +33,7 @@ dependencies = [
 
 [[package]]
 name = "circular_buffer"
-version = "0.2.7"
+version = "0.2.8"
 dependencies = [
  "rand",
  "thiserror",

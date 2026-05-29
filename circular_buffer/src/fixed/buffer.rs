@@ -51,10 +51,10 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 
 	fn enqueue(&mut self, item: T) {
 		if self.len() < self.capacity() {
-			self.storage[self.len()].write(item);
-			self.coordinator.enqueue_index();
+			_ = self.coordinator.enqueue_index();
+			self.storage[self.coordinator.tail_index().unwrap()].write(item);
 		} else {
-			let index = self.coordinator.virtual_to_real(0).unwrap();
+			let index = self.coordinator.head_index().unwrap();
 			unsafe {
 				self.storage[index].assume_init_drop();
 				self.storage[index].write(item);
@@ -86,6 +86,18 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 	fn len(&self) -> usize {
 		//debug_assert_eq!(self.storage.len(), self.coordinator.len());
 		self.coordinator.len()
+	}
+}
+
+impl<T, const N: usize> Buffer<T, N> {
+	pub(super) fn get_raw(&self, real_index: usize) -> &T {
+		unsafe { self.storage[real_index].assume_init_ref() }
+	}
+}
+
+impl<T, const N: usize> Drop for Buffer<T, N> {
+	fn drop(&mut self) {
+		todo!()
 	}
 }
 
@@ -202,5 +214,32 @@ mod tests {
 		}
 
 		assert_eq!(fixture.dequeue(), None);
+	}
+
+	#[test]
+	fn complex_enqueue() {
+		let mut fixture = Fixture::default();
+		for i in 0..100 {
+			fixture.enqueue(i as u8);
+		}
+
+		for i in 0..SIZE {
+			println!("[{i}]={}", fixture[i]);
+		}
+		println!("----");
+
+		println!("dequeue:{}", fixture.dequeue().unwrap());
+
+		fixture.enqueue(8);
+
+		print!("vec![");
+		for i in 0..SIZE {
+			print!("{}, ", fixture[i]);
+		}
+		println!("]");
+
+		for (idx, i) in (vec![93, 94, 95, 96, 97, 98, 99, 8]).iter().enumerate() {
+			assert_eq!(fixture[idx], *i);
+		}
 	}
 }
