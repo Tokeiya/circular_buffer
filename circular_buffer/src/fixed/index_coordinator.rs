@@ -16,7 +16,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		Self { head: 0, len: 0 }
 	}
 
-	fn head_index(&self) -> Result<usize> {
+	pub fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
 		} else {
@@ -24,7 +24,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	fn tail_index(&self) -> Result<usize> {
+	pub fn tail_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
 		} else {

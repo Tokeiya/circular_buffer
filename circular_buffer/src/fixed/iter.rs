@@ -1,19 +1,18 @@
 use super::buffer::Buffer;
 use crate::circular_buffer::CircularBuffer;
+use crate::fixed::index_coordinator::IndexCoordinator;
 use std::iter::FusedIterator;
 
 pub struct Iter<'a, T, const N: usize> {
 	backend: &'a Buffer<T, N>,
-	head: usize,
-	tail: usize,
+	coordinator: IndexCoordinator<N>,
 }
 
 impl<'a, T, const N: usize> Iter<'a, T, N> {
 	pub(super) fn new(item: &'a Buffer<T, N>) -> Self {
 		Self {
 			backend: item,
-			head: 0,
-			tail: item.len(),
+			coordinator: item.coordinator.clone(),
 		}
 	}
 }
@@ -25,21 +24,21 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
 		if self.len() == 0 {
 			None
 		} else {
-			let item = &self.backend[self.head];
-			self.head += 1;
+			let item = &self.backend[self.coordinator.head_index().unwrap()];
+			self.coordinator.dequeue_index().unwrap();
 			Some(item)
 		}
 	}
 
 	fn size_hint(&self) -> (usize, Option<usize>) {
-		let len = self.len();
+		let len = self.coordinator.len();
 		(len, Some(len))
 	}
 }
 
 impl<'a, T, const N: usize> ExactSizeIterator for Iter<'a, T, N> {
 	fn len(&self) -> usize {
-		self.tail - self.head
+		self.coordinator.len()
 	}
 }
 
@@ -48,8 +47,8 @@ impl<'a, T, const N: usize> DoubleEndedIterator for Iter<'a, T, N> {
 		if self.len() == 0 {
 			None
 		} else {
-			self.tail -= 1;
-			let item = &self.backend[self.tail];
+			let item = &self.backend[self.coordinator.tail_index().unwrap()];
+			self.coordinator.pop_index().unwrap();
 			Some(item)
 		}
 	}
