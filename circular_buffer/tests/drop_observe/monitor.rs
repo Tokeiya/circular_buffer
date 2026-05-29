@@ -37,9 +37,9 @@ mod tests {
 		let mut generator = MonitorGenerator::default();
 
 		for i in 0..10 {
-			let fixture = Monitor::from(generator.generate());
+			let fixture = generator.generate();
 			assert_eq!(fixture.id(), i);
-			assert_eq!(fixture.is_dropped(), false);
+			assert!(fixture.is_dropped());
 		}
 	}
 
@@ -48,7 +48,7 @@ mod tests {
 		let mut generator = MonitorGenerator::default();
 
 		for i in 0..10 {
-			let fixture = Monitor::from(generator.generate());
+			let fixture = generator.generate();
 			let specimen = fixture.payout_probe();
 			assert_eq!(specimen.id(), i);
 			assert_eq!(specimen.is_dropped(), false);
@@ -59,15 +59,15 @@ mod tests {
 	fn is_dropped() {
 		let fixture = Monitor::new(Item::new(42));
 
-		assert_eq!(fixture.is_dropped(), false);
+		assert!(fixture.is_dropped());
 
 		let probe = fixture.payout_probe();
 
-		assert_eq!(fixture.is_dropped(), false);
+		assert!(fixture.is_dropped());
 
 		std::mem::drop(probe);
 
-		assert_eq!(fixture.is_dropped(), true);
+		assert!(fixture.is_dropped());
 	}
 
 	#[test]
