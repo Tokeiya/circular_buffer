@@ -1,6 +1,6 @@
-use std::ops::Index;
+use std::ops::{Index,IndexMut};
 
-pub trait CircularBuffer<T>: Index<usize, Output = T> {
+pub trait CircularBuffer<T>: Index<usize, Output = T>+IndexMut<usize> {
 	type Iter<'a>: Iterator<Item = &'a T>
 	where
 		T: 'a,
@@ -15,11 +15,11 @@ pub trait CircularBuffer<T>: Index<usize, Output = T> {
 	}
 }
 
-#[cfg(test)]
-mod tests {
-
-	#[test]
-	fn test_is_empty() {
-		todo!("not implemented");
-	}
-}
+// #[cfg(test)]
+// mod tests {
+//
+// 	#[test]
+// 	fn test_is_empty() {
+// 		todo!("not implemented");
+// 	}
+// }

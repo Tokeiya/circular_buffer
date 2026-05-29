@@ -2,7 +2,7 @@ use super::index_coordinator::IndexCoordinator;
 use super::iter::Iter;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
-use std::ops::Index;
+use std::ops::{Index,IndexMut};
 
 pub struct Buffer<T, const N: usize> {
 	storage: [MaybeUninit<T>; N],
@@ -24,6 +24,15 @@ impl<T, const N: usize> Index<usize> for Buffer<T, N> {
 	fn index(&self, index: usize) -> &Self::Output {
 		match self.coordinator.virtual_to_real(index) {
 			Ok(i) => unsafe { self.storage[i].assume_init_ref() },
+			Err(_) => panic!("Index out of bounds"),
+		}
+	}
+}
+
+impl<T, const N: usize> IndexMut<usize> for Buffer<T, N> {
+	fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+		match self.coordinator.virtual_to_real(index) {
+			Ok(i) => unsafe { self.storage[i].assume_init_mut() },
 			Err(_) => panic!("Index out of bounds"),
 		}
 	}
@@ -56,7 +65,18 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 	}
 
 	fn dequeue(&mut self) -> Option<T> {
-		todo!()
+		if self.coordinator.len()==0{
+			None
+		}else{
+			let index = self.coordinator.virtual_to_real(0).unwrap();
+			let ret=unsafe {
+				std::mem::replace(&mut self.storage[index], std::mem::MaybeUninit::uninit()).assume_init()
+			};
+			
+			self.coordinator.dequeue_index().unwrap();
+			
+			Some(ret)
+		}
 	}
 
 	fn iter(&self) -> Self::Iter<'_> {
@@ -126,6 +146,23 @@ mod tests {
 		assert_eq!(fixture[7], 42);
 		assert_eq!(fixture[0], 101);
 	}
+	
+	#[test]
+	fn index_mut() {
+		let mut fixture = Fixture::default();
+		assert!(catch_unwind(|| _ = fixture[0]).is_err());
+		
+		for i in 0..SIZE{
+			fixture.enqueue(i as u8);
+			assert_eq!(fixture[i], i as u8);
+		}
+		
+		for i in 0..SIZE{
+			fixture[i] = i as u8 + 10;
+			assert_eq!(fixture[i], i as u8 + 10);
+		}
+		
+	}
 
 	#[test]
 	fn iter() {
@@ -148,5 +185,23 @@ mod tests {
 		for (e, i) in fixture.iter().enumerate() {
 			assert_eq!(*i, e as u8);
 		}
+	}
+	
+	#[test]
+	fn dequeue() {
+		let mut fixture = Fixture::default();
+		assert!(fixture.dequeue().is_none());
+		
+		for i in 0..SIZE {
+			fixture.enqueue(i as u8);
+		}
+		
+		
+		for i in 0..SIZE {
+			let act=fixture.dequeue().unwrap();
+			assert_eq!(act, i as u8);
+		}
+		
+		assert_eq!(fixture.dequeue(), None);
 	}
 }
