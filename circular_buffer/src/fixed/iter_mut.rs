@@ -25,9 +25,7 @@ impl<'a, T: 'a, const N: usize> Iterator for IterMut<'a, T, N> {
 			None
 		} else {
 			let ret = unsafe {
-				let uninit_ref = &mut *self
-					.head_ptr
-					.add(self.coordinator.virtual_to_real(0).unwrap());
+				let uninit_ref = &mut *self.head_ptr.add(self.coordinator.head_index().unwrap());
 				Some(uninit_ref.assume_init_mut())
 			};
 
@@ -54,12 +52,8 @@ impl<'a, T: 'a, const N: usize> DoubleEndedIterator for IterMut<'a, T, N> {
 			None
 		} else {
 			let ret = unsafe {
-				let index = self
-					.coordinator
-					.virtual_to_real(self.coordinator.len() - 1)
-					.unwrap();
+				let index = self.coordinator.tail_index().unwrap();
 
-				dbg!(index);
 				let uninit_ref = &mut *self.head_ptr.add(index);
 				Some(uninit_ref.assume_init_mut())
 			};
@@ -125,14 +119,9 @@ mod tests {
 	fn next_back() {
 		let mut buff = gen_sample();
 
-		for i in 0..SIZE {
-			println!("[{i}]={}", buff[i]);
-		}
-
 		let mut fixture = IterMut::new(&mut buff);
 
 		for i in 0..SIZE {
-			dbg!(i);
 			assert_eq!(*fixture.next_back().unwrap(), SIZE - 1 - i);
 			assert_eq!(fixture.size_hint(), (SIZE - i - 1, Some(SIZE - i - 1)));
 		}
