@@ -242,4 +242,24 @@ mod tests {
 			assert_eq!(fixture[idx], *i);
 		}
 	}
+
+	#[test]
+	fn complex() {
+		let mut fixture = Fixture::default();
+		for i in 0..100 {
+			fixture.enqueue(i as u8);
+		}
+
+		for i in 92..100 {
+			assert_eq!(fixture.dequeue().unwrap(), i as u8);
+		}
+
+		for i in 0..100 {
+			fixture.enqueue(i as u8);
+		}
+
+		for (exp, act) in fixture.iter().enumerate() {
+			assert_eq!(*act, exp as u8 + 92);
+		}
+	}
 }
