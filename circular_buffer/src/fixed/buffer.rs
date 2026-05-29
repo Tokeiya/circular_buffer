@@ -1,18 +1,18 @@
 use super::index_coordinator::IndexCoordinator;
 use super::iter::Iter;
-use super::storage::Storage;
 use crate::circular_buffer::CircularBuffer;
+use std::mem::MaybeUninit;
 use std::ops::Index;
 
 pub struct Buffer<T, const N: usize> {
-	storage: Storage<T, N>,
+	storage: [MaybeUninit<T>; N],
 	coordinator: IndexCoordinator<N>,
 }
 
 impl<T, const N: usize> Default for Buffer<T, N> {
 	fn default() -> Self {
 		Self {
-			storage: Storage::default(),
+			storage: [const { MaybeUninit::uninit() }; N],
 			coordinator: IndexCoordinator::new(),
 		}
 	}
@@ -23,7 +23,7 @@ impl<T, const N: usize> Index<usize> for Buffer<T, N> {
 
 	fn index(&self, index: usize) -> &Self::Output {
 		match self.coordinator.virtual_to_real(index) {
-			Ok(i) => &self.storage[i],
+			Ok(i) => unsafe { self.storage[i].assume_init_ref() },
 			Err(_) => panic!("Index out of bounds"),
 		}
 	}
@@ -42,10 +42,15 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 
 	fn enqueue(&mut self, item: T) {
 		if self.len() < self.capacity() {
-			self.storage.push(item);
+			self.storage[self.len()].write(item);
 			self.coordinator.enqueue_index();
 		} else {
-			self.storage[self.coordinator.virtual_to_real(0).unwrap()] = item;
+			let index = self.coordinator.virtual_to_real(0).unwrap();
+			unsafe {
+				self.storage[index].assume_init_drop();
+				self.storage[index].write(item);
+			};
+
 			self.coordinator.enqueue_index();
 		}
 	}
