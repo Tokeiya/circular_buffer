@@ -1,4 +1,5 @@
 mod drop_observe;
+mod process_sync;
 
 use circular_buffer::CircularBuffer;
 use circular_buffer::fixed::*;

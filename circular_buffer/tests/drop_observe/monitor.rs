@@ -39,7 +39,7 @@ mod tests {
 		for i in 0..10 {
 			let fixture = generator.generate();
 			assert_eq!(fixture.id(), i);
-			assert!(fixture.is_dropped());
+			assert!(!fixture.is_dropped());
 		}
 	}
 
@@ -59,11 +59,11 @@ mod tests {
 	fn is_dropped() {
 		let fixture = Monitor::new(Item::new(42));
 
-		assert!(fixture.is_dropped());
+		assert!(!fixture.is_dropped());
 
 		let probe = fixture.payout_probe();
 
-		assert!(fixture.is_dropped());
+		assert!(!fixture.is_dropped());
 
 		std::mem::drop(probe);
 

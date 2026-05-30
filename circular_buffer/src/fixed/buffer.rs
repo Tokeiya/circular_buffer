@@ -5,6 +5,7 @@ use std::rc::Rc;
 
 use super::index_coordinator::IndexCoordinator;
 use super::iter::Iter;
+use super::iter_mut::IterMut;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
@@ -63,6 +64,12 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 		T: 'a,
 		Self: 'a;
 
+	type MutIter<'a>
+		= IterMut<'a, T, N>
+	where
+		T: 'a,
+		Self: 'a;
+
 	fn capacity(&self) -> usize {
 		N
 	}
@@ -101,6 +108,11 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 	fn iter(&self) -> Self::Iter<'_> {
 		Iter::new(self)
 	}
+
+	fn iter_mut(&mut self) -> Self::MutIter<'_> {
+		Self::MutIter::new(self)
+	}
+
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
@@ -311,6 +323,22 @@ mod tests {
 
 			std::mem::drop(fixture);
 			assert_eq!(probe.get(), n);
+		}
+	}
+
+	#[test]
+	fn iter_mut() {
+		let mut fixture = Fixture::default();
+		for i in 0..SIZE {
+			fixture.enqueue(i as u8);
+		}
+
+		for iter in fixture.iter_mut() {
+			*iter += 10;
+		}
+
+		for (idx, i) in fixture.iter().enumerate() {
+			assert_eq!(*i, idx as u8 + 10);
 		}
 	}
 }
