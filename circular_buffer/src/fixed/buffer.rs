@@ -298,4 +298,19 @@ mod tests {
 			assert_eq!(*act, exp as u8 + 92);
 		}
 	}
+
+	#[test]
+	fn drop() {
+		for n in 0..SIZE {
+			let probe = Rc::new(Cell::new(0usize));
+			let mut fixture = Fixture::new_with_probe(probe.clone());
+
+			for i in 0..n {
+				fixture.enqueue(i as u8);
+			}
+
+			std::mem::drop(fixture);
+			assert_eq!(probe.get(), n);
+		}
+	}
 }

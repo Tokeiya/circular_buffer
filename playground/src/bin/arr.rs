@@ -1,13 +1,8 @@
+use circular_buffer::CircularBuffer;
+use circular_buffer::fixed::*;
+
 fn main() {
-	let mut vec = vec![1, 2, 3, 4, 5];
-	
-	let elem={
-		let mut iter=vec.iter_mut();
-		iter.next().unwrap()
-	};
-	
-	
-	
-	*elem=20;
-	
+	let mut buff = Buffer::<usize, 8>::default();
+
+	buff.enqueue(10);
 }
