@@ -1,7 +1,6 @@
 use super::item::Item;
 use crate::drop_observe::probe::Probe;
 use std::cell::Cell;
-use std::ops::Deref;
 use std::rc::Rc;
 #[derive(Debug)]
 pub struct Monitor(Rc<Item>, Cell<bool>);

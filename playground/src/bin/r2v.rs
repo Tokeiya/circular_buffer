@@ -30,5 +30,5 @@ fn main() {
 		println!("virtual_to_real({})={}", i, virtual_to_real(i));
 	}
 
-	let a = real_to_virtual(BASE);
+	let _ = real_to_virtual(BASE);
 }

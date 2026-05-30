@@ -1,5 +1,4 @@
 use super::item::Item;
-use std::ops::Deref;
 use std::rc::Rc;
 
 #[derive(Debug)]

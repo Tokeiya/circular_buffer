@@ -1,5 +1,4 @@
 use super::buffer::Buffer;
-use crate::circular_buffer::CircularBuffer;
 use crate::fixed::index_coordinator::IndexCoordinator;
 use std::iter::FusedIterator;
 
@@ -59,6 +58,7 @@ impl<'a, T, const N: usize> FusedIterator for Iter<'a, T, N> {}
 #[cfg(test)]
 mod test {
 	use super::*;
+	use crate::circular_buffer::CircularBuffer;
 	use crate::fixed::buffer::Buffer;
 
 	const SIZE: usize = 8;

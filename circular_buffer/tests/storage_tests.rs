@@ -7,6 +7,7 @@ use drop_observe::{Monitor, MonitorGenerator, Probe};
 use rand::prelude::*;
 use rand::seq::SliceRandom;
 use std::collections::{HashMap, VecDeque};
+use std::env::args;
 use std::mem::drop as consume;
 
 #[derive(Copy, Clone)]
@@ -22,5 +23,5 @@ type Expected = VecDeque<Probe>;
 
 #[test]
 fn random_proc() {
-	todo!()
+	dbg!(std::env::current_dir().unwrap());
 }

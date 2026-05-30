@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use playground::droppable::Droppable;
 use std::mem::MaybeUninit;
 fn main() {
