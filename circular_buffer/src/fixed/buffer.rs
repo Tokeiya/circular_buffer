@@ -1,3 +1,8 @@
+#[cfg(test)]
+use std::cell::Cell;
+#[cfg(test)]
+use std::rc::Rc;
+
 use super::index_coordinator::IndexCoordinator;
 use super::iter::Iter;
 use crate::circular_buffer::CircularBuffer;
@@ -5,15 +10,28 @@ use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
 pub struct Buffer<T, const N: usize> {
+	#[cfg(test)]
+	probe: Option<Rc<Cell<usize>>>,
 	pub(super) storage: [MaybeUninit<T>; N],
 	pub(super) coordinator: IndexCoordinator<N>,
 }
 
 impl<T, const N: usize> Default for Buffer<T, N> {
 	fn default() -> Self {
-		Self {
-			storage: [const { MaybeUninit::uninit() }; N],
-			coordinator: IndexCoordinator::new(),
+		#[cfg(not(test))]
+		{
+			Self {
+				storage: [const { MaybeUninit::uninit() }; N],
+				coordinator: IndexCoordinator::new(),
+			}
+		}
+		#[cfg(test)]
+		{
+			Self {
+				storage: [const { MaybeUninit::uninit() }; N],
+				coordinator: IndexCoordinator::new(),
+				probe: None,
+			}
 		}
 	}
 }
@@ -51,7 +69,7 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 
 	fn enqueue(&mut self, item: T) {
 		if self.len() < self.capacity() {
-			_ = self.coordinator.enqueue_index();
+			self.coordinator.enqueue_index();
 			self.storage[self.coordinator.tail_index().unwrap()].write(item);
 		} else {
 			let index = self.coordinator.head_index().unwrap();
@@ -84,12 +102,17 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 		Iter::new(self)
 	}
 	fn len(&self) -> usize {
-		//debug_assert_eq!(self.storage.len(), self.coordinator.len());
 		self.coordinator.len()
 	}
 }
 
 impl<T, const N: usize> Buffer<T, N> {
+	#[cfg(test)]
+	fn new_with_probe(probe: Rc<Cell<usize>>) -> Self {
+		let mut s = Self::default();
+		s.probe = Some(probe);
+		s
+	}
 	pub(super) fn get_raw(&self, real_index: usize) -> &T {
 		unsafe { self.storage[real_index].assume_init_ref() }
 	}
@@ -97,14 +120,27 @@ impl<T, const N: usize> Buffer<T, N> {
 
 impl<T, const N: usize> Drop for Buffer<T, N> {
 	fn drop(&mut self) {
-		todo!()
+		for i in 0..self.coordinator.len() {
+			#[cfg(test)]
+			{
+				if let Some(p) = &self.probe {
+					let i = p.get() + 1;
+					p.set(i)
+				}
+			}
+			unsafe {
+				self.storage[self.coordinator.virtual_to_real(i).unwrap()].assume_init_drop();
+			}
+		}
 	}
 }
 
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use std::panic::catch_unwind;
+	use std::cell::Cell;
+	use std::panic::{AssertUnwindSafe, catch_unwind};
+	use std::rc::Rc;
 
 	const SIZE: usize = 8;
 	type Fixture = Buffer<u8, SIZE>;
@@ -125,7 +161,7 @@ mod tests {
 	#[test]
 	fn push_index_len() {
 		let mut fixture = Fixture::default();
-		assert!(catch_unwind(|| _ = fixture[0]).is_err());
+		assert!(catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).is_err());
 
 		for i in 0..SIZE {
 			fixture.enqueue(i as u8);
@@ -136,7 +172,7 @@ mod tests {
 			assert_eq!(fixture[i], i as u8);
 		}
 
-		assert!(catch_unwind(|| _ = fixture[SIZE]).is_err());
+		assert!(catch_unwind(AssertUnwindSafe(|| _ = fixture[SIZE])).is_err());
 
 		const OFFSET: u8 = 100;
 
@@ -163,7 +199,7 @@ mod tests {
 	#[test]
 	fn index_mut() {
 		let mut fixture = Fixture::default();
-		assert!(catch_unwind(|| _ = fixture[0]).is_err());
+		assert!(catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).is_err());
 
 		for i in 0..SIZE {
 			fixture.enqueue(i as u8);
@@ -238,7 +274,7 @@ mod tests {
 		}
 		println!("]");
 
-		for (idx, i) in (vec![93, 94, 95, 96, 97, 98, 99, 8]).iter().enumerate() {
+		for (idx, i) in [93, 94, 95, 96, 97, 98, 99, 8].iter().enumerate() {
 			assert_eq!(fixture[idx], *i);
 		}
 	}
