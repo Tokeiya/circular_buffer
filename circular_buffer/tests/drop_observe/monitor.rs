@@ -73,7 +73,7 @@ mod tests {
 	#[should_panic]
 	fn dupl_probe() {
 		let fixture = Monitor::new(Item::new(42));
-		let a = fixture.payout_probe();
+		let _ = fixture.payout_probe();
 		fixture.payout_probe();
 	}
 }

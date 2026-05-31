@@ -150,6 +150,7 @@ impl<T, const N: usize> Drop for Buffer<T, N> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;
 	use std::panic::{AssertUnwindSafe, catch_unwind};
 	use std::rc::Rc;
@@ -339,6 +340,41 @@ mod tests {
 
 		for (idx, i) in fixture.iter().enumerate() {
 			assert_eq!(*i, idx as u8 + 10);
+		}
+	}
+
+	#[test]
+	fn drop_check() {
+		let mut factory = MonitorGenerator::default();
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
+
+		let mut fixture = Buffer::<Probe, SIZE>::default();
+		for m in monitor.as_slice().iter() {
+			fixture.enqueue(m.payout_probe())
+		}
+		std::mem::drop(fixture);
+
+		assert!(monitor.iter().all(|m| m.is_dropped()))
+	}
+
+	#[test]
+	fn index_mut_overwrite() {
+		const NUM: usize = 12;
+
+		let mut factory = MonitorGenerator::default();
+		let monitor: [Monitor; NUM] = std::array::from_fn(|_| factory.generate());
+
+		let mut fixture = Buffer::<Probe, SIZE>::default();
+		for m in monitor.iter() {
+			fixture.enqueue(m.payout_probe());
+		}
+
+		for m in monitor.iter().take(4) {
+			assert!(m.is_dropped())
+		}
+
+		for m in monitor.iter().skip(4) {
+			assert!(!m.is_dropped())
 		}
 	}
 }

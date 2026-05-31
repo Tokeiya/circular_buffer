@@ -9,6 +9,3 @@ mod test_shared;
 pub use circular_buffer::CircularBuffer;
 pub use error::Error;
 pub use error::Result;
-
-#[cfg(test)]
-pub(crate) use test_shared::*;
