@@ -57,13 +57,13 @@ fn enqueue_dequeue() {
 }
 
 #[test]
-fn enqueue_dequeue_index_mut() {
+fn enqueue_dequeue_iter_mut() {
 	let (seed, mut rng) = gen_rnd();
 	dbg!(seed);
 	let mut pair = TestPair::<ActualFixture, ExpectedFixture>::default();
 	pair.assert();
 
-	let proc = [Process::Enqueue, Process::Dequeue, Process::IndexMut];
+	let proc = [Process::Enqueue, Process::Dequeue, Process::IterMut];
 
 	for _ in 0..ITERATION {
 		match proc.choose(&mut rng).unwrap() {
@@ -77,7 +77,7 @@ fn enqueue_dequeue_index_mut() {
 					pair.dequeue()
 				}
 			}
-			Process::IndexMut => {
+			Process::IterMut => {
 				let value: Vec<Option<(Probe, Probe)>> = (0..pair.len())
 					.map(|_| {
 						if rng.random_bool(0.5) {
