@@ -41,23 +41,3 @@ fn overwrite() {
 		assert!(!m.is_dropped())
 	}
 }
-
-#[test]
-fn replace_via_iter() {
-	let mut factory = MonitorGenerator::default();
-	let may_be_dropped: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
-	let may_be_not_dropped: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
-
-	let mut fixture = Fixture::default();
-
-	for m in may_be_dropped.iter() {
-		fixture.enqueue(m.payout_probe());
-	}
-
-	for (i, elem) in fixture.iter_mut().enumerate() {
-		*elem = may_be_not_dropped[i].payout_probe();
-	}
-
-	assert!(may_be_dropped.iter().all(|m| m.is_dropped()));
-	assert!(may_be_not_dropped.iter().all(|m| !m.is_dropped()));
-}

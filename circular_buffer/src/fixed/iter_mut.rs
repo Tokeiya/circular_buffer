@@ -68,6 +68,7 @@ mod tests {
 	use super::*;
 	use crate::circular_buffer::CircularBuffer;
 	use crate::fixed::buffer::Buffer;
+	use crate::test_shared::*;
 
 	const SIZE: usize = 8;
 	type Buff = Buffer<usize, SIZE>;
@@ -147,5 +148,27 @@ mod tests {
 		for i in iter.zip(92..100) {
 			assert_eq!(i.0, &i.1);
 		}
+	}
+
+	#[test]
+	fn replace_via_iter() {
+		let mut factory = MonitorGenerator::default();
+		let may_be_dropped: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
+		let may_be_not_dropped: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
+
+		let mut fixture = Buffer::<Probe, SIZE>::default();
+
+		for m in may_be_dropped.iter() {
+			fixture.enqueue(m.payout_probe());
+		}
+
+		let iterator = IterMut::new(&mut fixture).enumerate();
+
+		for (i, elem) in iterator {
+			*elem = may_be_not_dropped[i].payout_probe();
+		}
+
+		assert!(may_be_dropped.iter().all(|m| m.is_dropped()));
+		assert!(may_be_not_dropped.iter().all(|m| !m.is_dropped()));
 	}
 }
