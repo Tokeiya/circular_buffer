@@ -52,7 +52,5 @@ mod test {
 		let exp = Expected::default();
 
 		let mut fixture = Fixture::new(act.iter(), exp.iter());
-
-		for elem in fixture {}
 	}
 }
