@@ -1,6 +1,3 @@
-#[path = "../drop_observe/mod.rs"]
-mod drop_observe;
-
 mod expected;
 mod iter;
 mod iter_mut;

@@ -9,7 +9,7 @@ use rand_chacha::ChaCha8Rng;
 
 use process_sync::Expected;
 
-const SIZE: usize = 24;
+const SIZE: usize = 64;
 type Fixture = Buffer<Probe, SIZE>;
 
 #[test]

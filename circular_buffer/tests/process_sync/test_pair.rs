@@ -1,4 +1,4 @@
-use super::drop_observe::*;
+use crate::drop_observe::*;
 use circular_buffer::CircularBuffer;
 use std::collections::HashMap;
 pub struct TestPair<A, E> {
