@@ -1,10 +1,13 @@
 mod drop_observe;
+mod process_sync;
 
 use circular_buffer::fixed::*;
 use circular_buffer::{Error, Result};
 use drop_observe::*;
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
+
+use process_sync::Expected;
 
 const SIZE: usize = 24;
 type Fixture = Buffer<Probe, SIZE>;
