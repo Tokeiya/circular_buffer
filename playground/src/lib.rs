@@ -1,2 +1,6 @@
 pub mod droppable;
-pub mod drop_observe;
+
+#[path = "../../circular_buffer/tests/drop_observe/mod.rs"]
+mod shared;
+
+pub use shared::*;

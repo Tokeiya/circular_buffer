@@ -1,4 +1,4 @@
-use playground::drop_observe::*;
+use playground::*;
 use std::mem::MaybeUninit;
 
 const SIZE: usize = 8;

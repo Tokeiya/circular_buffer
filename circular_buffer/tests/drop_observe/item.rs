@@ -33,7 +33,7 @@ impl Item {
 
 #[cfg(test)]
 mod tests {
-	use crate::drop_observe::item::Item;
+	use super::super::item::Item;
 
 	#[test]
 	fn new() {

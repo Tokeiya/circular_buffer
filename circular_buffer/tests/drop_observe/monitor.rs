@@ -1,5 +1,5 @@
 use super::item::Item;
-use crate::drop_observe::probe::Probe;
+use super::probe::Probe;
 use std::cell::Cell;
 use std::rc::Rc;
 #[derive(Debug)]
@@ -29,8 +29,8 @@ impl Monitor {
 
 #[cfg(test)]
 mod tests {
+	use super::super::monitor_gen::MonitorGenerator;
 	use super::*;
-	use crate::drop_observe::monitor_gen::MonitorGenerator;
 	#[test]
 	fn from_id_is_dropped() {
 		let mut generator = MonitorGenerator::default();
