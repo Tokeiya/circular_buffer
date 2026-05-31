@@ -37,7 +37,7 @@ fn enqueue_dequeue() {
 
 	let proc = [Process::Enqueue, Process::Dequeue];
 
-	for i in 0..ITERATION {
+	for _ in 0..ITERATION {
 		match proc.choose(&mut rng).unwrap() {
 			Process::Enqueue => {
 				for _ in 0..rng.random_range(0..=SIZE) {
@@ -49,7 +49,55 @@ fn enqueue_dequeue() {
 					pair.dequeue()
 				}
 			}
-			_ => todo!(),
+			_ => unreachable!(),
+		}
+	}
+
+	pair.assert();
+}
+
+#[test]
+fn enqueue_dequeue_index_mut() {
+	let (seed, mut rng) = gen_rnd();
+	dbg!(seed);
+	let mut pair = TestPair::<ActualFixture, ExpectedFixture>::default();
+	pair.assert();
+
+	let proc = [Process::Enqueue, Process::Dequeue, Process::IndexMut];
+
+	for _ in 0..ITERATION {
+		match proc.choose(&mut rng).unwrap() {
+			Process::Enqueue => {
+				for _ in 0..rng.random_range(0..=SIZE) {
+					pair.enqueue()
+				}
+			}
+			Process::Dequeue => {
+				for _ in 0..rng.random_range(0..=SIZE) {
+					pair.dequeue()
+				}
+			}
+			Process::IndexMut => {
+				let value: Vec<Option<(Probe, Probe)>> = (0..pair.len())
+					.map(|_| {
+						if rng.random_bool(0.5) {
+							Some(pair.get_probe())
+						} else {
+							None
+						}
+					})
+					.collect();
+
+				let iter_mut = pair.iter_mut();
+
+				for ((a, e), p) in iter_mut.zip(value.into_iter()) {
+					if let Some((ap, ep)) = p {
+						*a = ap;
+						*e = ep;
+					}
+				}
+			}
+			_ => unreachable!(),
 		}
 	}
 }

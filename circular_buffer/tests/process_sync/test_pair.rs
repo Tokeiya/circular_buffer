@@ -1,7 +1,8 @@
+#![allow(dead_code)]
+
 use crate::drop_observe::*;
 use circular_buffer::CircularBuffer;
 use std::collections::HashMap;
-use std::ops::{Index, IndexMut};
 
 const THRESHOLD: usize = 1024;
 
@@ -10,7 +11,11 @@ fn assert_probe(actual: &Probe, expected: &Probe) {
 	assert_eq!(actual.is_dropped(), expected.is_dropped());
 }
 
-pub struct TestPair<A, E> {
+pub struct TestPair<A, E>
+where
+	A: CircularBuffer<Probe>,
+	E: CircularBuffer<Probe>,
+{
 	actual: A,
 	expected: E,
 	act_gen: MonitorGenerator,
@@ -21,8 +26,8 @@ pub struct TestPair<A, E> {
 
 impl<A, E> Default for TestPair<A, E>
 where
-	A: Default,
-	E: Default,
+	A: CircularBuffer<Probe> + Default,
+	E: CircularBuffer<Probe> + Default,
 {
 	fn default() -> Self {
 		Self {
@@ -33,6 +38,17 @@ where
 			act_hash: HashMap::default(),
 			exp_hash: HashMap::default(),
 		}
+	}
+}
+
+impl<A, E> Drop for TestPair<A, E>
+where
+	A: CircularBuffer<Probe>,
+	E: CircularBuffer<Probe>,
+{
+	fn drop(&mut self) {
+		self.assert();
+		dbg!("TestPair dropped successfully.");
 	}
 }
 
@@ -171,5 +187,10 @@ where
 		}
 
 		(&mut self.actual[index], &mut self.expected[index])
+	}
+
+	pub fn len(&self) -> usize {
+		assert_eq!(self.actual.len(), self.expected.len());
+		self.expected.len()
 	}
 }
