@@ -1,24 +1,55 @@
 mod drop_observe;
 mod process_sync;
 
-use circular_buffer::fixed::*;
-use circular_buffer::{Error, Result};
+use circular_buffer::fixed::Buffer;
 use drop_observe::*;
+use process_sync::Expected;
+use process_sync::test_pair::TestPair;
+use rand::RngExt;
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
 
-use process_sync::Expected;
-
+const ITERATION: usize = 1024;
 const SIZE: usize = 64;
-type Fixture = Buffer<Probe, SIZE>;
+type ActualFixture = Buffer<Probe, SIZE>;
+type ExpectedFixture = Expected<Probe, SIZE>;
+
+#[derive(Eq, PartialEq)]
+enum Process {
+	Enqueue,
+	Dequeue,
+	IndexMut,
+	IterMut,
+}
+
+fn gen_rnd() -> (u64, ChaCha8Rng) {
+	let seed = rand::rng().next_u64();
+	let rng = ChaCha8Rng::seed_from_u64(seed);
+	(seed, rng)
+}
 
 #[test]
 fn enqueue_dequeue() {
-	let seed = rand::rng().next_u64();
+	let (seed, mut rng) = gen_rnd();
 	dbg!(seed);
-	let mut rng = ChaCha8Rng::seed_from_u64(seed);
+	let mut pair = TestPair::<ActualFixture, ExpectedFixture>::default();
+	pair.assert();
 
-	let mut buffer = Fixture::default();
-	let mut facory = MonitorGenerator::default();
-	let mut hash = std::collections::HashMap::<usize, Monitor>::new();
+	let proc = [Process::Enqueue, Process::Dequeue];
+
+	for i in 0..ITERATION {
+		match proc.choose(&mut rng).unwrap() {
+			Process::Enqueue => {
+				for _ in 0..rng.random_range(0..=SIZE) {
+					pair.enqueue()
+				}
+			}
+			Process::Dequeue => {
+				for _ in 0..rng.random_range(0..=SIZE) {
+					pair.dequeue()
+				}
+			}
+			_ => todo!(),
+		}
+	}
 }
