@@ -1,12 +1,12 @@
+use crate::IndexCoordinator;
 use crate::error::*;
-
 #[derive(Clone)]
-pub struct IndexCoordinator<const N: usize> {
+pub struct Pow2IndexCoordinator<const N: usize> {
 	head: usize,
 	len: usize,
 }
 
-impl<const N: usize> IndexCoordinator<N> {
+impl<const N: usize> Pow2IndexCoordinator<N> {
 	const CHECK: () = assert!(N.count_ones() == 1);
 	const MASK: usize = N - 1;
 
@@ -15,8 +15,10 @@ impl<const N: usize> IndexCoordinator<N> {
 		_ = Self::CHECK;
 		Self { head: 0, len: 0 }
 	}
+}
 
-	pub fn head_index(&self) -> Result<usize> {
+impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
+	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
 		} else {
@@ -24,7 +26,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn tail_index(&self) -> Result<usize> {
+	fn tail_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
 		} else {
@@ -32,7 +34,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn enqueue_index(&mut self) {
+	fn enqueue_index(&mut self) {
 		if self.len < N {
 			self.len += 1;
 		} else {
@@ -40,7 +42,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn dequeue_index(&mut self) -> Result<()> {
+	fn dequeue_index(&mut self) -> Result<()> {
 		if self.len == 0 {
 			Err(Error::Empty)
 		} else {
@@ -50,7 +52,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn pop_index(&mut self) -> Result<()> {
+	fn pop_index(&mut self) -> Result<()> {
 		match self.len.checked_sub(1) {
 			Some(len) => {
 				self.len = len;
@@ -60,8 +62,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	#[allow(dead_code)]
-	pub fn real_to_virtual(&self, idx: usize) -> Result<usize> {
+	fn real_to_virtual(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
 				index: idx,
@@ -72,7 +73,7 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	pub fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
 				index: idx,
@@ -83,12 +84,11 @@ impl<const N: usize> IndexCoordinator<N> {
 		}
 	}
 
-	#[allow(dead_code)]
-	pub fn capacity(&self) -> usize {
+	fn capacity(&self) -> usize {
 		N
 	}
 
-	pub fn len(&self) -> usize {
+	fn len(&self) -> usize {
 		self.len
 	}
 }
@@ -110,7 +110,7 @@ mod tests {
 
 	#[test]
 	fn head_index() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 		assert_matches!(fixture.head_index(), Err(Error::Empty));
 
 		fixture.head = 0;
@@ -127,7 +127,7 @@ mod tests {
 
 	#[test]
 	fn tail_index() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 		assert_matches!(fixture.tail_index(), Err(Error::Empty));
 
 		fixture.head = 0;
@@ -152,14 +152,14 @@ mod tests {
 
 	#[test]
 	fn new() {
-		let fixture = IndexCoordinator::<BASE>::new();
+		let fixture = Pow2IndexCoordinator::<BASE>::new();
 		assert_eq!(fixture.head, 0);
 		assert_eq!(fixture.len, 0);
 	}
 
 	#[test]
 	fn capacity() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 		assert_eq!(fixture.capacity(), BASE);
 
 		for _ in 0..100 {
@@ -170,7 +170,7 @@ mod tests {
 
 	#[test]
 	fn enqueue_index() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 
 		for i in 0..BASE {
 			fixture.enqueue_index();
@@ -187,7 +187,7 @@ mod tests {
 
 	#[test]
 	fn dequeue_index() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 		assert!(matches!(fixture.dequeue_index(), Err(Error::Empty)));
 
 		fixture.head = 0;
@@ -219,7 +219,7 @@ mod tests {
 
 	#[test]
 	fn pop_index() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 		assert_matches!(fixture.pop_index(), Err(Error::Empty));
 
 		fixture.head = 0;
@@ -247,7 +247,7 @@ mod tests {
 
 	#[test]
 	fn len() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 
 		for i in 0..BASE {
 			assert_eq!(fixture.len(), i);
@@ -264,7 +264,7 @@ mod tests {
 
 	#[test]
 	fn real_to_virtual() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 
 		for i in 0..BASE {
 			for r in 0..i {
@@ -300,7 +300,7 @@ mod tests {
 
 	#[test]
 	fn virtual_to_real() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 
 		for i in 0..BASE {
 			for v in 0..i {
@@ -336,7 +336,7 @@ mod tests {
 
 	#[test]
 	fn single() {
-		let mut fixture = IndexCoordinator::<1>::new();
+		let mut fixture = Pow2IndexCoordinator::<1>::new();
 
 		for _ in 0..100 {
 			fixture.enqueue_index();
@@ -347,7 +347,7 @@ mod tests {
 
 	#[test]
 	fn complex() {
-		let mut fixture = IndexCoordinator::<BASE>::new();
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
 
 		fixture.enqueue_index();
 		fixture.enqueue_index();

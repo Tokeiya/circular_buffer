@@ -1,9 +1,10 @@
+use crate::IndexCoordinator;
 use crate::fixed::Buffer;
-use crate::fixed::index_coordinator::IndexCoordinator;
+use crate::fixed::index_coordinator::Pow2IndexCoordinator;
 
 pub struct IterMut<'a, T, const N: usize> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,
-	coordinator: IndexCoordinator<N>,
+	coordinator: Pow2IndexCoordinator<N>,
 	_phantom: std::marker::PhantomData<&'a ()>,
 }
 

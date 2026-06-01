@@ -1,10 +1,11 @@
 use super::buffer::Buffer;
-use crate::fixed::index_coordinator::IndexCoordinator;
+use crate::IndexCoordinator;
+use crate::fixed::index_coordinator::Pow2IndexCoordinator;
 use std::iter::FusedIterator;
 
 pub struct Iter<'a, T, const N: usize> {
 	backend: &'a Buffer<T, N>,
-	coordinator: IndexCoordinator<N>,
+	coordinator: Pow2IndexCoordinator<N>,
 }
 
 impl<'a, T, const N: usize> Iter<'a, T, N> {

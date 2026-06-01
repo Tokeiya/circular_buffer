@@ -3,9 +3,10 @@ use std::cell::Cell;
 #[cfg(test)]
 use std::rc::Rc;
 
-use super::index_coordinator::IndexCoordinator;
+use super::index_coordinator::Pow2IndexCoordinator;
 use super::iter::Iter;
 use super::iter_mut::IterMut;
+use crate::IndexCoordinator;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
@@ -14,7 +15,7 @@ pub struct Buffer<T, const N: usize> {
 	#[cfg(test)]
 	probe: Option<Rc<Cell<usize>>>,
 	pub(super) storage: [MaybeUninit<T>; N],
-	pub(super) coordinator: IndexCoordinator<N>,
+	pub(super) coordinator: Pow2IndexCoordinator<N>,
 }
 
 impl<T, const N: usize> Default for Buffer<T, N> {
@@ -23,14 +24,14 @@ impl<T, const N: usize> Default for Buffer<T, N> {
 		{
 			Self {
 				storage: [const { MaybeUninit::uninit() }; N],
-				coordinator: IndexCoordinator::new(),
+				coordinator: Pow2IndexCoordinator::new(),
 			}
 		}
 		#[cfg(test)]
 		{
 			Self {
 				storage: [const { MaybeUninit::uninit() }; N],
-				coordinator: IndexCoordinator::new(),
+				coordinator: Pow2IndexCoordinator::new(),
 				probe: None,
 			}
 		}
