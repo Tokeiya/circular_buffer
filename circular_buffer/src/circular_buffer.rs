@@ -1,12 +1,16 @@
+use std::iter::{ExactSizeIterator, FusedIterator};
 use std::ops::{Index, IndexMut};
 
 pub trait CircularBuffer<T>: Index<usize, Output = T> + IndexMut<usize> {
-	type Iter<'a>: Iterator<Item = &'a T>
+	type Iter<'a>: Iterator<Item = &'a T> + DoubleEndedIterator + FusedIterator + ExactSizeIterator
 	where
 		T: 'a,
 		Self: 'a;
 
 	type MutIter<'a>: Iterator<Item = &'a mut T>
+		+ DoubleEndedIterator
+		+ FusedIterator
+		+ ExactSizeIterator
 	where
 		T: 'a,
 		Self: 'a;

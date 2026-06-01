@@ -1,6 +1,7 @@
 use crate::IndexCoordinator;
 use crate::fixed::Buffer;
 use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
+use std::iter::FusedIterator;
 
 pub struct IterMut<'a, T, const N: usize> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,
@@ -63,6 +64,8 @@ impl<'a, T: 'a, const N: usize> DoubleEndedIterator for IterMut<'a, T, N> {
 		}
 	}
 }
+
+impl<'a, T: 'a, const N: usize> FusedIterator for IterMut<'a, T, N> {}
 
 #[cfg(test)]
 mod tests {

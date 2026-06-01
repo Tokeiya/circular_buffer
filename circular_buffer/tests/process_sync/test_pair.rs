@@ -3,6 +3,7 @@
 use crate::drop_observe::*;
 use circular_buffer::CircularBuffer;
 use std::collections::HashMap;
+use std::iter::{DoubleEndedIterator, ExactSizeIterator, FusedIterator};
 
 const THRESHOLD: usize = 1024;
 
@@ -165,7 +166,9 @@ where
 		ret
 	}
 
-	pub fn iter_mut(&mut self) -> impl Iterator<Item = (&mut Probe, &mut Probe)> {
+	pub fn iter_mut(
+		&mut self,
+	) -> impl DoubleEndedIterator<Item = (&mut Probe, &mut Probe)> + ExactSizeIterator {
 		if self.act_hash.len() >= THRESHOLD {
 			self.assert();
 		}
@@ -173,7 +176,7 @@ where
 		self.actual.iter_mut().zip(self.expected.iter_mut())
 	}
 
-	pub fn iter(&self) -> impl Iterator<Item = (&Probe, &Probe)> {
+	pub fn iter(&self) -> impl ExactSizeIterator + DoubleEndedIterator<Item = (&Probe, &Probe)> {
 		self.actual.iter().zip(self.expected.iter())
 	}
 
