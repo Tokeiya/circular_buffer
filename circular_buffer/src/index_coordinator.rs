@@ -10,4 +10,12 @@ pub trait IndexCoordinator {
 	fn virtual_to_real(&self, idx: usize) -> Result<usize>;
 	fn capacity(&self) -> usize;
 	fn len(&self) -> usize;
+
+	fn is_empty(&self) -> bool {
+		self.len() == 0
+	}
+
+	fn is_full(&self) -> bool {
+		self.len() == self.capacity()
+	}
 }

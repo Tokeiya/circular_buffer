@@ -1,6 +1,6 @@
 use crate::IndexCoordinator;
 use crate::fixed::Buffer;
-use crate::fixed::index_coordinator::Pow2IndexCoordinator;
+use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
 
 pub struct IterMut<'a, T, const N: usize> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,

@@ -3,9 +3,9 @@ use std::cell::Cell;
 #[cfg(test)]
 use std::rc::Rc;
 
-use super::index_coordinator::Pow2IndexCoordinator;
 use super::iter::Iter;
 use super::iter_mut::IterMut;
+use super::pow2_index_coordinator::Pow2IndexCoordinator;
 use crate::IndexCoordinator;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;

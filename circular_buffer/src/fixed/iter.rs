@@ -1,6 +1,6 @@
 use super::buffer::Buffer;
 use crate::IndexCoordinator;
-use crate::fixed::index_coordinator::Pow2IndexCoordinator;
+use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
 use std::iter::FusedIterator;
 
 pub struct Iter<'a, T, const N: usize> {
