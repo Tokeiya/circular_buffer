@@ -5,7 +5,6 @@ use std::rc::Rc;
 
 use super::iter::Iter;
 use super::iter_mut::IterMut;
-use super::pow2_index_coordinator::Pow2IndexCoordinator;
 use crate::IndexCoordinator;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
@@ -20,20 +19,11 @@ pub struct Buffer<T, C: IndexCoordinator, const N: usize> {
 
 impl<T, C: IndexCoordinator, const N: usize> Default for Buffer<T, C, N> {
 	fn default() -> Self {
-		#[cfg(not(test))]
-		{
-			Self {
-				storage: [const { MaybeUninit::uninit() }; N],
-				coordinator: C::default(),
-			}
-		}
-		#[cfg(test)]
-		{
-			Self {
-				storage: [const { MaybeUninit::uninit() }; N],
-				coordinator: C::default(),
-				probe: None,
-			}
+		Self {
+			storage: [const { MaybeUninit::uninit() }; N],
+			coordinator: C::default(),
+			#[cfg(test)]
+			probe: None,
 		}
 	}
 }
@@ -151,6 +141,7 @@ impl<T, C: IndexCoordinator, const N: usize> Drop for Buffer<T, C, N> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::fixed::Pow2IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;
 	use std::panic::{AssertUnwindSafe, catch_unwind};
