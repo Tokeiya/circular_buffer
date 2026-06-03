@@ -1,5 +1,6 @@
 mod buffer;
 mod fixed_index_coordinator;
+mod index_coordinator;
 mod iter;
 mod iter_mut;
 mod pow2_index_coordinator;

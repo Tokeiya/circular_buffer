@@ -306,6 +306,29 @@ mod tests {
 				);
 			}
 		}
+
+		let mut fixture = Pow2IndexCoordinator::<BASE>::new();
+
+		for (h, l) in (0..BASE).flat_map(|h| (0..=BASE).map(move |i| (h, i))) {
+			fixture.head = h;
+			fixture.len = l;
+
+			if l == 0 {
+				assert_matches!(
+					fixture.real_to_virtual(0),
+					Err(Error::IndexOutOfRange { index: _, len: _ })
+				);
+			}
+
+			for i in 0..l {
+				if fixture.real_to_virtual(i).unwrap() != expected_real_to_virtual::<BASE>(i, h) {
+					assert_eq!(
+						fixture.real_to_virtual(i).unwrap(),
+						expected_real_to_virtual::<BASE>(i, h)
+					)
+				}
+			}
+		}
 	}
 
 	#[test]
