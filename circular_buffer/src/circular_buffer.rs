@@ -26,11 +26,72 @@ pub trait CircularBuffer<T>: Index<usize, Output = T> + IndexMut<usize> + Defaul
 	}
 }
 
-// #[cfg(test)]
-// mod tests {
-//
-// 	#[test]
-// 	fn test_is_empty() {
-// 		todo!("not implemented");
-// 	}
-// }
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[derive(Default)]
+	struct Dummy(pub usize);
+
+	impl Index<usize> for Dummy {
+		type Output = usize;
+
+		fn index(&self, index: usize) -> &Self::Output {
+			todo!()
+		}
+	}
+
+	impl IndexMut<usize> for Dummy {
+		fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+			todo!()
+		}
+	}
+
+	impl CircularBuffer<usize> for Dummy {
+		type Iter<'a>
+			= std::iter::Empty<&'a usize>
+		where
+			Self: 'a;
+		type MutIter<'a>
+			= std::iter::Empty<&'a mut usize>
+		where
+			Self: 'a;
+
+		fn capacity(&self) -> usize {
+			todo!()
+		}
+
+		fn enqueue(&mut self, item: usize) {
+			todo!()
+		}
+
+		fn dequeue(&mut self) -> Option<usize> {
+			todo!()
+		}
+
+		fn iter(&self) -> Self::Iter<'_> {
+			todo!()
+		}
+
+		fn iter_mut(&mut self) -> Self::MutIter<'_> {
+			todo!()
+		}
+
+		fn len(&self) -> usize {
+			self.0
+		}
+	}
+
+	#[test]
+	fn is_empty() {
+		let mut fixture = Dummy::default();
+		assert_eq!(fixture.len(), 0);
+		assert!(fixture.is_empty());
+
+		for i in 1..100 {
+			fixture.0 = i;
+			assert_eq!(fixture.len(), i);
+			assert!(!fixture.is_empty());
+		}
+	}
+}
