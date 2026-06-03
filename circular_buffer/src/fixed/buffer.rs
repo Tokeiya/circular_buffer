@@ -3,6 +3,7 @@ use std::cell::Cell;
 #[cfg(test)]
 use std::rc::Rc;
 
+use super::fixed_index_coordinator::FixedIndexCoordinator;
 use super::iter::Iter;
 use super::iter_mut::IterMut;
 use crate::IndexCoordinator;
@@ -17,7 +18,7 @@ pub struct Buffer<T, C: IndexCoordinator, const N: usize> {
 	pub(super) coordinator: C,
 }
 
-impl<T, C: IndexCoordinator, const N: usize> Default for Buffer<T, C, N> {
+impl<T, C: FixedIndexCoordinator<N>, const N: usize> Default for Buffer<T, C, N> {
 	fn default() -> Self {
 		Self {
 			storage: [const { MaybeUninit::uninit() }; N],
@@ -28,7 +29,7 @@ impl<T, C: IndexCoordinator, const N: usize> Default for Buffer<T, C, N> {
 	}
 }
 
-impl<T, C: IndexCoordinator, const N: usize> Index<usize> for Buffer<T, C, N> {
+impl<T, C: FixedIndexCoordinator<N>, const N: usize> Index<usize> for Buffer<T, C, N> {
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
@@ -39,7 +40,7 @@ impl<T, C: IndexCoordinator, const N: usize> Index<usize> for Buffer<T, C, N> {
 	}
 }
 
-impl<T, C: IndexCoordinator, const N: usize> IndexMut<usize> for Buffer<T, C, N> {
+impl<T, C: FixedIndexCoordinator<N>, const N: usize> IndexMut<usize> for Buffer<T, C, N> {
 	fn index_mut(&mut self, index: usize) -> &mut Self::Output {
 		match self.coordinator.virtual_to_real(index) {
 			Ok(i) => unsafe { self.storage[i].assume_init_mut() },
@@ -48,7 +49,7 @@ impl<T, C: IndexCoordinator, const N: usize> IndexMut<usize> for Buffer<T, C, N>
 	}
 }
 
-impl<T, C: IndexCoordinator, const N: usize> CircularBuffer<T> for Buffer<T, C, N> {
+impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffer<T, C, N> {
 	type Iter<'a>
 		= Iter<'a, T, C, N>
 	where
@@ -109,7 +110,7 @@ impl<T, C: IndexCoordinator, const N: usize> CircularBuffer<T> for Buffer<T, C, 
 	}
 }
 
-impl<T, C: IndexCoordinator, const N: usize> Buffer<T, C, N> {
+impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 	#[cfg(test)]
 	fn new_with_probe(probe: Rc<Cell<usize>>) -> Self {
 		let mut s = Self::default();

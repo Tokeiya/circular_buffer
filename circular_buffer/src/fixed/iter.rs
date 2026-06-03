@@ -1,14 +1,14 @@
 use super::buffer::Buffer;
+use super::fixed_index_coordinator::FixedIndexCoordinator;
 use crate::IndexCoordinator;
-use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
 use std::iter::FusedIterator;
 
-pub struct Iter<'a, T, C: IndexCoordinator, const N: usize> {
+pub struct Iter<'a, T, C: FixedIndexCoordinator<N>, const N: usize> {
 	backend: &'a Buffer<T, C, N>,
 	coordinator: C,
 }
 
-impl<'a, T, C: IndexCoordinator, const N: usize> Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> Iter<'a, T, C, N> {
 	pub(super) fn new(item: &'a Buffer<T, C, N>) -> Self {
 		Self {
 			backend: item,
@@ -17,7 +17,7 @@ impl<'a, T, C: IndexCoordinator, const N: usize> Iter<'a, T, C, N> {
 	}
 }
 
-impl<'a, T, C: IndexCoordinator, const N: usize> Iterator for Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> Iterator for Iter<'a, T, C, N> {
 	type Item = &'a T;
 
 	fn next(&mut self) -> Option<Self::Item> {
@@ -36,13 +36,13 @@ impl<'a, T, C: IndexCoordinator, const N: usize> Iterator for Iter<'a, T, C, N> 
 	}
 }
 
-impl<'a, T, C: IndexCoordinator, const N: usize> ExactSizeIterator for Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> ExactSizeIterator for Iter<'a, T, C, N> {
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
 
-impl<'a, T, C: IndexCoordinator, const N: usize> DoubleEndedIterator for Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> DoubleEndedIterator for Iter<'a, T, C, N> {
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.len() == 0 {
 			None
@@ -54,12 +54,13 @@ impl<'a, T, C: IndexCoordinator, const N: usize> DoubleEndedIterator for Iter<'a
 	}
 }
 
-impl<'a, T, C: IndexCoordinator, const N: usize> FusedIterator for Iter<'a, T, C, N> {}
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> FusedIterator for Iter<'a, T, C, N> {}
 
 #[cfg(test)]
 mod test {
 	use super::*;
 	use crate::circular_buffer::CircularBuffer;
+	use crate::fixed::Pow2IndexCoordinator;
 	use crate::fixed::buffer::Buffer;
 
 	const SIZE: usize = 8;

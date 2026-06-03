@@ -1,5 +1,7 @@
 use crate::IndexCoordinator;
 use crate::error::*;
+use crate::fixed::fixed_index_coordinator::FixedIndexCoordinator;
+
 #[derive(Clone)]
 pub struct Pow2IndexCoordinator<const N: usize> {
 	head: usize,
@@ -98,6 +100,8 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		self.len
 	}
 }
+
+impl<const N: usize> FixedIndexCoordinator<N> for Pow2IndexCoordinator<N> {}
 
 #[cfg(test)]
 mod tests {
