@@ -1,10 +1,18 @@
 use crate::drop_observe::Probe;
 use crate::process_sync::test_pair::TestPair;
-use crate::{ITERATION, Process, SIZE};
+use crate::{ITERATION, SIZE};
 use circular_buffer::CircularBuffer;
 use rand::prelude::IndexedRandom;
 use rand::{Rng, RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
+
+#[derive(Eq, PartialEq)]
+enum Process {
+	Enqueue,
+	Dequeue,
+	IndexMut,
+	IterMut,
+}
 
 fn gen_rnd() -> (u64, ChaCha8Rng) {
 	let seed = rand::rng().next_u64();
@@ -117,6 +125,7 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>() {
 		Process::IndexMut,
 	];
 
+	#[allow(unreachable_patterns)]
 	for _ in 0..ITERATION {
 		match proc.choose(&mut rng).unwrap() {
 			Process::Enqueue => {

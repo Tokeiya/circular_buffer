@@ -3,7 +3,7 @@
 use crate::drop_observe::*;
 use circular_buffer::CircularBuffer;
 use std::collections::HashMap;
-use std::iter::{DoubleEndedIterator, ExactSizeIterator, FusedIterator};
+use std::iter::{DoubleEndedIterator, ExactSizeIterator};
 
 const THRESHOLD: usize = 1024;
 
