@@ -1,7 +1,5 @@
 #[cfg(test)]
-use std::cell::Cell;
-#[cfg(test)]
-use std::rc::Rc;
+use std::{cell::Cell, rc::Rc};
 
 use super::fixed_index_coordinator::FixedIndexCoordinator;
 use super::iter::Iter;
