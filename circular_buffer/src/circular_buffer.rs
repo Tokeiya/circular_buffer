@@ -36,13 +36,13 @@ mod tests {
 	impl Index<usize> for Dummy {
 		type Output = usize;
 
-		fn index(&self, index: usize) -> &Self::Output {
+		fn index(&self, _: usize) -> &Self::Output {
 			todo!()
 		}
 	}
 
 	impl IndexMut<usize> for Dummy {
-		fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+		fn index_mut(&mut self, _: usize) -> &mut Self::Output {
 			todo!()
 		}
 	}
@@ -61,7 +61,7 @@ mod tests {
 			todo!()
 		}
 
-		fn enqueue(&mut self, item: usize) {
+		fn enqueue(&mut self, _: usize) {
 			todo!()
 		}
 
