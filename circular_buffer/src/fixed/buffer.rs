@@ -11,34 +11,34 @@ use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
-pub struct Buffer<T, const N: usize> {
+pub struct Buffer<T, C: IndexCoordinator, const N: usize> {
 	#[cfg(test)]
 	probe: Option<Rc<Cell<usize>>>,
 	pub(super) storage: [MaybeUninit<T>; N],
-	pub(super) coordinator: Pow2IndexCoordinator<N>,
+	pub(super) coordinator: C,
 }
 
-impl<T, const N: usize> Default for Buffer<T, N> {
+impl<T, C: IndexCoordinator, const N: usize> Default for Buffer<T, C, N> {
 	fn default() -> Self {
 		#[cfg(not(test))]
 		{
 			Self {
 				storage: [const { MaybeUninit::uninit() }; N],
-				coordinator: Pow2IndexCoordinator::new(),
+				coordinator: C::default(),
 			}
 		}
 		#[cfg(test)]
 		{
 			Self {
 				storage: [const { MaybeUninit::uninit() }; N],
-				coordinator: Pow2IndexCoordinator::new(),
+				coordinator: C::default(),
 				probe: None,
 			}
 		}
 	}
 }
 
-impl<T, const N: usize> Index<usize> for Buffer<T, N> {
+impl<T, C: IndexCoordinator, const N: usize> Index<usize> for Buffer<T, C, N> {
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
@@ -49,7 +49,7 @@ impl<T, const N: usize> Index<usize> for Buffer<T, N> {
 	}
 }
 
-impl<T, const N: usize> IndexMut<usize> for Buffer<T, N> {
+impl<T, C: IndexCoordinator, const N: usize> IndexMut<usize> for Buffer<T, C, N> {
 	fn index_mut(&mut self, index: usize) -> &mut Self::Output {
 		match self.coordinator.virtual_to_real(index) {
 			Ok(i) => unsafe { self.storage[i].assume_init_mut() },
@@ -58,15 +58,15 @@ impl<T, const N: usize> IndexMut<usize> for Buffer<T, N> {
 	}
 }
 
-impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
+impl<T, C: IndexCoordinator, const N: usize> CircularBuffer<T> for Buffer<T, C, N> {
 	type Iter<'a>
-		= Iter<'a, T, N>
+		= Iter<'a, T, C, N>
 	where
 		T: 'a,
 		Self: 'a;
 
 	type MutIter<'a>
-		= IterMut<'a, T, N>
+		= IterMut<'a, T, C, N>
 	where
 		T: 'a,
 		Self: 'a;
@@ -119,7 +119,7 @@ impl<T, const N: usize> CircularBuffer<T> for Buffer<T, N> {
 	}
 }
 
-impl<T, const N: usize> Buffer<T, N> {
+impl<T, C: IndexCoordinator, const N: usize> Buffer<T, C, N> {
 	#[cfg(test)]
 	fn new_with_probe(probe: Rc<Cell<usize>>) -> Self {
 		let mut s = Self::default();
@@ -131,7 +131,7 @@ impl<T, const N: usize> Buffer<T, N> {
 	}
 }
 
-impl<T, const N: usize> Drop for Buffer<T, N> {
+impl<T, C: IndexCoordinator, const N: usize> Drop for Buffer<T, C, N> {
 	fn drop(&mut self) {
 		for i in 0..self.coordinator.len() {
 			#[cfg(test)]
@@ -157,7 +157,7 @@ mod tests {
 	use std::rc::Rc;
 
 	const SIZE: usize = 8;
-	type Fixture = Buffer<u8, SIZE>;
+	type Fixture = Buffer<u8, Pow2IndexCoordinator<SIZE>, SIZE>;
 
 	#[test]
 	fn default() {
@@ -349,7 +349,7 @@ mod tests {
 		let mut factory = MonitorGenerator::default();
 		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
 
-		let mut fixture = Buffer::<Probe, SIZE>::default();
+		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 		for m in monitor.as_slice().iter() {
 			fixture.enqueue(m.payout_probe())
 		}
@@ -365,7 +365,7 @@ mod tests {
 		let mut factory = MonitorGenerator::default();
 		let monitor: [Monitor; NUM] = std::array::from_fn(|_| factory.generate());
 
-		let mut fixture = Buffer::<Probe, SIZE>::default();
+		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 		for m in monitor.iter() {
 			fixture.enqueue(m.payout_probe());
 		}

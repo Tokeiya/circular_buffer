@@ -3,13 +3,13 @@ use crate::IndexCoordinator;
 use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
 use std::iter::FusedIterator;
 
-pub struct Iter<'a, T, const N: usize> {
-	backend: &'a Buffer<T, N>,
-	coordinator: Pow2IndexCoordinator<N>,
+pub struct Iter<'a, T, C: IndexCoordinator, const N: usize> {
+	backend: &'a Buffer<T, C, N>,
+	coordinator: C,
 }
 
-impl<'a, T, const N: usize> Iter<'a, T, N> {
-	pub(super) fn new(item: &'a Buffer<T, N>) -> Self {
+impl<'a, T, C: IndexCoordinator, const N: usize> Iter<'a, T, C, N> {
+	pub(super) fn new(item: &'a Buffer<T, C, N>) -> Self {
 		Self {
 			backend: item,
 			coordinator: item.coordinator.clone(),
@@ -17,7 +17,7 @@ impl<'a, T, const N: usize> Iter<'a, T, N> {
 	}
 }
 
-impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
+impl<'a, T, C: IndexCoordinator, const N: usize> Iterator for Iter<'a, T, C, N> {
 	type Item = &'a T;
 
 	fn next(&mut self) -> Option<Self::Item> {
@@ -36,13 +36,13 @@ impl<'a, T, const N: usize> Iterator for Iter<'a, T, N> {
 	}
 }
 
-impl<'a, T, const N: usize> ExactSizeIterator for Iter<'a, T, N> {
+impl<'a, T, C: IndexCoordinator, const N: usize> ExactSizeIterator for Iter<'a, T, C, N> {
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
 
-impl<'a, T, const N: usize> DoubleEndedIterator for Iter<'a, T, N> {
+impl<'a, T, C: IndexCoordinator, const N: usize> DoubleEndedIterator for Iter<'a, T, C, N> {
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.len() == 0 {
 			None
@@ -54,7 +54,7 @@ impl<'a, T, const N: usize> DoubleEndedIterator for Iter<'a, T, N> {
 	}
 }
 
-impl<'a, T, const N: usize> FusedIterator for Iter<'a, T, N> {}
+impl<'a, T, C: IndexCoordinator, const N: usize> FusedIterator for Iter<'a, T, C, N> {}
 
 #[cfg(test)]
 mod test {
@@ -63,7 +63,7 @@ mod test {
 	use crate::fixed::buffer::Buffer;
 
 	const SIZE: usize = 8;
-	type Fixture = Buffer<usize, SIZE>;
+	type Fixture = Buffer<usize, Pow2IndexCoordinator<SIZE>, SIZE>;
 
 	fn fixture() -> Fixture {
 		let mut fixture = Buffer::default();

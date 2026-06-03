@@ -3,14 +3,14 @@ use crate::fixed::Buffer;
 use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
 use std::iter::FusedIterator;
 
-pub struct IterMut<'a, T, const N: usize> {
+pub struct IterMut<'a, T, C, const N: usize> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,
-	coordinator: Pow2IndexCoordinator<N>,
-	_phantom: std::marker::PhantomData<&'a ()>,
+	coordinator: C,
+	_phantom: std::marker::PhantomData<&'a C>,
 }
 
-impl<'a, T, const N: usize> IterMut<'a, T, N> {
-	pub(super) fn new(buffer: &'a mut Buffer<T, N>) -> Self {
+impl<'a, T, C: IndexCoordinator, const N: usize> IterMut<'a, T, C, N> {
+	pub(super) fn new(buffer: &'a mut Buffer<T, C, N>) -> Self {
 		Self {
 			head_ptr: buffer.storage.as_mut_ptr(),
 			coordinator: buffer.coordinator.clone(),
@@ -19,7 +19,7 @@ impl<'a, T, const N: usize> IterMut<'a, T, N> {
 	}
 }
 
-impl<'a, T: 'a, const N: usize> Iterator for IterMut<'a, T, N> {
+impl<'a, T: 'a, C: IndexCoordinator, const N: usize> Iterator for IterMut<'a, T, C, N> {
 	type Item = &'a mut T;
 
 	fn next(&mut self) -> Option<Self::Item> {
@@ -42,13 +42,13 @@ impl<'a, T: 'a, const N: usize> Iterator for IterMut<'a, T, N> {
 	}
 }
 
-impl<'a, T: 'a, const N: usize> ExactSizeIterator for IterMut<'a, T, N> {
+impl<'a, T: 'a, C: IndexCoordinator, const N: usize> ExactSizeIterator for IterMut<'a, T, C, N> {
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
 
-impl<'a, T: 'a, const N: usize> DoubleEndedIterator for IterMut<'a, T, N> {
+impl<'a, T: 'a, C: IndexCoordinator, const N: usize> DoubleEndedIterator for IterMut<'a, T, C, N> {
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.coordinator.len() == 0 {
 			None
@@ -65,7 +65,7 @@ impl<'a, T: 'a, const N: usize> DoubleEndedIterator for IterMut<'a, T, N> {
 	}
 }
 
-impl<'a, T: 'a, const N: usize> FusedIterator for IterMut<'a, T, N> {}
+impl<'a, T: 'a, C: IndexCoordinator, const N: usize> FusedIterator for IterMut<'a, T, C, N> {}
 
 #[cfg(test)]
 mod tests {
@@ -75,7 +75,7 @@ mod tests {
 	use crate::test_shared::*;
 
 	const SIZE: usize = 8;
-	type Buff = Buffer<usize, SIZE>;
+	type Buff = Buffer<usize, Pow2IndexCoordinator<SIZE>, SIZE>;
 
 	fn gen_sample() -> Buff {
 		let mut buffer = Buff::default();
@@ -160,7 +160,7 @@ mod tests {
 		let may_be_dropped: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
 		let may_be_not_dropped: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
 
-		let mut fixture = Buffer::<Probe, SIZE>::default();
+		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 
 		for m in may_be_dropped.iter() {
 			fixture.enqueue(m.payout_probe());

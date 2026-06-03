@@ -17,6 +17,12 @@ impl<const N: usize> Pow2IndexCoordinator<N> {
 	}
 }
 
+impl<const N: usize> Default for Pow2IndexCoordinator<N> {
+	fn default() -> Self {
+		Self::new()
+	}
+}
+
 impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {

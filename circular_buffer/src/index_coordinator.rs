@@ -1,6 +1,6 @@
 use super::error::*;
 
-pub trait IndexCoordinator {
+pub trait IndexCoordinator: Clone + Default {
 	fn head_index(&self) -> Result<usize>;
 	fn tail_index(&self) -> Result<usize>;
 	fn enqueue_index(&mut self);
