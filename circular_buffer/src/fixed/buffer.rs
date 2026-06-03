@@ -85,8 +85,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 		} else {
 			let index = self.coordinator.virtual_to_real(0).unwrap();
 			let ret = unsafe {
-				std::mem::replace(&mut self.storage[index], std::mem::MaybeUninit::uninit())
-					.assume_init()
+				std::mem::replace(&mut self.storage[index], MaybeUninit::uninit()).assume_init()
 			};
 
 			self.coordinator.dequeue_index().unwrap();
