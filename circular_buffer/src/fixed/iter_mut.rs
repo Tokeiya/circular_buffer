@@ -1,6 +1,5 @@
 use crate::IndexCoordinator;
 use crate::fixed::Buffer;
-use crate::fixed::pow2_index_coordinator::Pow2IndexCoordinator;
 use std::iter::FusedIterator;
 
 pub struct IterMut<'a, T, C, const N: usize> {
@@ -71,6 +70,7 @@ impl<'a, T: 'a, C: IndexCoordinator, const N: usize> FusedIterator for IterMut<'
 mod tests {
 	use super::*;
 	use crate::circular_buffer::CircularBuffer;
+	use crate::fixed::Pow2IndexCoordinator;
 	use crate::fixed::buffer::Buffer;
 	use crate::test_shared::*;
 

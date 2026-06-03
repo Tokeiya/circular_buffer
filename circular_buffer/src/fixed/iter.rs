@@ -1,6 +1,5 @@
 use super::buffer::Buffer;
 use super::fixed_index_coordinator::FixedIndexCoordinator;
-use crate::IndexCoordinator;
 use std::iter::FusedIterator;
 
 pub struct Iter<'a, T, C: FixedIndexCoordinator<N>, const N: usize> {
