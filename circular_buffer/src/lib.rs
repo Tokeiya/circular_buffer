@@ -2,7 +2,7 @@ mod circular_buffer;
 mod error;
 pub mod fixed;
 
-mod index_coordinator;
+pub mod resizable;
 #[cfg(test)]
 #[path = "../tests/drop_observe/mod.rs"]
 mod test_shared;
@@ -10,4 +10,3 @@ mod test_shared;
 pub use circular_buffer::CircularBuffer;
 pub use error::Error;
 pub use error::Result;
-pub use index_coordinator::IndexCoordinator;

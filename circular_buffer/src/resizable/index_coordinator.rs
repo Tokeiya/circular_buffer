@@ -1,4 +1,4 @@
-use super::error::*;
+use super::super::error::*;
 
 pub trait IndexCoordinator: Clone + Default {
 	fn head_index(&self) -> Result<usize>;

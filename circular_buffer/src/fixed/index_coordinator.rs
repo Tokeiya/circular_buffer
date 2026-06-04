@@ -1,6 +1,5 @@
 use super::fixed_index_coordinator::FixedIndexCoordinator;
 use crate::Error;
-use crate::index_coordinator::IndexCoordinator as TraitIndexCoordinator;
 
 #[derive(Clone, Debug)]
 pub struct IndexCoordinator<const N: usize> {
@@ -14,7 +13,7 @@ impl<const N: usize> Default for IndexCoordinator<N> {
 	}
 }
 
-impl<const N: usize> TraitIndexCoordinator for IndexCoordinator<N> {
+impl<const N: usize> FixedIndexCoordinator<N> for IndexCoordinator<N> {
 	fn head_index(&self) -> crate::Result<usize> {
 		if self.is_empty() {
 			Err(crate::Error::Empty)
@@ -89,8 +88,6 @@ impl<const N: usize> TraitIndexCoordinator for IndexCoordinator<N> {
 		self.len
 	}
 }
-
-impl<const N: usize> FixedIndexCoordinator<N> for IndexCoordinator<N> {}
 
 #[cfg(test)]
 mod test {
