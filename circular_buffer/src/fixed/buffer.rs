@@ -215,6 +215,13 @@ mod tests {
 	}
 
 	#[test]
+	#[should_panic]
+	fn index_mut_out_of_range() {
+		let mut fixture = Fixture::default();
+		fixture[SIZE] = 42;
+	}
+
+	#[test]
 	fn iter() {
 		let mut fixture = Fixture::default();
 
