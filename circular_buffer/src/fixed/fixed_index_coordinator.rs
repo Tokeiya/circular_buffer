@@ -25,6 +25,7 @@ pub trait FixedIndexCoordinator<const N: usize>: Clone + Default {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::fixed::index_coordinator_test as tests;
 
 	#[derive(Default, Clone)]
 	struct Dummy<const N: usize> {
@@ -65,23 +66,27 @@ mod tests {
 		}
 	}
 
+	impl<const N: usize> tests::IndexCoordinatorTestExtensions<N> for Dummy<N> {
+		fn mut_len(&mut self) -> &mut usize {
+			&mut self.len
+		}
+
+		fn mut_head(&mut self) -> &mut usize {
+			unimplemented!()
+		}
+
+		fn fixture() -> Self {
+			Dummy::<N> { len: 0 }
+		}
+	}
+
 	#[test]
 	fn is_empty() {
-		let mut fixture = Dummy::<10>::default();
-		assert_eq!(fixture.len(), 0);
-		assert!(fixture.is_empty());
-
-		fixture.len = 10;
-		assert_eq!(fixture.len(), 10);
-		assert!(!fixture.is_empty());
+		tests::is_empty::<10, Dummy<10>>()
 	}
 
 	#[test]
 	fn is_full() {
-		let mut fixture = Dummy::<10>::default();
-		assert!(!fixture.is_full());
-
-		fixture.len = 10;
-		assert!(fixture.is_full());
+		tests::is_full::<10, Dummy<10>>()
 	}
 }

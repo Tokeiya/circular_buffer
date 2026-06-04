@@ -160,4 +160,14 @@ mod test {
 	fn len() {
 		tests::len::<CAPACITY, Fixture>();
 	}
+
+	#[test]
+	fn is_empty() {
+		tests::is_empty::<CAPACITY, Fixture>()
+	}
+
+	#[test]
+	fn is_full() {
+		tests::is_full::<CAPACITY, Fixture>()
+	}
 }

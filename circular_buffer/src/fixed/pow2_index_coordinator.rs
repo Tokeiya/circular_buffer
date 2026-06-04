@@ -179,4 +179,14 @@ mod tests {
 	fn len() {
 		tests::len::<BASE, Fixture>();
 	}
+
+	#[test]
+	fn is_empty() {
+		tests::is_empty::<BASE, Fixture>();
+	}
+
+	#[test]
+	fn is_full() {
+		tests::is_full::<BASE, Fixture>();
+	}
 }

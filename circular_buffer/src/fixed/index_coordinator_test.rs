@@ -184,3 +184,26 @@ pub(super) fn len<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 		assert_eq!(fixture.len(), l);
 	}
 }
+
+pub(super) fn is_empty<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
+	let mut fixture = T::fixture();
+	assert_eq!(*fixture.mut_len(), 0);
+	assert!(fixture.is_empty());
+
+	for l in 1..=N {
+		*fixture.mut_len() = l;
+		assert!(!fixture.is_empty());
+	}
+}
+
+pub(super) fn is_full<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
+	let mut fixture = T::fixture();
+
+	for l in 0..N {
+		*fixture.mut_len() = l;
+		assert!(!fixture.is_full());
+	}
+
+	*fixture.mut_len() = N;
+	assert!(fixture.is_full());
+}
