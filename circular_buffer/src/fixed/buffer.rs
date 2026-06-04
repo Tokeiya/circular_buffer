@@ -1,15 +1,14 @@
 #[cfg(test)]
 use std::{cell::Cell, rc::Rc};
 
-use super::fixed_index_coordinator::FixedIndexCoordinator;
+use super::FixedIndexCoordinator;
 use super::iter::Iter;
 use super::iter_mut::IterMut;
-use crate::IndexCoordinator;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
-pub struct Buffer<T, C: IndexCoordinator, const N: usize> {
+pub struct Buffer<T, C: FixedIndexCoordinator<N>, const N: usize> {
 	#[cfg(test)]
 	probe: Option<Rc<Cell<usize>>>,
 	pub(super) storage: [MaybeUninit<T>; N],
@@ -119,7 +118,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 	}
 }
 
-impl<T, C: IndexCoordinator, const N: usize> Drop for Buffer<T, C, N> {
+impl<T, C: FixedIndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
 	fn drop(&mut self) {
 		for i in 0..self.coordinator.len() {
 			#[cfg(test)]
@@ -139,6 +138,7 @@ impl<T, C: IndexCoordinator, const N: usize> Drop for Buffer<T, C, N> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::IndexCoordinator;
 	use crate::fixed::Pow2IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;

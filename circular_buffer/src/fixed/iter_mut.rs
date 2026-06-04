@@ -1,4 +1,4 @@
-use crate::IndexCoordinator;
+use super::FixedIndexCoordinator;
 use crate::fixed::Buffer;
 use std::iter::FusedIterator;
 
@@ -8,7 +8,7 @@ pub struct IterMut<'a, T, C, const N: usize> {
 	_phantom: std::marker::PhantomData<&'a ()>,
 }
 
-impl<'a, T, C: IndexCoordinator, const N: usize> IterMut<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> IterMut<'a, T, C, N> {
 	pub(super) fn new(buffer: &'a mut Buffer<T, C, N>) -> Self {
 		Self {
 			head_ptr: buffer.storage.as_mut_ptr(),
@@ -18,7 +18,7 @@ impl<'a, T, C: IndexCoordinator, const N: usize> IterMut<'a, T, C, N> {
 	}
 }
 
-impl<'a, T: 'a, C: IndexCoordinator, const N: usize> Iterator for IterMut<'a, T, C, N> {
+impl<'a, T: 'a, C: FixedIndexCoordinator<N>, const N: usize> Iterator for IterMut<'a, T, C, N> {
 	type Item = &'a mut T;
 
 	fn next(&mut self) -> Option<Self::Item> {
@@ -41,13 +41,17 @@ impl<'a, T: 'a, C: IndexCoordinator, const N: usize> Iterator for IterMut<'a, T,
 	}
 }
 
-impl<'a, T: 'a, C: IndexCoordinator, const N: usize> ExactSizeIterator for IterMut<'a, T, C, N> {
+impl<'a, T: 'a, C: FixedIndexCoordinator<N>, const N: usize> ExactSizeIterator
+	for IterMut<'a, T, C, N>
+{
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
 
-impl<'a, T: 'a, C: IndexCoordinator, const N: usize> DoubleEndedIterator for IterMut<'a, T, C, N> {
+impl<'a, T: 'a, C: FixedIndexCoordinator<N>, const N: usize> DoubleEndedIterator
+	for IterMut<'a, T, C, N>
+{
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.coordinator.len() == 0 {
 			None
@@ -64,7 +68,10 @@ impl<'a, T: 'a, C: IndexCoordinator, const N: usize> DoubleEndedIterator for Ite
 	}
 }
 
-impl<'a, T: 'a, C: IndexCoordinator, const N: usize> FusedIterator for IterMut<'a, T, C, N> {}
+impl<'a, T: 'a, C: FixedIndexCoordinator<N>, const N: usize> FusedIterator
+	for IterMut<'a, T, C, N>
+{
+}
 
 #[cfg(test)]
 mod tests {
