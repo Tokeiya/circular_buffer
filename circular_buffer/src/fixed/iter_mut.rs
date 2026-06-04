@@ -5,7 +5,7 @@ use std::iter::FusedIterator;
 pub struct IterMut<'a, T, C, const N: usize> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,
 	coordinator: C,
-	_phantom: std::marker::PhantomData<&'a C>,
+	_phantom: std::marker::PhantomData<&'a ()>,
 }
 
 impl<'a, T, C: IndexCoordinator, const N: usize> IterMut<'a, T, C, N> {

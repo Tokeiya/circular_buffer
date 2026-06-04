@@ -57,11 +57,11 @@ mod tests {
 			unimplemented!()
 		}
 
-		fn real_to_virtual(&self, idx: usize) -> Result<usize> {
+		fn real_to_virtual(&self, _: usize) -> Result<usize> {
 			unimplemented!()
 		}
 
-		fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+		fn virtual_to_real(&self, _: usize) -> Result<usize> {
 			unimplemented!()
 		}
 
@@ -77,8 +77,8 @@ mod tests {
 	#[test]
 	fn is_empty() {
 		let mut dummy = Dummy::default();
-		dummy.capacity = 120;
 		assert_eq!(dummy.len(), 0);
+		dummy.capacity = 120;
 		assert_eq!(dummy.capacity(), 120);
 		assert!(dummy.is_empty());
 
@@ -91,7 +91,7 @@ mod tests {
 
 	#[test]
 	fn is_full() {
-		let mut dummy = Dummy::default();
+		let dummy = Dummy::default();
 		assert_eq!(dummy.len, 0);
 		assert_eq!(dummy.capacity(), 0);
 		assert!(dummy.is_full());

@@ -1,10 +1,9 @@
 use circular_buffer::CircularBuffer;
 use circular_buffer::fixed::*;
+use std::ops::DerefMut;
 
 fn main() {
-	let mut tmp = 0u8.wrapping_sub(1).wrapping_add(1);
-	dbg!(tmp);
-	dbg!(u8::MAX - tmp);
-	tmp %= 10;
-	dbg!(tmp);
+	let mut b = Box::new(Buffer::<usize, Pow2IndexCoordinator<64>, 64>::default());
+	b.enqueue(100);
+	b.deref_mut().enqueue(200);
 }
