@@ -1,11 +1,11 @@
 use crate::drop_observe::Probe;
 use crate::process_sync::test_pair::TestPair;
-use crate::{ITERATION, SIZE};
 use circular_buffer::CircularBuffer;
 use rand::prelude::IndexedRandom;
 use rand::{Rng, RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 
+const ITERATION: usize = 8192;
 #[derive(Eq, PartialEq)]
 enum Process {
 	Enqueue,
@@ -20,7 +20,7 @@ fn gen_rnd() -> (u64, ChaCha8Rng) {
 	(seed, rng)
 }
 
-pub fn enqueue_dequeue_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>() {
+pub fn enqueue_dequeue_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>() {
 	let (seed, mut rng) = gen_rnd();
 	dbg!(seed);
 	let mut pair = TestPair::<A, E>::default();
@@ -32,12 +32,12 @@ pub fn enqueue_dequeue_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(
 	for _ in 0..ITERATION {
 		match proc.choose(&mut rng).unwrap() {
 			Process::Enqueue => {
-				for _ in 0..rng.random_range(0..=SIZE) {
+				for _ in 0..rng.random_range(0..=N) {
 					pair.enqueue()
 				}
 			}
 			Process::Dequeue => {
-				for _ in 0..rng.random_range(0..=SIZE) {
+				for _ in 0..rng.random_range(0..=N) {
 					pair.dequeue()
 				}
 			}
@@ -112,7 +112,7 @@ fn index_mut_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(
 	}
 }
 
-pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>() {
+pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>() {
 	let (seed, mut rng) = gen_rnd();
 	dbg!(seed);
 	let mut pair = TestPair::<A, E>::default();
@@ -129,12 +129,12 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>() {
 	for _ in 0..ITERATION {
 		match proc.choose(&mut rng).unwrap() {
 			Process::Enqueue => {
-				for _ in 0..rng.random_range(0..=SIZE) {
+				for _ in 0..rng.random_range(0..=N) {
 					pair.enqueue()
 				}
 			}
 			Process::Dequeue => {
-				for _ in 0..rng.random_range(0..=SIZE) {
+				for _ in 0..rng.random_range(0..=N) {
 					pair.dequeue()
 				}
 			}

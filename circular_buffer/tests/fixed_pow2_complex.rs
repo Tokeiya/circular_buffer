@@ -1,0 +1,21 @@
+mod drop_observe;
+mod process_sync;
+
+use circular_buffer::fixed::{Buffer, Pow2IndexCoordinator};
+use drop_observe::*;
+use process_sync::Expected;
+use process_sync::test_process::{all_process_impl, enqueue_dequeue_impl};
+
+const SIZE: usize = 64;
+type ActualFixture = Buffer<Probe, Pow2IndexCoordinator<SIZE>, SIZE>;
+type ExpectedFixture = Expected<Probe, SIZE>;
+
+#[test]
+fn enqueue_dequeue() {
+	enqueue_dequeue_impl::<ActualFixture, ExpectedFixture, SIZE>();
+}
+
+#[test]
+fn all_process() {
+	all_process_impl::<ActualFixture, ExpectedFixture, SIZE>();
+}

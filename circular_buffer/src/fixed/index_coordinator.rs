@@ -1,3 +1,4 @@
+use super::fixed_index_coordinator::FixedIndexCoordinator;
 use crate::Error;
 use crate::index_coordinator::IndexCoordinator as TraitIndexCoordinator;
 
@@ -88,6 +89,8 @@ impl<const N: usize> TraitIndexCoordinator for IndexCoordinator<N> {
 		self.len
 	}
 }
+
+impl<const N: usize> FixedIndexCoordinator<N> for IndexCoordinator<N> {}
 
 #[cfg(test)]
 mod test {
