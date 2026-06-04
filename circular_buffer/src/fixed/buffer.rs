@@ -138,7 +138,6 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::IndexCoordinator;
 	use crate::fixed::Pow2IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;

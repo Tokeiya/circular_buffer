@@ -1,4 +1,3 @@
-use crate::IndexCoordinator;
 use crate::error::*;
 use crate::fixed::fixed_index_coordinator::FixedIndexCoordinator;
 
@@ -25,7 +24,7 @@ impl<const N: usize> Default for Pow2IndexCoordinator<N> {
 	}
 }
 
-impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
+impl<const N: usize> FixedIndexCoordinator<N> for Pow2IndexCoordinator<N> {
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -100,8 +99,6 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		self.len
 	}
 }
-
-impl<const N: usize> FixedIndexCoordinator<N> for Pow2IndexCoordinator<N> {}
 
 #[cfg(test)]
 mod tests {
