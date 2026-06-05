@@ -18,7 +18,7 @@ pub trait IndexCoordinator<const N: usize>: Clone + Default {
 	}
 
 	fn is_full(&self) -> bool {
-		self.len() == self.capacity()
+		self.len() == N
 	}
 }
 
