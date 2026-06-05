@@ -170,4 +170,9 @@ mod test {
 	fn is_full() {
 		tests::is_full::<CAPACITY, Fixture>()
 	}
+
+	#[test]
+	fn clone() {
+		tests::clone::<CAPACITY, Fixture>();
+	}
 }

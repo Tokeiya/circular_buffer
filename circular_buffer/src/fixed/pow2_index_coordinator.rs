@@ -189,4 +189,9 @@ mod tests {
 	fn is_full() {
 		tests::is_full::<BASE, Fixture>();
 	}
+
+	#[test]
+	fn clone() {
+		tests::clone::<BASE, Fixture>();
+	}
 }

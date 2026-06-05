@@ -207,3 +207,13 @@ pub(super) fn is_full<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	*fixture.mut_len() = N;
 	assert!(fixture.is_full());
 }
+
+pub(super) fn clone<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
+	let mut fixture = T::fixture();
+	*fixture.mut_len() = 10;
+	*fixture.mut_head() = 5;
+
+	let mut actual = fixture.clone();
+	assert_eq!(*actual.mut_head(), 5);
+	assert_eq!(*actual.mut_len(), 10);
+}
