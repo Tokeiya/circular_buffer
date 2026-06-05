@@ -8,4 +8,8 @@ pub enum Error {
 	IndexOutOfRange { index: usize, len: usize },
 	#[error("State is empty")]
 	Empty,
+	#[error("Capacity {0} is not a power of 2.")]
+	CapacityNotPow2(usize),
+	#[error("Capacity must be greater than zero.")]
+	ZeroCapacity,
 }

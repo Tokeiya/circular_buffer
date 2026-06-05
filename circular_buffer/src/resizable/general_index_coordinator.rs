@@ -188,4 +188,9 @@ mod test {
 	fn is_full() {
 		Fixture::is_full_test(CAPACITY)
 	}
+
+	#[test]
+	fn clone() {
+		Fixture::clone_test(CAPACITY);
+	}
 }

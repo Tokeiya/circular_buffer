@@ -25,6 +25,7 @@ impl<const N: usize> Default for Pow2IndexCoordinator<N> {
 }
 
 impl<const N: usize> IndexCoordinator<N> for Pow2IndexCoordinator<N> {
+	//noinspection DuplicatedCode
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -59,6 +60,7 @@ impl<const N: usize> IndexCoordinator<N> for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	fn pop_index(&mut self) -> Result<()> {
 		match self.len.checked_sub(1) {
 			Some(len) => {
