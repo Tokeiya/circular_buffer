@@ -1,173 +1,92 @@
-use super::fixed_index_coordinator::FixedIndexCoordinator;
-use crate::Error;
+use super::super::error::*;
 
-#[derive(Clone, Debug)]
-pub struct IndexCoordinator<const N: usize> {
-	head: usize,
-	len: usize,
-}
-
-impl<const N: usize> Default for IndexCoordinator<N> {
-	fn default() -> Self {
-		IndexCoordinator { head: 0, len: 0 }
-	}
-}
-
-impl<const N: usize> FixedIndexCoordinator<N> for IndexCoordinator<N> {
-	fn head_index(&self) -> crate::Result<usize> {
-		if self.is_empty() {
-			Err(crate::Error::Empty)
-		} else {
-			Ok(self.head)
-		}
-	}
-
-	fn tail_index(&self) -> crate::Result<usize> {
-		if self.is_empty() {
-			Err(crate::Error::Empty)
-		} else {
-			Ok((self.head + self.len - 1) % N)
-		}
-	}
-
-	fn enqueue_index(&mut self) {
-		if self.len < N {
-			self.len += 1;
-		} else {
-			self.head = (self.head + 1) % N;
-		}
-	}
-
-	fn dequeue_index(&mut self) -> crate::Result<()> {
-		if self.is_empty() {
-			Err(Error::Empty)
-		} else {
-			self.head = (self.head + 1) % N;
-			self.len -= 1;
-			Ok(())
-		}
-	}
-
-	fn pop_index(&mut self) -> crate::Result<()> {
-		match self.len.checked_sub(1) {
-			Some(len) => {
-				self.len = len;
-				Ok(())
-			}
-			None => Err(Error::Empty),
-		}
-	}
-
-	fn real_to_virtual(&self, idx: usize) -> crate::Result<usize> {
-		if self.len <= idx {
-			Err(Error::IndexOutOfRange {
-				index: idx,
-				len: self.len,
-			})
-		} else {
-			Ok((idx + N - self.head) % N)
-		}
-	}
-
-	fn virtual_to_real(&self, idx: usize) -> crate::Result<usize> {
-		if self.len <= idx {
-			Err(Error::IndexOutOfRange {
-				index: idx,
-				len: self.len,
-			})
-		} else {
-			Ok((idx + self.head) % N)
-		}
-	}
-
+pub trait FixedIndexCoordinator<const N: usize>: Clone + Default {
+	fn head_index(&self) -> Result<usize>;
+	fn tail_index(&self) -> Result<usize>;
+	fn enqueue_index(&mut self);
+	fn dequeue_index(&mut self) -> Result<()>;
+	fn pop_index(&mut self) -> Result<()>;
+	fn real_to_virtual(&self, idx: usize) -> Result<usize>;
+	fn virtual_to_real(&self, idx: usize) -> Result<usize>;
 	fn capacity(&self) -> usize {
 		N
 	}
+	fn len(&self) -> usize;
 
-	fn len(&self) -> usize {
-		self.len
+	fn is_empty(&self) -> bool {
+		self.len() == 0
+	}
+
+	fn is_full(&self) -> bool {
+		self.len() == self.capacity()
 	}
 }
 
 #[cfg(test)]
-mod test {
-	use super::super::index_coordinator_test as tests;
+mod tests {
 	use super::*;
+	use crate::fixed::index_coordinator_test as tests;
 
-	const CAPACITY: usize = 10;
-	type Fixture = IndexCoordinator<CAPACITY>;
+	#[derive(Default, Clone)]
+	struct Dummy<const N: usize> {
+		pub len: usize,
+	}
 
-	impl tests::IndexCoordinatorTestExtensions<CAPACITY> for IndexCoordinator<CAPACITY> {
+	impl<const N: usize> FixedIndexCoordinator<N> for Dummy<N> {
+		fn head_index(&self) -> Result<usize> {
+			unimplemented!()
+		}
+
+		fn tail_index(&self) -> Result<usize> {
+			unimplemented!()
+		}
+
+		fn enqueue_index(&mut self) {
+			unimplemented!()
+		}
+
+		fn dequeue_index(&mut self) -> Result<()> {
+			unimplemented!()
+		}
+
+		fn pop_index(&mut self) -> Result<()> {
+			unimplemented!()
+		}
+
+		fn real_to_virtual(&self, _: usize) -> Result<usize> {
+			unimplemented!()
+		}
+
+		fn virtual_to_real(&self, _: usize) -> Result<usize> {
+			unimplemented!()
+		}
+
+		fn len(&self) -> usize {
+			self.len
+		}
+	}
+
+	impl<const N: usize> tests::IndexCoordinatorTestExtensions<N> for Dummy<N> {
 		fn mut_len(&mut self) -> &mut usize {
 			&mut self.len
 		}
 
 		fn mut_head(&mut self) -> &mut usize {
-			&mut self.head
+			unimplemented!()
 		}
 
 		fn fixture() -> Self {
-			Self { head: 0, len: 0 }
+			Dummy::<N> { len: 0 }
 		}
-	}
-
-	#[test]
-	fn default() {
-		tests::default::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn head_index() {
-		tests::head_index::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn tail_index() {
-		tests::tail_index::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn enqueue_index() {
-		tests::enqueue_index::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn dequeue_index() {
-		tests::dequeue_index::<CAPACITY, Fixture>()
-	}
-
-	#[test]
-	fn pop_index() {
-		tests::pop_index::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn real_to_virtual() {
-		tests::real_to_virtual::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn virtual_to_real() {
-		tests::virtual_to_real::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn capacity() {
-		tests::capacity::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn len() {
-		tests::len::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn is_empty() {
-		tests::is_empty::<CAPACITY, Fixture>()
+		tests::is_empty::<10, Dummy<10>>()
 	}
 
 	#[test]
 	fn is_full() {
-		tests::is_full::<CAPACITY, Fixture>()
+		tests::is_full::<10, Dummy<10>>()
 	}
 }

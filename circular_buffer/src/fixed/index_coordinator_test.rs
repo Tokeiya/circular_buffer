@@ -1,5 +1,5 @@
 #![cfg(test)]
-use super::fixed_index_coordinator::FixedIndexCoordinator;
+use super::index_coordinator::FixedIndexCoordinator;
 use crate::error::*;
 use std::assert_matches;
 

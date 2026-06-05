@@ -1,5 +1,5 @@
 use crate::error::*;
-use crate::fixed::fixed_index_coordinator::FixedIndexCoordinator;
+use crate::fixed::index_coordinator::FixedIndexCoordinator;
 
 #[derive(Clone)]
 pub struct Pow2IndexCoordinator<const N: usize> {
