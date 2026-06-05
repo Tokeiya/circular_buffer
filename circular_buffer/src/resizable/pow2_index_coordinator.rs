@@ -104,13 +104,9 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 }
 
 #[cfg(test)]
-mod tests {
-	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
-	use super::*;
-	use std::assert_matches;
-
-	const CAPACITY: usize = 8;
-	type Fixture = Pow2IndexCoordinator;
+pub(crate) mod ext_impl {
+	use crate::resizable::Pow2IndexCoordinator;
+	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 
 	impl IndexCoordinatorTestExtension for Pow2IndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
@@ -129,6 +125,16 @@ mod tests {
 			&mut self.len
 		}
 	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
+	use super::*;
+	use std::assert_matches;
+
+	const CAPACITY: usize = 8;
+	type Fixture = Pow2IndexCoordinator;
 
 	#[test]
 	fn new() {

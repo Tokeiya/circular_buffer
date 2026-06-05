@@ -97,12 +97,9 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 }
 
 #[cfg(test)]
-mod test {
-	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
-	use super::*;
-
-	const CAPACITY: usize = 10;
-	type Fixture = GeneralIndexCoordinator;
+pub(crate) mod ext_impl {
+	use crate::resizable::GeneralIndexCoordinator;
+	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 
 	impl IndexCoordinatorTestExtension for GeneralIndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
@@ -125,6 +122,15 @@ mod test {
 			&mut self.len
 		}
 	}
+}
+
+#[cfg(test)]
+mod test {
+	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
+	use super::*;
+
+	const CAPACITY: usize = 10;
+	type Fixture = GeneralIndexCoordinator;
 
 	#[test]
 	fn new() {
