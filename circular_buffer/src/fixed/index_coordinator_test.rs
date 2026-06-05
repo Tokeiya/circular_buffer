@@ -76,6 +76,7 @@ pub(super) fn enqueue_index<const N: usize, T: IndexCoordinatorTestExtensions<N>
 	}
 }
 
+//noinspection DuplicatedCode
 pub(super) fn dequeue_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 	assert_matches!(fixture.dequeue_index(), Err(Error::Empty));
@@ -94,6 +95,7 @@ pub(super) fn dequeue_index<const N: usize, T: IndexCoordinatorTestExtensions<N>
 	assert_matches!(fixture.dequeue_index(), Err(Error::Empty));
 }
 
+//noinspection DuplicatedCode
 pub(super) fn pop_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 	assert_matches!(fixture.pop_index(), Err(Error::Empty));
@@ -109,7 +111,7 @@ pub(super) fn pop_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() 
 	assert_eq!(*fixture.mut_len(), 0);
 	assert_eq!(*fixture.mut_head(), 0);
 
-	assert_matches!(fixture.pop_index(), Err(crate::Error::Empty));
+	assert_matches!(fixture.pop_index(), Err(Error::Empty));
 }
 
 pub(super) fn real_to_virtual<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
@@ -166,6 +168,7 @@ pub(super) fn virtual_to_real<const N: usize, T: IndexCoordinatorTestExtensions<
 	}
 }
 
+//noinspection DuplicatedCode
 pub(super) fn capacity<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 
@@ -176,6 +179,7 @@ pub(super) fn capacity<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	}
 }
 
+//noinspection DuplicatedCode
 pub(super) fn len<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 
@@ -217,4 +221,5 @@ pub(super) fn clone<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut actual = fixture.clone();
 	assert_eq!(*actual.mut_head(), 5);
 	assert_eq!(*actual.mut_len(), 10);
+	assert_eq!(actual.capacity(), N);
 }
