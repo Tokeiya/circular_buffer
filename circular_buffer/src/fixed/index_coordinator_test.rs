@@ -24,6 +24,7 @@ pub(super) fn default<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	assert_eq!(*fixture.mut_head(), 0);
 }
 
+//noinspection DuplicatedCode
 pub(super) fn head_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 	assert_matches!(fixture.head_index(), Err(Error::Empty));
