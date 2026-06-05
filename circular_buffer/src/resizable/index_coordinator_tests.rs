@@ -18,7 +18,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 	fn mut_len(&mut self) -> &mut usize;
 
 	//noinspection DuplicatedCode
-	fn head_index(capacity: usize) {
+	fn head_index_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 		for (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |l| (h, l))) {
 			*fixture.mut_head() = h;
@@ -32,7 +32,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		}
 	}
 
-	fn tail_index(capacity: usize) {
+	fn tail_index_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |l| (h, l))) {
@@ -50,7 +50,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		}
 	}
 
-	fn enqueue_index(capacity: usize) {
+	fn enqueue_index_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for i in 0..capacity {
@@ -67,9 +67,11 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 	}
 
 	//noinspection DuplicatedCode
-	fn dequeue_index(capacity: usize) {
+	fn dequeue_index_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 		assert_matches!(fixture.dequeue_index(), Err(Error::Empty));
+
+		*fixture.mut_len() = capacity;
 
 		for i in 0..capacity {
 			assert_eq!(*fixture.mut_head(), i);
@@ -84,7 +86,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 	}
 
 	//noinspection DuplicatedCode
-	fn pop_index(capacity: usize) {
+	fn pop_index_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		assert_matches!(fixture.pop_index(), Err(Error::Empty));
@@ -103,7 +105,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		assert_matches!(fixture.pop_index(), Err(Error::Empty));
 	}
 
-	fn real_to_virtual(capacity: usize) {
+	fn real_to_virtual_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {
@@ -128,7 +130,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		}
 	}
 
-	fn virtual_to_real(capacity: usize) {
+	fn virtual_to_real_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for h in 0..capacity {
@@ -158,7 +160,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 	}
 
 	//noinspection DuplicatedCode
-	fn capacity(capacity: usize) {
+	fn capacity_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {
@@ -169,7 +171,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 	}
 
 	//noinspection DuplicatedCode
-	fn len(capacity: usize) {
+	fn len_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {
@@ -179,7 +181,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		}
 	}
 
-	fn is_empty(capacity: usize) {
+	fn is_empty_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 		assert_eq!(*fixture.mut_len(), 0);
 		assert!(fixture.is_empty());
@@ -190,7 +192,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		}
 	}
 
-	fn is_full(capacity: usize) {
+	fn is_full_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for l in 0..capacity {
@@ -202,7 +204,7 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		assert!(fixture.is_full());
 	}
 
-	fn clone(capacity: usize) {
+	fn clone_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 		*fixture.mut_len() = 10;
 		*fixture.mut_head() = 5;
