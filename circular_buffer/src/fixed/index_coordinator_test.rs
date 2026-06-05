@@ -1,9 +1,9 @@
 #![cfg(test)]
-use super::index_coordinator::FixedIndexCoordinator;
+use super::index_coordinator::IndexCoordinator;
 use crate::error::*;
 use std::assert_matches;
 
-pub trait IndexCoordinatorTestExtensions<const N: usize>: FixedIndexCoordinator<N> {
+pub trait IndexCoordinatorTestExtensions<const N: usize>: IndexCoordinator<N> {
 	fn mut_len(&mut self) -> &mut usize;
 	fn mut_head(&mut self) -> &mut usize;
 

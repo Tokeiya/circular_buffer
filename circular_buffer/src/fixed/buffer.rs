@@ -1,21 +1,21 @@
 #[cfg(test)]
 use std::{cell::Cell, rc::Rc};
 
-use super::FixedIndexCoordinator;
+use super::IndexCoordinator;
 use super::iter::Iter;
 use super::iter_mut::IterMut;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
-pub struct Buffer<T, C: FixedIndexCoordinator<N>, const N: usize> {
+pub struct Buffer<T, C: IndexCoordinator<N>, const N: usize> {
 	#[cfg(test)]
 	probe: Option<Rc<Cell<usize>>>,
 	pub(super) storage: [MaybeUninit<T>; N],
 	pub(super) coordinator: C,
 }
 
-impl<T, C: FixedIndexCoordinator<N>, const N: usize> Default for Buffer<T, C, N> {
+impl<T, C: IndexCoordinator<N>, const N: usize> Default for Buffer<T, C, N> {
 	fn default() -> Self {
 		Self {
 			storage: [const { MaybeUninit::uninit() }; N],
@@ -26,7 +26,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Default for Buffer<T, C, N>
 	}
 }
 
-impl<T, C: FixedIndexCoordinator<N>, const N: usize> Index<usize> for Buffer<T, C, N> {
+impl<T, C: IndexCoordinator<N>, const N: usize> Index<usize> for Buffer<T, C, N> {
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
@@ -37,7 +37,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Index<usize> for Buffer<T, 
 	}
 }
 
-impl<T, C: FixedIndexCoordinator<N>, const N: usize> IndexMut<usize> for Buffer<T, C, N> {
+impl<T, C: IndexCoordinator<N>, const N: usize> IndexMut<usize> for Buffer<T, C, N> {
 	fn index_mut(&mut self, index: usize) -> &mut Self::Output {
 		match self.coordinator.virtual_to_real(index) {
 			Ok(i) => unsafe { self.storage[i].assume_init_mut() },
@@ -46,7 +46,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> IndexMut<usize> for Buffer<
 	}
 }
 
-impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffer<T, C, N> {
+impl<T, C: IndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffer<T, C, N> {
 	type Iter<'a>
 		= Iter<'a, T, C, N>
 	where
@@ -106,7 +106,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 	}
 }
 
-impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
+impl<T, C: IndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 	#[cfg(test)]
 	fn new_with_probe(probe: Rc<Cell<usize>>) -> Self {
 		let mut s = Self::default();
@@ -118,7 +118,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 	}
 }
 
-impl<T, C: FixedIndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
+impl<T, C: IndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
 	fn drop(&mut self) {
 		for i in 0..self.coordinator.len() {
 			#[cfg(test)]

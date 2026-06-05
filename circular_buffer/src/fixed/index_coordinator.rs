@@ -1,6 +1,6 @@
 use super::super::error::*;
 
-pub trait FixedIndexCoordinator<const N: usize>: Clone + Default {
+pub trait IndexCoordinator<const N: usize>: Clone + Default {
 	fn head_index(&self) -> Result<usize>;
 	fn tail_index(&self) -> Result<usize>;
 	fn enqueue_index(&mut self);
@@ -32,7 +32,7 @@ mod tests {
 		pub len: usize,
 	}
 
-	impl<const N: usize> FixedIndexCoordinator<N> for Dummy<N> {
+	impl<const N: usize> IndexCoordinator<N> for Dummy<N> {
 		fn head_index(&self) -> Result<usize> {
 			unimplemented!()
 		}

@@ -1,5 +1,5 @@
 use crate::error::*;
-use crate::fixed::index_coordinator::FixedIndexCoordinator;
+use crate::fixed::index_coordinator::IndexCoordinator;
 
 #[derive(Clone)]
 pub struct Pow2IndexCoordinator<const N: usize> {
@@ -24,7 +24,7 @@ impl<const N: usize> Default for Pow2IndexCoordinator<N> {
 	}
 }
 
-impl<const N: usize> FixedIndexCoordinator<N> for Pow2IndexCoordinator<N> {
+impl<const N: usize> IndexCoordinator<N> for Pow2IndexCoordinator<N> {
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)

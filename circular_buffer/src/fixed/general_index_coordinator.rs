@@ -1,4 +1,4 @@
-use super::index_coordinator::FixedIndexCoordinator;
+use super::index_coordinator::IndexCoordinator;
 use crate::Error;
 
 #[derive(Clone, Debug)]
@@ -13,7 +13,7 @@ impl<const N: usize> Default for GeneralIndexCoordinator<N> {
 	}
 }
 
-impl<const N: usize> FixedIndexCoordinator<N> for GeneralIndexCoordinator<N> {
+impl<const N: usize> IndexCoordinator<N> for GeneralIndexCoordinator<N> {
 	fn head_index(&self) -> crate::Result<usize> {
 		if self.is_empty() {
 			Err(crate::Error::Empty)
