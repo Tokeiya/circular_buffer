@@ -91,192 +91,83 @@ impl<const N: usize> FixedIndexCoordinator<N> for IndexCoordinator<N> {
 
 #[cfg(test)]
 mod test {
+	use super::super::index_coordinator_test as tests;
 	use super::*;
-	use crate::error::*;
-	use std::assert_matches;
 
 	const CAPACITY: usize = 10;
 	type Fixture = IndexCoordinator<CAPACITY>;
 
-	fn expected_real_to_virtual<const N: usize>(index: usize, head: usize) -> usize {
-		(index + N - head) % N
-	}
+	impl tests::IndexCoordinatorTestExtensions<CAPACITY> for IndexCoordinator<CAPACITY> {
+		fn mut_len(&mut self) -> &mut usize {
+			&mut self.len
+		}
 
-	fn expected_virtual_to_real<const N: usize>(index: usize, head: usize) -> usize {
-		(index + head) % N
-	}
+		fn mut_head(&mut self) -> &mut usize {
+			&mut self.head
+		}
 
-	fn fixture() -> Fixture {
-		Fixture { head: 0, len: 0 }
+		fn fixture() -> Self {
+			Self { head: 0, len: 0 }
+		}
 	}
 
 	#[test]
 	fn default() {
-		let fixture = Fixture::default();
-		assert_eq!(fixture.head, 0);
-		assert_eq!(fixture.len, 0);
+		tests::default::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn head_index() {
-		let mut fixture = fixture();
-		assert_matches!(fixture.head_index(), Err(crate::Error::Empty));
-		fixture.len = 1;
-
-		for i in 0..CAPACITY {
-			fixture.head = i;
-			assert_eq!(fixture.head_index().unwrap(), i);
-		}
+		tests::head_index::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn tail_index() {
-		let mut fixture = fixture();
-		assert_matches!(fixture.tail_index(), Err(crate::Error::Empty));
-
-		for h in 0..CAPACITY {
-			for l in 1..=CAPACITY {
-				fixture.len = l;
-				fixture.head = h;
-				assert_eq!(
-					fixture.tail_index().unwrap(),
-					expected_virtual_to_real::<CAPACITY>(l - 1, h)
-				)
-			}
-		}
+		tests::tail_index::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn enqueue_index() {
-		let mut fixture = fixture();
-
-		for i in 0..CAPACITY {
-			assert_eq!(fixture.len, i);
-			assert_eq!(fixture.head, 0);
-			fixture.enqueue_index();
-		}
-
-		for i in 0..CAPACITY {
-			assert_eq!(fixture.len, CAPACITY);
-			assert_eq!(fixture.head, i);
-			fixture.enqueue_index();
-		}
+		tests::enqueue_index::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn dequeue_index() {
-		let mut fixture = fixture();
-		assert_matches!(fixture.dequeue_index(), Err(crate::Error::Empty));
-
-		fixture.len = CAPACITY;
-
-		for i in 0..CAPACITY {
-			assert_eq!(fixture.head, i);
-			assert_eq!(fixture.len, CAPACITY - i);
-			fixture.dequeue_index().unwrap();
-		}
-
-		assert_eq!(fixture.head, 0);
-		assert_eq!(fixture.len, 0);
-
-		assert_matches!(fixture.dequeue_index(), Err(crate::Error::Empty));
+		tests::dequeue_index::<CAPACITY, Fixture>()
 	}
 
 	#[test]
 	fn pop_index() {
-		let mut fixture = fixture();
-		assert_matches!(fixture.pop_index(), Err(crate::Error::Empty));
-
-		fixture.len = CAPACITY;
-
-		for i in 0..CAPACITY {
-			assert_eq!(fixture.len, CAPACITY - i);
-			assert_eq!(fixture.head, 0);
-			fixture.pop_index().unwrap();
-		}
-
-		assert_eq!(fixture.len, 0);
-		assert_eq!(fixture.head, 0);
-
-		assert_matches!(fixture.pop_index(), Err(crate::Error::Empty));
+		tests::pop_index::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn real_to_virtual() {
-		let mut fixture = fixture();
-
-		for (h, l) in (0..CAPACITY).flat_map(|h| (0..=CAPACITY).map(move |i| (h, i))) {
-			fixture.head = h;
-			fixture.len = l;
-
-			if l == 0 {
-				assert_matches!(
-					fixture.real_to_virtual(0),
-					Err(Error::IndexOutOfRange { index: _, len: _ })
-				);
-			}
-
-			for i in 0..l {
-				if fixture.real_to_virtual(i).unwrap() != expected_real_to_virtual::<CAPACITY>(i, h)
-				{
-					assert_eq!(
-						fixture.real_to_virtual(i).unwrap(),
-						expected_real_to_virtual::<CAPACITY>(i, h)
-					)
-				}
-			}
-		}
+		tests::real_to_virtual::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn virtual_to_real() {
-		let mut fixture = fixture();
-
-		for h in 0..CAPACITY {
-			for l in 0..=CAPACITY {
-				fixture.head = h;
-				fixture.len = l;
-
-				if l == 0 {
-					assert_matches!(
-						fixture.virtual_to_real(0),
-						Err(Error::IndexOutOfRange { index: _, len: _ })
-					);
-				} else {
-					for i in 0..l {
-						assert_eq!(
-							fixture.virtual_to_real(i).unwrap(),
-							expected_virtual_to_real::<CAPACITY>(i, h),
-							"h:{} l:{} i:{}",
-							h,
-							l,
-							i,
-						);
-					}
-				}
-			}
-		}
+		tests::virtual_to_real::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn capacity() {
-		let mut fixture = fixture();
-
-		for (h, l) in (0..CAPACITY).flat_map(|h| (0..=CAPACITY).map(move |i| (h, i))) {
-			fixture.head = h;
-			fixture.len = l;
-			assert_eq!(fixture.capacity(), CAPACITY);
-		}
+		tests::capacity::<CAPACITY, Fixture>();
 	}
 
 	#[test]
 	fn len() {
-		let mut fixture = fixture();
+		tests::len::<CAPACITY, Fixture>();
+	}
 
-		for (h, l) in (0..CAPACITY).flat_map(|h| (0..=CAPACITY).map(move |i| (h, i))) {
-			fixture.head = h;
-			fixture.len = l;
-			assert_eq!(fixture.len(), l);
-		}
+	#[test]
+	fn is_empty() {
+		tests::is_empty::<CAPACITY, Fixture>()
+	}
+
+	#[test]
+	fn is_full() {
+		tests::is_full::<CAPACITY, Fixture>()
 	}
 }

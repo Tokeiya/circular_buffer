@@ -1,6 +1,9 @@
 mod buffer;
 mod fixed_index_coordinator;
 mod index_coordinator;
+
+#[cfg(test)]
+pub(crate) mod index_coordinator_test;
 mod iter;
 mod iter_mut;
 mod pow2_index_coordinator;

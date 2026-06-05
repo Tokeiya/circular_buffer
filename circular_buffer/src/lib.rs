@@ -2,7 +2,7 @@ mod circular_buffer;
 mod error;
 pub mod fixed;
 
-mod resizable;
+pub mod resizable;
 #[cfg(test)]
 #[path = "../tests/drop_observe/mod.rs"]
 mod test_shared;
