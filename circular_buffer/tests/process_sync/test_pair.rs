@@ -25,23 +25,6 @@ where
 	exp_hash: HashMap<usize, Monitor>,
 }
 
-impl<A, E> Default for TestPair<A, E>
-where
-	A: CircularBuffer<Probe> + Default,
-	E: CircularBuffer<Probe> + Default,
-{
-	fn default() -> Self {
-		Self {
-			actual: Default::default(),
-			expected: Default::default(),
-			act_gen: MonitorGenerator::default(),
-			exp_gen: MonitorGenerator::default(),
-			act_hash: HashMap::default(),
-			exp_hash: HashMap::default(),
-		}
-	}
-}
-
 impl<A, E> Drop for TestPair<A, E>
 where
 	A: CircularBuffer<Probe>,
@@ -58,6 +41,16 @@ where
 	A: CircularBuffer<Probe>,
 	E: CircularBuffer<Probe>,
 {
+	pub fn new(actual: A, expected: E) -> Self {
+		Self {
+			actual,
+			expected,
+			act_gen: MonitorGenerator::default(),
+			exp_gen: MonitorGenerator::default(),
+			act_hash: HashMap::default(),
+			exp_hash: HashMap::default(),
+		}
+	}
 	pub fn assert(&mut self) {
 		let act = &self.actual;
 		let exp = &self.expected;

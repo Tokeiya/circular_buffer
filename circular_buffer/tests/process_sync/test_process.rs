@@ -20,10 +20,13 @@ fn gen_rnd() -> (u64, ChaCha8Rng) {
 	(seed, rng)
 }
 
-pub fn enqueue_dequeue_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>() {
+pub fn enqueue_dequeue_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
+	actual: A,
+	expected: E,
+) {
 	let (seed, mut rng) = gen_rnd();
 	dbg!(seed);
-	let mut pair = TestPair::<A, E>::default();
+	let mut pair = TestPair::<A, E>::new(actual, expected);
 
 	pair.assert();
 
@@ -112,10 +115,13 @@ fn index_mut_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(
 	}
 }
 
-pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>() {
+pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
+	actual: A,
+	expected: E,
+) {
 	let (seed, mut rng) = gen_rnd();
 	dbg!(seed);
-	let mut pair = TestPair::<A, E>::default();
+	let mut pair = TestPair::<A, E>::new(actual, expected);
 	pair.assert();
 
 	let proc = [

@@ -13,10 +13,16 @@ type ExpectedFixture = Expected<Probe, SIZE>;
 
 #[test]
 fn enqueue_dequeue() {
-	enqueue_dequeue_impl::<ActualFixture, ExpectedFixture, SIZE>();
+	enqueue_dequeue_impl::<ActualFixture, ExpectedFixture, SIZE>(
+		ActualFixture::default(),
+		ExpectedFixture::default(),
+	);
 }
 
 #[test]
 fn all_process() {
-	all_process_impl::<ActualFixture, ExpectedFixture, SIZE>();
+	all_process_impl::<ActualFixture, ExpectedFixture, SIZE>(
+		ActualFixture::default(),
+		ExpectedFixture::default(),
+	);
 }
