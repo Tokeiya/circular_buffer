@@ -18,9 +18,9 @@ impl CoordinatorSelector {
 				capacity,
 			)?))
 		} else {
-			Ok(CoordinatorSelector::General(GeneralIndexCoordinator::new(
-				capacity,
-			)))
+			Ok(CoordinatorSelector::General(
+				GeneralIndexCoordinator::try_new(capacity)?,
+			))
 		}
 	}
 }

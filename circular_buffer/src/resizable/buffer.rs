@@ -9,3 +9,5 @@ pub struct Buffer<T, C: IndexCoordinator> {
 	pub(super) storage: Vec<T>,
 	pub(super) coordinator: C,
 }
+
+impl<T, C: IndexCoordinator> Buffer<T, C> {}

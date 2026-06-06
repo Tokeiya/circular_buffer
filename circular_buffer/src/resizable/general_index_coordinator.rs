@@ -9,11 +9,15 @@ pub struct GeneralIndexCoordinator {
 }
 
 impl GeneralIndexCoordinator {
-	pub fn new(capacity: usize) -> Self {
-		Self {
-			capacity,
-			head: 0,
-			len: 0,
+	pub fn try_new(capacity: usize) -> Result<Self> {
+		if capacity == 0 {
+			Err(Error::ZeroCapacity)
+		} else {
+			Ok(Self {
+				capacity,
+				head: 0,
+				len: 0,
+			})
 		}
 	}
 }
@@ -134,10 +138,15 @@ mod test {
 
 	#[test]
 	fn new() {
-		let fixture = GeneralIndexCoordinator::new(10);
+		let fixture = GeneralIndexCoordinator::try_new(10).unwrap();
 		assert_eq!(fixture.capacity(), 10);
 		assert_eq!(fixture.head, 0);
 		assert_eq!(fixture.len, 0);
+
+		matches!(
+			GeneralIndexCoordinator::try_new(0),
+			Err(Error::ZeroCapacity)
+		);
 	}
 
 	#[test]
