@@ -6,7 +6,6 @@ mod index_coordinator;
 pub(crate) mod index_coordinator_test;
 mod iter;
 mod iter_mut;
-mod null_index_coordinator;
 mod pow2_index_coordinator;
 
 pub use buffer::Buffer;

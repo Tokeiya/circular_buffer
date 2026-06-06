@@ -4,7 +4,6 @@ mod index_coordinator;
 mod index_coordinator_tests;
 mod iter;
 mod iter_mut;
-mod null_index_coordinator;
 mod pow2_index_coordinator;
 mod selector;
 
