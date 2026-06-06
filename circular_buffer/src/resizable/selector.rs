@@ -57,7 +57,7 @@ impl IndexCoordinator for CoordinatorSelector {
 	fn pop_index(&mut self) -> Result<()> {
 		match self {
 			CoordinatorSelector::General(g) => g.pop_index(),
-			CoordinatorSelector::Pow2(p) => p.dequeue_index(),
+			CoordinatorSelector::Pow2(p) => p.pop_index(),
 		}
 	}
 
@@ -116,14 +116,19 @@ mod tests {
 	}
 
 	type Fixture = CoordinatorSelector;
+	const POW2: usize = 64;
+	const NON_POW2: usize = 65;
 
 	impl IndexCoordinatorTestExtension for CoordinatorSelector {
 		fn fixture(capacity: usize) -> Self {
 			Fixture::new(capacity).unwrap()
 		}
 
-		fn mut_capacity(&mut self) -> &mut usize {
-			todo!()
+		fn ref_capacity(&self) -> &usize {
+			match self {
+				CoordinatorSelector::General(g) => g.ref_capacity(),
+				CoordinatorSelector::Pow2(p) => p.ref_capacity(),
+			}
 		}
 
 		fn mut_head(&mut self) -> &mut usize {
@@ -139,5 +144,77 @@ mod tests {
 				CoordinatorSelector::Pow2(p) => p.mut_len(),
 			}
 		}
+	}
+
+	#[test]
+	fn head_index() {
+		Fixture::head_index_test(POW2);
+		Fixture::head_index_test(NON_POW2);
+	}
+
+	#[test]
+	fn tail_index() {
+		Fixture::tail_index_test(POW2);
+		Fixture::tail_index_test(NON_POW2);
+	}
+
+	#[test]
+	fn enqueue_index() {
+		Fixture::enqueue_index_test(POW2);
+		Fixture::enqueue_index_test(NON_POW2);
+	}
+
+	#[test]
+	fn dequeue_index() {
+		Fixture::dequeue_index_test(POW2);
+		Fixture::dequeue_index_test(NON_POW2);
+	}
+
+	#[test]
+	fn pop_index() {
+		Fixture::pop_index_test(POW2);
+		Fixture::pop_index_test(NON_POW2);
+	}
+
+	#[test]
+	fn real_to_virtual() {
+		Fixture::real_to_virtual_test(POW2);
+		Fixture::real_to_virtual_test(NON_POW2);
+	}
+
+	#[test]
+	fn virtual_to_real() {
+		Fixture::virtual_to_real_test(POW2);
+		Fixture::virtual_to_real_test(NON_POW2);
+	}
+
+	#[test]
+	fn capacity() {
+		Fixture::capacity_test(POW2);
+		Fixture::capacity_test(NON_POW2);
+	}
+
+	#[test]
+	fn len() {
+		Fixture::len_test(POW2);
+		Fixture::len_test(NON_POW2);
+	}
+
+	#[test]
+	fn is_empty() {
+		Fixture::is_empty_test(POW2);
+		Fixture::is_empty_test(NON_POW2);
+	}
+
+	#[test]
+	fn is_full() {
+		Fixture::is_full_test(POW2);
+		Fixture::is_full_test(NON_POW2);
+	}
+
+	#[test]
+	fn clone() {
+		Fixture::clone_test(POW2);
+		Fixture::clone_test(NON_POW2);
 	}
 }

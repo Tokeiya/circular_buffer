@@ -110,8 +110,8 @@ pub(crate) mod ext_impl {
 			}
 		}
 
-		fn mut_capacity(&mut self) -> &mut usize {
-			&mut self.capacity
+		fn ref_capacity(&self) -> &usize {
+			&self.capacity
 		}
 
 		fn mut_head(&mut self) -> &mut usize {
