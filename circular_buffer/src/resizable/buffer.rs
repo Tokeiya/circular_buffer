@@ -1,9 +1,4 @@
-use super::IndexCoordinator;
-use super::iter::Iter;
-use super::iter_mut::IterMut;
-use crate::CircularBuffer;
 use std::mem::MaybeUninit;
-use std::ops::{Index, IndexMut};
 #[cfg(test)]
 use std::{cell::Cell, rc::Rc};
 
