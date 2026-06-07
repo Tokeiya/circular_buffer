@@ -6,6 +6,12 @@ pub struct Iter<'a, T, C: IndexCoordinator> {
 	coordinator: C,
 }
 
+impl<'a, T, C: IndexCoordinator> Iter<'a, T, C> {
+	pub(super) fn new(buffer: &'a Buffer<T, C>) -> Self {
+		todo!()
+	}
+}
+
 impl<'a, T, C: IndexCoordinator> Iterator for Iter<'a, T, C> {
 	type Item = &'a T;
 

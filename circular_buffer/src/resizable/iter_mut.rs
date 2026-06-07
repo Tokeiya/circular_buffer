@@ -8,7 +8,7 @@ pub struct IterMut<'a, T, C: IndexCoordinator> {
 }
 
 impl<'a, T, C: IndexCoordinator> IterMut<'a, T, C> {
-	pub fn new(buffer: &'a mut Buffer<T, C>) -> Self {
+	pub(super) fn new(buffer: &'a mut Buffer<T, C>) -> Self {
 		todo!()
 	}
 }

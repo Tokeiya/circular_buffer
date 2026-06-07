@@ -1,4 +1,7 @@
 #![allow(dead_code)]
+
+// 1. nightly フィーチャーがあるときだけ、Nightly専用の標準テストクレートを読み込む
+#[cfg(feature = "nightly")]
 extern crate test;
 
 fn common_mod<const N: usize>(value: usize) -> usize {
@@ -35,14 +38,15 @@ impl<const N: usize> Modulo<N> for Static<N> {
 	}
 }
 
-#[cfg(test)]
+// 2. このモジュール全体を「nightly フィーチャーが有効なとき」かつ「テスト/ベンチマーク実行時」のみに限定する
+#[cfg(all(feature = "nightly", test))]
 mod benchmark {
 	use super::*;
 	use std::hint::black_box;
-	use test::Bencher;
-
+	use test::Bencher; // 👈 ここで上記の extern crate test を利用しているため、隔離が必要
+	
 	const ITERATIONS: usize = 100_000;
-
+	
 	#[bench]
 	fn dynamic_normal(bencher: &mut Bencher) {
 		bencher.iter(|| {
@@ -51,11 +55,11 @@ mod benchmark {
 			for i in 0..ITERATIONS {
 				accum += fixture.modulo(i);
 			}
-
+			
 			black_box(accum);
 		});
 	}
-
+	
 	#[bench]
 	fn static_normal(bencher: &mut Bencher) {
 		bencher.iter(|| {
@@ -67,7 +71,7 @@ mod benchmark {
 			black_box(accum);
 		});
 	}
-
+	
 	#[bench]
 	fn dynamic_pow2(bencher: &mut Bencher) {
 		bencher.iter(|| {
@@ -76,11 +80,11 @@ mod benchmark {
 			for i in 0..ITERATIONS {
 				accum += fixture.modulo(i);
 			}
-
+			
 			black_box(accum);
 		});
 	}
-
+	
 	#[bench]
 	fn static_pow2(bencher: &mut Bencher) {
 		bencher.iter(|| {
@@ -89,7 +93,7 @@ mod benchmark {
 			for i in 0..ITERATIONS {
 				accum += fixture.modulo(i);
 			}
-
+			
 			black_box(accum);
 		});
 	}
