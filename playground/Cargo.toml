@@ -5,3 +5,7 @@ edition = "2024"
 
 [dependencies]
 circular_buffer = { path = "../circular_buffer" }
+
+
+[features]
+nightly = []

@@ -14,21 +14,7 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/playground/src/bin/foo.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/circular_buffer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/circular_buffer.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/iter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/iter.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/iter_mut.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/iter_mut.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/tests/process_sync/test_pair.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/tests/process_sync/test_pair.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/rust-toolchain.toml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rust-toolchain.toml" beforeDir="false" />
-    </list>
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -203,11 +189,24 @@
       <workItem from="1780835906449" duration="218000" />
       <workItem from="1780836128238" duration="26000" />
       <workItem from="1780836165269" duration="1439000" />
-      <workItem from="1780837621764" duration="72000" />
+      <workItem from="1780837621764" duration="484000" />
     </task>
+    <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
+      <option name="closed" value="true" />
+      <created>1780837924022</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1780837924022</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations." />
   </component>
 </project>
