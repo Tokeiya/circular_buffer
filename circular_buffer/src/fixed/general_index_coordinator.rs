@@ -7,9 +7,19 @@ pub struct GeneralIndexCoordinator<const N: usize> {
 	len: usize,
 }
 
+impl<const N: usize> GeneralIndexCoordinator<N> {
+	const CHECK: () = assert!(N != 0);
+
+	#[allow(clippy::let_unit_value)]
+	fn new() -> Self {
+		_ = Self::CHECK;
+		Self { head: 0, len: 0 }
+	}
+}
+
 impl<const N: usize> Default for GeneralIndexCoordinator<N> {
 	fn default() -> Self {
-		GeneralIndexCoordinator { head: 0, len: 0 }
+		GeneralIndexCoordinator::new()
 	}
 }
 

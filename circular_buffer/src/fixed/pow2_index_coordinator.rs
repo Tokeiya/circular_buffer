@@ -8,11 +8,11 @@ pub struct Pow2IndexCoordinator<const N: usize> {
 }
 
 impl<const N: usize> Pow2IndexCoordinator<N> {
-	const CHECK: () = assert!(N.count_ones() == 1);
+	const CHECK: () = assert!(N.count_ones() == 1 && N != 0);
 	const MASK: usize = N - 1;
 
 	#[allow(clippy::let_unit_value)]
-	pub fn new() -> Self {
+	fn new() -> Self {
 		_ = Self::CHECK;
 		Self { head: 0, len: 0 }
 	}
