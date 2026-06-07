@@ -9,7 +9,7 @@ pub struct Pow2IndexCoordinator {
 }
 
 impl Pow2IndexCoordinator {
-	pub fn new(capacity: usize) -> Result<Self> {
+	pub fn try_new(capacity: usize) -> Result<Self> {
 		if capacity == 0 {
 			Err(Error::ZeroCapacity)
 		} else if capacity.count_ones() != 1 {
@@ -110,7 +110,7 @@ pub(crate) mod ext_impl {
 
 	impl IndexCoordinatorTestExtension for Pow2IndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
-			Pow2IndexCoordinator::new(capacity).unwrap()
+			Pow2IndexCoordinator::try_new(capacity).unwrap()
 		}
 
 		fn ref_capacity(&self) -> &usize {
@@ -138,9 +138,9 @@ mod tests {
 
 	#[test]
 	fn new() {
-		assert_matches!(Pow2IndexCoordinator::new(0), Err(Error::ZeroCapacity));
+		assert_matches!(Pow2IndexCoordinator::try_new(0), Err(Error::ZeroCapacity));
 
-		let fixture = Pow2IndexCoordinator::new(8).unwrap();
+		let fixture = Pow2IndexCoordinator::try_new(8).unwrap();
 		assert_eq!(fixture.head, 0);
 		assert_eq!(fixture.len, 0);
 		assert_eq!(fixture.capacity, 8);

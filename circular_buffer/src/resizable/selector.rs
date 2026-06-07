@@ -14,13 +14,13 @@ impl CoordinatorSelector {
 		if capacity == 0 {
 			Err(Error::ZeroCapacity)
 		} else if capacity.is_power_of_two() {
-			Ok(CoordinatorSelector::Pow2(Pow2IndexCoordinator::new(
+			Ok(CoordinatorSelector::Pow2(Pow2IndexCoordinator::try_new(
 				capacity,
 			)?))
 		} else {
-			Ok(CoordinatorSelector::General(GeneralIndexCoordinator::new(
-				capacity,
-			)))
+			Ok(CoordinatorSelector::General(
+				GeneralIndexCoordinator::try_new(capacity)?,
+			))
 		}
 	}
 }
@@ -122,7 +122,7 @@ mod tests {
 			Fixture::new(capacity).unwrap()
 		}
 
-		fn mut_capacity(&mut self) -> &mut usize {
+		fn ref_capacity(&self) -> &usize {
 			todo!()
 		}
 

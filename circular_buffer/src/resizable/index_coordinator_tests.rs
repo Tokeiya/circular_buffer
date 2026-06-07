@@ -13,7 +13,7 @@ fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize
 
 pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 	fn fixture(capacity: usize) -> Self;
-	fn mut_capacity(&mut self) -> &mut usize;
+	fn ref_capacity(&self) -> &usize;
 	fn mut_head(&mut self) -> &mut usize;
 	fn mut_len(&mut self) -> &mut usize;
 
@@ -212,6 +212,6 @@ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
 		let mut actual = fixture.clone();
 		assert_eq!(*actual.mut_head(), 5);
 		assert_eq!(*actual.mut_len(), 10);
-		assert_eq!(*actual.mut_capacity(), capacity);
+		assert_eq!(*actual.ref_capacity(), capacity);
 	}
 }
