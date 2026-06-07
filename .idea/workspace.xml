@@ -14,7 +14,10 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations." />
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Update `.idea` configurations, add workspace `nightly` feature, and adjust `Cargo.toml` files accordingly.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,6 +33,9 @@
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -42,61 +48,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000000000632563" />
-      <entry key="MS500" value="1.009124745270415" />
-      <entry key="S2" value="1.3090688152302379" />
-      <entry key="S5" value="1.6252044707507853" />
-      <entry key="S10" value="1.7906987231245446" />
-      <entry key="S30" value="1.9247060076172327" />
-      <entry key="S60" value="1.9616163515754257" />
-      <entry key="M2" value="1.9806203911684812" />
-      <entry key="M5" value="1.9922026163912574" />
-      <entry key="M10" value="1.9960936785218832" />
-      <entry key="M15" value="1.997394087247875" />
-      <entry key="M30" value="1.9986961936684626" />
-      <entry key="H1" value="1.9993478842067274" />
-      <entry key="H2" value="1.9996738889291483" />
-      <entry key="H4" value="1.9998369311688524" />
-      <entry key="D1" value="1.9999728200146634" />
-      <entry key="W1" value="1.9999961170997214" />
+      <entry key="MS100" value="2.352310723794174E-10" />
+      <entry key="MS500" value="0.017083839102468586" />
+      <entry key="S2" value="0.6434102572667341" />
+      <entry key="S5" value="1.6166890051056038" />
+      <entry key="S10" value="2.536461856879655" />
+      <entry key="S30" value="3.848735618964681" />
+      <entry key="S60" value="4.364722272311269" />
+      <entry key="M2" value="4.691448314034785" />
+      <entry key="M5" value="6.434359313188496" />
+      <entry key="M10" value="16.181937620003538" />
+      <entry key="M15" value="29.540183774100708" />
+      <entry key="M30" value="62.049919449786145" />
+      <entry key="H1" value="93.79151792168265" />
+      <entry key="H2" value="116.31634573582048" />
+      <entry key="H4" value="129.78789386312232" />
+      <entry key="D1" value="142.33413182152316" />
+      <entry key="W1" value="144.6158311950133" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="3.306774711811076E-8" />
-      <entry key="MS500" value="0.031906628928349785" />
-      <entry key="S2" value="0.422639642565196" />
-      <entry key="S5" value="0.7085786982541082" />
-      <entry key="S10" value="0.8417711673929609" />
-      <entry key="S30" value="0.9442014912834691" />
-      <entry key="S60" value="0.97170030939764" />
-      <entry key="M2" value="0.9857486035484097" />
-      <entry key="M5" value="0.9942748821619899" />
-      <entry key="M10" value="0.9971333321888252" />
-      <entry key="M15" value="0.9980879738734444" />
-      <entry key="M30" value="0.9990435295188316" />
-      <entry key="H1" value="0.999521650350222" />
-      <entry key="H2" value="0.9997607965659696" />
-      <entry key="H4" value="0.9998803911298438" />
-      <entry key="D1" value="0.9999800641947428" />
-      <entry key="W1" value="0.9999971520034872" />
+      <entry key="MS100" value="1.0000089480205476" />
+      <entry key="MS500" value="1.097801472717064" />
+      <entry key="S2" value="1.5592247068524618" />
+      <entry key="S5" value="1.7930957143729316" />
+      <entry key="S10" value="1.92272998551949" />
+      <entry key="S30" value="2.467960488152195" />
+      <entry key="S60" value="2.9866904830697827" />
+      <entry key="M2" value="3.4270351518306854" />
+      <entry key="M5" value="4.682693557904061" />
+      <entry key="M10" value="9.266712057530686" />
+      <entry key="M15" value="14.86052455946251" />
+      <entry key="M30" value="27.84252066193275" />
+      <entry key="H1" value="40.23274777542592" />
+      <entry key="H2" value="48.95055571399062" />
+      <entry key="H4" value="54.145900685975484" />
+      <entry key="D1" value="58.974924974340105" />
+      <entry key="W1" value="59.852300394331166" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.8827029963593493" />
-      <entry key="MS500" value="0.9900660856510322" />
-      <entry key="S2" value="1.5762337729239506" />
-      <entry key="S5" value="2.217975611401197" />
-      <entry key="S10" value="2.5609849591234655" />
-      <entry key="S30" value="2.8414637629869564" />
-      <entry key="S60" value="2.9191002151636893" />
-      <entry key="M2" value="2.9591337072598716" />
-      <entry key="M5" value="2.9835524405228564" />
-      <entry key="M10" value="2.991759286809732" />
-      <entry key="M15" value="2.9945024212932565" />
-      <entry key="M30" value="2.9972493239560283" />
-      <entry key="H1" value="2.99862418997996" />
-      <entry key="H2" value="2.9993119769497674" />
-      <entry key="H4" value="2.999655958959741" />
-      <entry key="D1" value="2.9999426557268665" />
-      <entry key="W1" value="2.9999918078605727" />
+      <entry key="MS100" value="0.04210104968990565" />
+      <entry key="MS500" value="0.5586095919842887" />
+      <entry key="S2" value="1.818342609901669" />
+      <entry key="S5" value="3.187475856139317" />
+      <entry key="S10" value="4.325081089902469" />
+      <entry key="S30" value="6.2489847446618265" />
+      <entry key="S60" value="7.307718561620249" />
+      <entry key="M2" value="8.092366159387366" />
+      <entry key="M5" value="11.098980499024421" />
+      <entry key="M10" value="25.425131139851167" />
+      <entry key="M15" value="44.37372303098602" />
+      <entry key="M30" value="89.86620254784147" />
+      <entry key="H1" value="134.00518029924308" />
+      <entry key="H2" value="165.25527938376288" />
+      <entry key="H4" value="183.92736681547166" />
+      <entry key="D1" value="201.30789024462896" />
+      <entry key="W1" value="204.46796247031025" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -108,35 +114,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;initial__devel&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "code.cleanup.on.save": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "initial__devel",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "rearrange.code.on.save": "true",
+    "settings.editor.selected.configurable": "language.rust.cargo.check",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
+  </component>
+  <component name="RsExternalLinterProjectSettings">
+    <option name="tool" value="Clippy" />
   </component>
   <component name="RunManager" selected="Cargo.Test circular_buffer">
     <configuration name="Run enum_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
@@ -189,7 +200,7 @@
       <workItem from="1780835906449" duration="218000" />
       <workItem from="1780836128238" duration="26000" />
       <workItem from="1780836165269" duration="1439000" />
-      <workItem from="1780837621764" duration="484000" />
+      <workItem from="1780837621764" duration="4035000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -199,7 +210,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780837924022</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Update `.idea` configurations, add workspace `nightly` feature, and adjust `Cargo.toml` files accordingly.">
+      <option name="closed" value="true" />
+      <created>1780838164319</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1780838164319</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -207,6 +226,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations." />
+    <MESSAGE value="Update `.idea` configurations, add workspace `nightly` feature, and adjust `Cargo.toml` files accordingly." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update `.idea` configurations, add workspace `nightly` feature, and adjust `Cargo.toml` files accordingly." />
   </component>
 </project>

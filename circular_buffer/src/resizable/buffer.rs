@@ -78,6 +78,8 @@ mod tests {
 	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
+	use rand::rand_core::block::Generator;
+	use std::borrow::Cow;
 	use std::mem::MaybeUninit;
 	use std::panic::{AssertUnwindSafe, catch_unwind};
 
@@ -109,9 +111,14 @@ mod tests {
 		}
 	}
 
-	fn create_monitor(size: usize) -> Vec<Monitor> {
-		let mut factory = MonitorGenerator::default();
-		(0..size).map(|_| factory.generate()).collect()
+	fn create_monitor(size: usize, generator: Option<&mut MonitorGenerator>) -> Vec<Monitor> {
+		match generator {
+			None => {
+				let mut factory = MonitorGenerator::default();
+				(0..size).map(|_| factory.generate()).collect()
+			}
+			Some(g) => (0..size).map(|_| g.generate()).collect(),
+		}
 	}
 
 	#[test]
@@ -129,11 +136,11 @@ mod tests {
 
 		fn check(target: &UsizeFixture, n: usize, offset: usize) {
 			for idx in 0..n {
-				assert_eq!(target[idx], idx + offset);
+				assert_eq!(*UsizeFixture::index(target, idx), idx + offset);
 			}
 
 			catch_unwind(AssertUnwindSafe(|| {
-				_ = target[n];
+				_ = UsizeFixture::index(target, n);
 			}))
 			.unwrap_err();
 		}
@@ -147,14 +154,65 @@ mod tests {
 			fixture.enqueue(i + CAPACITY);
 			check(&fixture, i, i + 1);
 		}
+
+		*fixture.coordinator.mut_head() = CAPACITY / 2;
+		let c = fixture.coordinator.clone();
+
+		for i in 1..=CAPACITY {
+			fixture.storage[c.virtual_to_real(i).unwrap()] = MaybeUninit::new(i);
+		}
+
+		for i in 0..CAPACITY {
+			assert_eq!(*UsizeFixture::index(&fixture, i), i + 1);
+		}
 	}
 
 	#[test]
-	fn index_mut() {
-		let mut fixture = probe_fixture();
-		let mut generator=MonitorGenerator::default();
-		let mut vec=(0..10).map(|_|generator.generate()).collect::<Vec<_>>();
-		let v=&vec[0];
-		
+	fn index_mut_read_write() {
+		let mut fixture = usize_fixture();
+		catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).unwrap_err();
+
+		fn check(target: &mut UsizeFixture, n: usize, offset: usize) {
+			for idx in 0..n {
+				assert_eq!(*UsizeFixture::index_mut(target, idx), idx + offset);
+			}
+
+			catch_unwind(AssertUnwindSafe(|| {
+				_ = UsizeFixture::index(&target, n);
+			}))
+			.unwrap_err();
+		}
+
+		for i in 1..=CAPACITY {
+			fixture.enqueue(i);
+			check(&mut fixture, i, 1);
+		}
+
+		for i in 1..=CAPACITY {
+			fixture.enqueue(i + CAPACITY);
+			check(&mut fixture, i, i + 1);
+		}
+
+		*fixture.coordinator.mut_head() = CAPACITY / 2;
+		let c = fixture.coordinator.clone();
+
+		for i in 1..=CAPACITY {
+			fixture.storage[c.virtual_to_real(i).unwrap()] = MaybeUninit::new(i);
+		}
+
+		for i in 0..CAPACITY {
+			assert_eq!(*UsizeFixture::index_mut(&mut fixture, i), i + 1);
+		}
+	}
+
+	#[test]
+	fn index_mut_drop_test() {
+		// let (mut fixture, cnt) = probe_fixture();
+		// //let init = create_monitor(CAPACITY);
+		// for p in init.iter().take(CAPACITY).map(|m| m.payout_probe()) {
+		// 	fixture.enqueue(p);
+		// }
+		//
+		// let over_write=
 	}
 }
