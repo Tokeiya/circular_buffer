@@ -16,10 +16,7 @@
   <component name="ChangeListManager">
     <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="test unpassed.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/buffer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/buffer.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/selector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/selector.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,61 +48,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="2.713759384378356E-135" />
-      <entry key="MS500" value="1.2245431760371758E-27" />
-      <entry key="S2" value="3.0366990480037974E-7" />
-      <entry key="S5" value="0.007312888758571278" />
-      <entry key="S10" value="0.31517392913864994" />
-      <entry key="S30" value="5.65889507243882" />
-      <entry key="S60" value="12.574675310899233" />
-      <entry key="M2" value="19.42828079868242" />
-      <entry key="M5" value="30.732733144256137" />
-      <entry key="M10" value="45.09132159844555" />
-      <entry key="M15" value="59.644496773779615" />
-      <entry key="M30" value="109.03820352393255" />
-      <entry key="H1" value="189.771020384305" />
-      <entry key="H2" value="273.5089439936977" />
-      <entry key="H4" value="336.2508735950762" />
-      <entry key="D1" value="404.27490151930766" />
-      <entry key="W1" value="417.70554293720625" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000000000002867" />
+      <entry key="S2" value="1.001000843693575" />
+      <entry key="S5" value="1.09400293922818" />
+      <entry key="S10" value="1.4595836638582513" />
+      <entry key="S30" value="2.595588925656126" />
+      <entry key="S60" value="4.214656039566076" />
+      <entry key="M2" value="9.650934641726947" />
+      <entry key="M5" value="29.703982794654543" />
+      <entry key="M10" value="54.85340573484712" />
+      <entry key="M15" value="74.62475489649117" />
+      <entry key="M30" value="129.192388270824" />
+      <entry key="H1" value="214.95347169478936" />
+      <entry key="H2" value="305.90536931382667" />
+      <entry key="H4" value="375.4815773122676" />
+      <entry key="D1" value="452.12154509148485" />
+      <entry key="W1" value="467.387763041621" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.000000492849067" />
-      <entry key="S5" value="1.0038303029455766" />
-      <entry key="S10" value="1.0978099326709434" />
-      <entry key="S30" value="2.151706384813857" />
-      <entry key="S60" value="3.394907048020496" />
-      <entry key="M2" value="4.959791198131072" />
-      <entry key="M5" value="9.178891395302587" />
-      <entry key="M10" value="15.991599954961597" />
-      <entry key="M15" value="23.717950916904147" />
-      <entry key="M30" value="50.8150717629686" />
-      <entry key="H1" value="93.8904938645418" />
-      <entry key="H2" value="137.0140270829979" />
-      <entry key="H4" value="168.58711678562494" />
-      <entry key="D1" value="202.27896833356164" />
-      <entry key="W1" value="208.87486937227752" />
+      <entry key="MS100" value="4.3444765348279276E-67" />
+      <entry key="MS500" value="5.340568516282995E-14" />
+      <entry key="S2" value="4.8072518229365905E-4" />
+      <entry key="S5" value="0.04707157708422281" />
+      <entry key="S10" value="0.21696162385743858" />
+      <entry key="S30" value="0.6291369028422545" />
+      <entry key="S60" value="1.2182434427657605" />
+      <entry key="M2" value="3.1296593360526037" />
+      <entry key="M5" value="9.376623672273752" />
+      <entry key="M10" value="18.047615793735655" />
+      <entry key="M15" value="26.306946225020436" />
+      <entry key="M30" value="53.20245557550621" />
+      <entry key="H1" value="97.39257066220763" />
+      <entry key="H2" value="143.60639137613404" />
+      <entry key="H4" value="178.39595860744942" />
+      <entry key="D1" value="216.23644089616707" />
+      <entry key="W1" value="223.7209510471404" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.003988328616043724" />
-      <entry key="MS500" value="0.3312517542613019" />
-      <entry key="S2" value="0.758647348290469" />
-      <entry key="S5" value="0.9061221314831889" />
-      <entry key="S10" value="1.3530542618504062" />
-      <entry key="S30" value="7.7631545081757" />
-      <entry key="S60" value="15.927690311162346" />
-      <entry key="M2" value="24.355553647875876" />
-      <entry key="M5" value="39.886588650145214" />
-      <entry key="M10" value="61.05945197969137" />
-      <entry key="M15" value="83.33633935168673" />
-      <entry key="M30" value="159.81864353701653" />
-      <entry key="H1" value="283.6257512829705" />
-      <entry key="H2" value="410.49560318107217" />
-      <entry key="H4" value="504.8207942984801" />
-      <entry key="D1" value="606.5503753085081" />
-      <entry key="W1" value="626.5798954580702" />
+      <entry key="MS100" value="0.180491149440312" />
+      <entry key="MS500" value="0.7100536792719209" />
+      <entry key="S2" value="0.9191374994035483" />
+      <entry key="S5" value="1.0932710300493915" />
+      <entry key="S10" value="1.6244538266085704" />
+      <entry key="S30" value="3.181978204209812" />
+      <entry key="S60" value="5.390208684170481" />
+      <entry key="M2" value="12.72655526465834" />
+      <entry key="M5" value="39.02402035651507" />
+      <entry key="M10" value="72.85370390019877" />
+      <entry key="M15" value="100.88847994676512" />
+      <entry key="M30" value="182.35223409139394" />
+      <entry key="H1" value="312.30612720090755" />
+      <entry key="H2" value="449.4817565505763" />
+      <entry key="H4" value="553.858700494711" />
+      <entry key="D1" value="668.3541465554354" />
+      <entry key="W1" value="691.1081457420227" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -117,39 +114,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Cargo.Test buffer::tests (1).executor": "Run",
-    "Cargo.Test buffer::tests.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::index_enqueue.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::index_mut_read_write.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::new.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "code.cleanup.on.save": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "initial__devel",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true",
-    "rearrange.code.on.save": "true",
-    "settings.editor.selected.configurable": "language.rust.cargo.check",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Test buffer::tests (1).executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test buffer::tests.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::index_enqueue.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::index_mut_read_write.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::new.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;code.cleanup.on.save&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;initial__devel&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -158,7 +155,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="tool" value="Clippy" />
   </component>
-  <component name="RunManager" selected="Cargo.Test resizable::buffer::tests::index_enqueue">
+  <component name="RunManager" selected="Cargo.Test resizable::buffer::tests::index_mut_read_write">
     <configuration name="Run enum_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="run --package playground --bin enum_survey" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -281,9 +278,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test resizable::buffer::tests::index_mut_read_write" />
         <item itemvalue="Cargo.Test resizable::buffer::tests::index_enqueue" />
         <item itemvalue="Cargo.Test buffer::tests" />
-        <item itemvalue="Cargo.Test resizable::buffer::tests::index_mut_read_write" />
         <item itemvalue="Cargo.Test buffer::tests (1)" />
         <item itemvalue="Cargo.Test resizable::buffer::tests::new" />
       </list>
@@ -305,6 +302,7 @@
       <workItem from="1780836165269" duration="1439000" />
       <workItem from="1780837621764" duration="4035000" />
       <workItem from="1780905458220" duration="3944000" />
+      <workItem from="1780925440066" duration="1294000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />

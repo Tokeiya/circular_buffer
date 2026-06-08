@@ -132,7 +132,8 @@ mod tests {
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::assert_matches;
 	use std::mem::MaybeUninit;
-	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook};
+	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
+	use std::sync::{LazyLock, Mutex};
 
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator>;
@@ -172,6 +173,18 @@ mod tests {
 		}
 	}
 
+	static BLOCKER: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
+	fn should_panic(f: impl FnOnce()) {
+		let _token = BLOCKER.lock().unwrap();
+		let recent = take_hook();
+		set_hook(Box::new(move |_info| {}));
+
+		let result = catch_unwind(AssertUnwindSafe(f));
+		assert!(result.is_err(), "Expected panic, but none occurred");
+
+		set_hook(recent);
+	}
+
 	#[test]
 	fn new() {
 		let mut fixture = ProbeFixture::new(Pow2IndexCoordinator::try_new(CAPACITY).unwrap());
@@ -187,17 +200,14 @@ mod tests {
 				assert_eq!(*UsizeFixture::index(target, idx), idx + offset);
 			}
 
-			catch_unwind(AssertUnwindSafe(|| {
-				_ = UsizeFixture::index(target, n);
-			}))
-			.unwrap_err();
+			should_panic(|| _ = UsizeFixture::index(target, n));
 
 			assert_eq!(target.capacity(), CAPACITY);
 			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
 		}
 
 		let mut fixture = usize_fixture();
-		assert!(catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).is_err());
+		should_panic(|| _ = fixture[0]);
 
 		for i in 1..=CAPACITY {
 			fixture.enqueue(i);
@@ -224,17 +234,14 @@ mod tests {
 	#[test]
 	fn index_mut_read_write() {
 		let mut fixture = usize_fixture();
-		catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).unwrap_err();
+		should_panic(|| _ = fixture[0]);
 
 		fn check(target: &mut UsizeFixture, n: usize, offset: usize) {
 			for idx in 0..n {
 				assert_eq!(*UsizeFixture::index_mut(target, idx), idx + offset);
 			}
 
-			catch_unwind(AssertUnwindSafe(|| {
-				_ = UsizeFixture::index(target, n);
-			}))
-			.unwrap_err();
+			should_panic(|| _ = UsizeFixture::index_mut(target, n));
 
 			assert_eq!(target.capacity(), CAPACITY);
 			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
@@ -253,12 +260,12 @@ mod tests {
 		*fixture.coordinator.mut_head() = CAPACITY / 2;
 		let c = fixture.coordinator.clone();
 
-		for i in 1..=CAPACITY {
-			fixture.storage[c.virtual_to_real(i).unwrap()] = MaybeUninit::new(i);
+		for i in 0..CAPACITY {
+			*fixture.index_mut(i) = i;
 		}
 
 		for i in 0..CAPACITY {
-			assert_eq!(*UsizeFixture::index_mut(&mut fixture, i), i + 1);
+			assert_eq!(*UsizeFixture::index_mut(&mut fixture, i), i);
 		}
 	}
 
