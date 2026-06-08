@@ -16,7 +16,12 @@ pub struct Buffer<T, C: IndexCoordinator> {
 
 impl<T, C: IndexCoordinator> Buffer<T, C> {
 	pub fn new(coordinator: C) -> Self {
-		todo!()
+		Self {
+			#[cfg(test)]
+			probe: None,
+			storage: Vec::new(),
+			coordinator,
+		}
 	}
 }
 
@@ -24,13 +29,19 @@ impl<T, C: IndexCoordinator> Index<usize> for Buffer<T, C> {
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
-		todo!()
+		match self.coordinator.virtual_to_real(index) {
+			Ok(i) => unsafe { self.storage.get_unchecked(i).assume_init_ref() },
+			Err(_) => panic!("Index out of range"),
+		}
 	}
 }
 
 impl<T, C: IndexCoordinator> IndexMut<usize> for Buffer<T, C> {
-	fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-		todo!()
+	fn index_mut(&mut self, index: usize) -> &mut T {
+		match self.coordinator.virtual_to_real(index) {
+			Ok(i) => unsafe { self.storage.get_unchecked_mut(i).assume_init_mut() },
+			Err(_) => panic!("Index out of range"),
+		}
 	}
 }
 
@@ -50,12 +61,36 @@ impl<T, C: IndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 		todo!()
 	}
 
+	//noinspection DuplicatedCode
 	fn enqueue(&mut self, item: T) {
-		todo!()
+		if self.len() < self.capacity() {
+			self.coordinator.enqueue_index();
+			self.storage[self.coordinator.tail_index().unwrap()].write(item);
+		} else {
+			let index = self.coordinator.head_index().unwrap();
+			unsafe {
+				self.storage[index].assume_init_drop();
+				self.storage[index].write(item);
+			};
+
+			self.coordinator.enqueue_index();
+		}
 	}
 
+	//noinspection DuplicatedCode
 	fn dequeue(&mut self) -> Option<T> {
-		todo!()
+		if self.coordinator.len() == 0 {
+			None
+		} else {
+			let index = self.coordinator.virtual_to_real(0).unwrap();
+			let ret = unsafe {
+				std::mem::replace(&mut self.storage[index], MaybeUninit::uninit()).assume_init()
+			};
+
+			self.coordinator.dequeue_index().unwrap();
+
+			Some(ret)
+		}
 	}
 
 	fn iter(&self) -> Self::Iter<'_> {
@@ -67,13 +102,25 @@ impl<T, C: IndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	}
 
 	fn len(&self) -> usize {
-		todo!()
+		self.coordinator.len()
 	}
 }
 
 impl<T, C: IndexCoordinator> Drop for Buffer<T, C> {
+	//noinspection DuplicatedCode
 	fn drop(&mut self) {
-		todo!()
+		for i in 0..self.coordinator.len() {
+			#[cfg(test)]
+			{
+				if let Some(p) = &self.probe {
+					let i = p.get() + 1;
+					p.set(i)
+				}
+			}
+			unsafe {
+				self.storage[self.coordinator.virtual_to_real(i).unwrap()].assume_init_drop();
+			}
+		}
 	}
 }
 
@@ -264,5 +311,45 @@ mod tests {
 		assert_eq!(*fixture.coordinator.mut_len(), 0);
 		assert!(init.iter().all(|x| x.is_dropped()));
 		assert_matches!(fixture.dequeue(), None);
+	}
+
+	#[test]
+	fn iter() {
+		unimplemented!("Delay until implementation is completed")
+	}
+
+	#[test]
+	fn iter_mut() {
+		unimplemented!("Delay until implementation is completed")
+	}
+
+	#[test]
+	fn len() {
+		let mut fixture = usize_fixture();
+
+		for i in 0..CAPACITY {
+			assert_eq!(fixture.len(), i);
+			fixture.enqueue(i);
+		}
+
+		for i in 0..CAPACITY {
+			assert_eq!(fixture.len(), CAPACITY);
+			fixture.enqueue(i)
+		}
+	}
+
+	#[test]
+	fn drop() {
+		let (mut fixture, cnt) = probe_fixture();
+		let init = create_monitor(CAPACITY, None);
+
+		for p in init.iter().map(|m| m.payout_probe()) {
+			fixture.enqueue(p);
+		}
+
+		std::mem::drop(fixture);
+
+		assert!(init.iter().all(|x| x.is_dropped()));
+		assert_eq!(cnt.take(), CAPACITY);
 	}
 }

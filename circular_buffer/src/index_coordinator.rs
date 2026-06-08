@@ -1,0 +1,1 @@
+//IndexCoordinatorを統一化することで、Resizable/FixedのIterとIterMutを統一できないか検討してみる

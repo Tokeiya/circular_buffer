@@ -64,7 +64,7 @@ impl<T, C: IndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffer<T, 
 	}
 
 	fn enqueue(&mut self, item: T) {
-		if self.len() < self.capacity() {
+		if self.len() < N {
 			self.coordinator.enqueue_index();
 			self.storage[self.coordinator.tail_index().unwrap()].write(item);
 		} else {
