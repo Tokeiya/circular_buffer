@@ -12,8 +12,10 @@ pub use index_coordinator::IndexCoordinator;
 pub use pow2_index_coordinator::Pow2IndexCoordinator;
 pub use selector::CoordinatorSelector;
 
+#[allow(unused_imports)]
 #[cfg(test)]
 pub(super) use general_index_coordinator::ext_impl as general_ext;
 
+#[allow(unused_imports)]
 #[cfg(test)]
 pub(super) use pow2_index_coordinator::ext_impl as pow2_ext;

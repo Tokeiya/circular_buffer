@@ -58,7 +58,7 @@ impl<T, C: IndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 		Self: 'a;
 
 	fn capacity(&self) -> usize {
-		todo!()
+		self.coordinator.capacity()
 	}
 
 	//noinspection DuplicatedCode
@@ -127,13 +127,12 @@ impl<T, C: IndexCoordinator> Drop for Buffer<T, C> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::error::*;
 	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::assert_matches;
 	use std::mem::MaybeUninit;
-	use std::panic::{AssertUnwindSafe, catch_unwind};
+	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook};
 
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator>;
@@ -183,9 +182,6 @@ mod tests {
 
 	#[test]
 	fn index_enqueue() {
-		let mut fixture = usize_fixture();
-		catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).unwrap_err();
-
 		fn check(target: &UsizeFixture, n: usize, offset: usize) {
 			for idx in 0..n {
 				assert_eq!(*UsizeFixture::index(target, idx), idx + offset);
@@ -200,6 +196,9 @@ mod tests {
 			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
 		}
 
+		let mut fixture = usize_fixture();
+		assert!(catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).is_err());
+
 		for i in 1..=CAPACITY {
 			fixture.enqueue(i);
 			check(&fixture, i, 1);
@@ -207,18 +206,18 @@ mod tests {
 
 		for i in 1..=CAPACITY {
 			fixture.enqueue(i + CAPACITY);
-			check(&fixture, i, i + 1);
+			check(&fixture, CAPACITY, i + 1);
 		}
 
 		*fixture.coordinator.mut_head() = CAPACITY / 2;
 		let c = fixture.coordinator.clone();
 
-		for i in 1..=CAPACITY {
+		for i in 0..CAPACITY {
 			fixture.storage[c.virtual_to_real(i).unwrap()] = MaybeUninit::new(i);
 		}
 
 		for i in 0..CAPACITY {
-			assert_eq!(*UsizeFixture::index(&fixture, i), i + 1);
+			assert_eq!(*UsizeFixture::index(&fixture, i), i);
 		}
 	}
 
@@ -248,7 +247,7 @@ mod tests {
 
 		for i in 1..=CAPACITY {
 			fixture.enqueue(i + CAPACITY);
-			check(&mut fixture, i, i + 1);
+			check(&mut fixture, CAPACITY, i + 1);
 		}
 
 		*fixture.coordinator.mut_head() = CAPACITY / 2;

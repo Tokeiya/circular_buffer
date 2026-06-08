@@ -119,6 +119,7 @@ impl<T, C: IndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 }
 
 impl<T, C: IndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
+	//noinspection DuplicatedCode
 	fn drop(&mut self) {
 		for i in 0..self.coordinator.len() {
 			#[cfg(test)]

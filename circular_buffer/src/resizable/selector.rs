@@ -92,7 +92,6 @@ impl IndexCoordinator for CoordinatorSelector {
 
 #[cfg(test)]
 mod tests {
-	use super::super::general_index_coordinator::ext_impl;
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use std::assert_matches;
