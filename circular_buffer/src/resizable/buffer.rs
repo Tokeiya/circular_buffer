@@ -258,7 +258,6 @@ mod tests {
 		}
 
 		*fixture.coordinator.mut_head() = CAPACITY / 2;
-		let c = fixture.coordinator.clone();
 
 		for i in 0..CAPACITY {
 			*fixture.index_mut(i) = i;
