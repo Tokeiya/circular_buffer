@@ -71,6 +71,12 @@ impl<T, C: IndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	}
 }
 
+impl<T, C: IndexCoordinator> Drop for Buffer<T, C> {
+	fn drop(&mut self) {
+		todo!()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -78,8 +84,7 @@ mod tests {
 	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
-	use rand::rand_core::block::Generator;
-	use std::borrow::Cow;
+	use std::assert_matches;
 	use std::mem::MaybeUninit;
 	use std::panic::{AssertUnwindSafe, catch_unwind};
 
@@ -130,7 +135,7 @@ mod tests {
 	}
 
 	#[test]
-	fn index() {
+	fn index_enqueue() {
 		let mut fixture = usize_fixture();
 		catch_unwind(AssertUnwindSafe(|| _ = fixture[0])).unwrap_err();
 
@@ -143,6 +148,9 @@ mod tests {
 				_ = UsizeFixture::index(target, n);
 			}))
 			.unwrap_err();
+
+			assert_eq!(target.capacity(), CAPACITY);
+			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
 		}
 
 		for i in 1..=CAPACITY {
@@ -178,9 +186,12 @@ mod tests {
 			}
 
 			catch_unwind(AssertUnwindSafe(|| {
-				_ = UsizeFixture::index(&target, n);
+				_ = UsizeFixture::index(target, n);
 			}))
 			.unwrap_err();
+
+			assert_eq!(target.capacity(), CAPACITY);
+			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
 		}
 
 		for i in 1..=CAPACITY {
@@ -207,12 +218,51 @@ mod tests {
 
 	#[test]
 	fn index_mut_drop_test() {
-		// let (mut fixture, cnt) = probe_fixture();
-		// //let init = create_monitor(CAPACITY);
-		// for p in init.iter().take(CAPACITY).map(|m| m.payout_probe()) {
-		// 	fixture.enqueue(p);
-		// }
-		//
-		// let over_write=
+		let (mut fixture, _) = probe_fixture();
+		let mut generator = MonitorGenerator::default();
+		let init = create_monitor(CAPACITY, Some(&mut generator));
+
+		for p in init.iter().map(|m| m.payout_probe()) {
+			fixture.enqueue(p);
+		}
+
+		let overwrite = create_monitor(CAPACITY, Some(&mut generator));
+
+		for (i, p) in overwrite.iter().map(|m| m.payout_probe()).enumerate() {
+			*fixture.index_mut(i) = p;
+		}
+
+		assert!(init.iter().all(|x| x.is_dropped()));
+		assert!(overwrite.iter().all(|x| !x.is_dropped()));
+	}
+
+	#[test]
+	fn capacity() {
+		let fixture = usize_fixture();
+		assert_eq!(fixture.capacity(), CAPACITY);
+	}
+
+	#[test]
+	fn dequeue() {
+		let mut generator = MonitorGenerator::default();
+		let (mut fixture, _) = probe_fixture();
+
+		assert_matches!(fixture.dequeue(), None);
+
+		let init = create_monitor(CAPACITY, Some(&mut generator));
+
+		for p in init.iter().map(|m| m.payout_probe()) {
+			fixture.enqueue(p);
+		}
+
+		for i in 0..CAPACITY {
+			assert_eq!(*fixture.coordinator.mut_len(), CAPACITY - i);
+			let act = fixture.dequeue().unwrap();
+			assert_eq!(act.id(), i);
+		}
+
+		assert_eq!(*fixture.coordinator.mut_len(), 0);
+		assert!(init.iter().all(|x| x.is_dropped()));
+		assert_matches!(fixture.dequeue(), None);
 	}
 }

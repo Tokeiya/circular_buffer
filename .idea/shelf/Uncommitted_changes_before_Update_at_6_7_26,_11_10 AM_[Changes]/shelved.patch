@@ -1,0 +1,217 @@
+Index: circular_buffer/src/resizable/selector.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>use super::GeneralIndexCoordinator;\nuse super::IndexCoordinator;\nuse super::Pow2IndexCoordinator;\nuse crate::error::*;\n\n#[derive(Clone, Debug)]\npub enum CoordinatorSelector {\n\tGeneral(GeneralIndexCoordinator),\n\tPow2(Pow2IndexCoordinator),\n}\n\nimpl CoordinatorSelector {\n\tpub fn new(capacity: usize) -> Result<Self> {\n\t\tif capacity == 0 {\n\t\t\tErr(Error::ZeroCapacity)\n\t\t} else if capacity.is_power_of_two() {\n\t\t\tOk(CoordinatorSelector::Pow2(Pow2IndexCoordinator::new(\n\t\t\t\tcapacity,\n\t\t\t)?))\n\t\t} else {\n\t\t\tOk(CoordinatorSelector::General(GeneralIndexCoordinator::new(\n\t\t\t\tcapacity,\n\t\t\t)))\n\t\t}\n\t}\n}\n\nimpl IndexCoordinator for CoordinatorSelector {\n\tfn head_index(&self) -> Result<usize> {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.head_index(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.head_index(),\n\t\t}\n\t}\n\n\tfn tail_index(&self) -> Result<usize> {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.tail_index(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.tail_index(),\n\t\t}\n\t}\n\n\tfn enqueue_index(&mut self) {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.enqueue_index(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.enqueue_index(),\n\t\t}\n\t}\n\n\tfn dequeue_index(&mut self) -> Result<()> {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.dequeue_index(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.dequeue_index(),\n\t\t}\n\t}\n\n\tfn pop_index(&mut self) -> Result<()> {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.pop_index(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.dequeue_index(),\n\t\t}\n\t}\n\n\tfn real_to_virtual(&self, idx: usize) -> Result<usize> {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.real_to_virtual(idx),\n\t\t\tCoordinatorSelector::Pow2(p) => p.real_to_virtual(idx),\n\t\t}\n\t}\n\n\tfn virtual_to_real(&self, idx: usize) -> Result<usize> {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.virtual_to_real(idx),\n\t\t\tCoordinatorSelector::Pow2(p) => p.virtual_to_real(idx),\n\t\t}\n\t}\n\n\tfn capacity(&self) -> usize {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.capacity(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.capacity(),\n\t\t}\n\t}\n\n\tfn len(&self) -> usize {\n\t\tmatch self {\n\t\t\tCoordinatorSelector::General(g) => g.len(),\n\t\t\tCoordinatorSelector::Pow2(p) => p.len(),\n\t\t}\n\t}\n}\n\n#[cfg(test)]\nmod tests {\n\tuse super::super::general_index_coordinator::ext_impl;\n\tuse super::super::index_coordinator_tests::IndexCoordinatorTestExtension;\n\tuse super::*;\n\tuse std::assert_matches;\n\n\t#[test]\n\tfn new() {\n\t\tassert_matches!(CoordinatorSelector::new(0), Err(Error::ZeroCapacity));\n\t\tassert_matches!(\n\t\t\tCoordinatorSelector::new(1),\n\t\t\tOk(CoordinatorSelector::Pow2(_))\n\t\t);\n\t\tassert_matches!(\n\t\t\tCoordinatorSelector::new(2),\n\t\t\tOk(CoordinatorSelector::Pow2(_))\n\t\t);\n\n\t\tassert_matches!(\n\t\t\tCoordinatorSelector::new(3),\n\t\t\tOk(CoordinatorSelector::General(_))\n\t\t);\n\t}\n\n\ttype Fixture = CoordinatorSelector;\n\n\timpl IndexCoordinatorTestExtension for CoordinatorSelector {\n\t\tfn fixture(capacity: usize) -> Self {\n\t\t\tFixture::new(capacity).unwrap()\n\t\t}\n\n\t\tfn mut_capacity(&mut self) -> &mut usize {\n\t\t\ttodo!()\n\t\t}\n\n\t\tfn mut_head(&mut self) -> &mut usize {\n\t\t\tmatch self {\n\t\t\t\tCoordinatorSelector::General(g) => g.mut_head(),\n\t\t\t\tCoordinatorSelector::Pow2(p) => p.mut_head(),\n\t\t\t}\n\t\t}\n\n\t\tfn mut_len(&mut self) -> &mut usize {\n\t\t\tmatch self {\n\t\t\t\tCoordinatorSelector::General(g) => g.mut_len(),\n\t\t\t\tCoordinatorSelector::Pow2(p) => p.mut_len(),\n\t\t\t}\n\t\t}\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/resizable/selector.rs b/circular_buffer/src/resizable/selector.rs
+--- a/circular_buffer/src/resizable/selector.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/resizable/selector.rs	(date 1780734268780)
+@@ -115,6 +115,9 @@
+ 		);
+ 	}
+ 
++	const POW2: usize = 64;
++	const NON_POW2: usize = 65;
++
+ 	type Fixture = CoordinatorSelector;
+ 
+ 	impl IndexCoordinatorTestExtension for CoordinatorSelector {
+@@ -122,8 +125,11 @@
+ 			Fixture::new(capacity).unwrap()
+ 		}
+ 
+-		fn mut_capacity(&mut self) -> &mut usize {
+-			todo!()
++		fn ref_capacity(&self) -> &usize {
++			match self {
++				CoordinatorSelector::General(g) => g.ref_capacity(),
++				CoordinatorSelector::Pow2(p) => p.ref_capacity(),
++			}
+ 		}
+ 
+ 		fn mut_head(&mut self) -> &mut usize {
+@@ -140,4 +146,10 @@
+ 			}
+ 		}
+ 	}
++
++	#[test]
++	fn head_index_test() {
++		Fixture::head_index_test(POW2);
++		Fixture::head_index_test(NON_POW2);
++	}
+ }
+Index: circular_buffer/src/resizable/pow2_index_coordinator.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>use crate::error::*;\nuse crate::resizable::index_coordinator::IndexCoordinator;\n#[derive(Clone, Debug)]\npub struct Pow2IndexCoordinator {\n\thead: usize,\n\tlen: usize,\n\tcapacity: usize,\n\tmask: usize,\n}\n\nimpl Pow2IndexCoordinator {\n\tpub fn new(capacity: usize) -> Result<Self> {\n\t\tif capacity == 0 {\n\t\t\tErr(Error::ZeroCapacity)\n\t\t} else if capacity.count_ones() != 1 {\n\t\t\tErr(Error::CapacityNotPow2(capacity))\n\t\t} else {\n\t\t\tOk(Self {\n\t\t\t\thead: 0,\n\t\t\t\tlen: 0,\n\t\t\t\tcapacity,\n\t\t\t\tmask: capacity - 1,\n\t\t\t})\n\t\t}\n\t}\n}\n\nimpl IndexCoordinator for Pow2IndexCoordinator {\n\t//noinspection DuplicatedCode\n\tfn head_index(&self) -> Result<usize> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tOk(self.head)\n\t\t}\n\t}\n\n\tfn tail_index(&self) -> Result<usize> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tOk((self.head + self.len - 1) & self.mask)\n\t\t}\n\t}\n\n\tfn enqueue_index(&mut self) {\n\t\tif self.len < self.capacity {\n\t\t\tself.len += 1;\n\t\t} else {\n\t\t\tself.head = (self.head + 1) & self.mask;\n\t\t}\n\t}\n\n\tfn dequeue_index(&mut self) -> Result<()> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tself.head = (self.head + 1) & self.mask;\n\t\t\tself.len -= 1;\n\t\t\tOk(())\n\t\t}\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn pop_index(&mut self) -> Result<()> {\n\t\tmatch self.len.checked_sub(1) {\n\t\t\tSome(len) => {\n\t\t\t\tself.len = len;\n\t\t\t\tOk(())\n\t\t\t}\n\t\t\tNone => Err(Error::Empty),\n\t\t}\n\t}\n\n\tfn real_to_virtual(&self, idx: usize) -> Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk(idx.wrapping_sub(self.head) & self.mask)\n\t\t}\n\t}\n\n\tfn virtual_to_real(&self, idx: usize) -> Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk((idx + self.head) & self.mask)\n\t\t}\n\t}\n\n\tfn capacity(&self) -> usize {\n\t\tself.capacity\n\t}\n\n\tfn len(&self) -> usize {\n\t\tself.len\n\t}\n}\n\n#[cfg(test)]\npub(crate) mod ext_impl {\n\tuse crate::resizable::Pow2IndexCoordinator;\n\tuse crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;\n\n\timpl IndexCoordinatorTestExtension for Pow2IndexCoordinator {\n\t\tfn fixture(capacity: usize) -> Self {\n\t\t\tPow2IndexCoordinator::new(capacity).unwrap()\n\t\t}\n\n\t\tfn mut_capacity(&mut self) -> &mut usize {\n\t\t\t&mut self.capacity\n\t\t}\n\n\t\tfn mut_head(&mut self) -> &mut usize {\n\t\t\t&mut self.head\n\t\t}\n\n\t\tfn mut_len(&mut self) -> &mut usize {\n\t\t\t&mut self.len\n\t\t}\n\t}\n}\n\n#[cfg(test)]\nmod tests {\n\tuse super::super::index_coordinator_tests::IndexCoordinatorTestExtension;\n\tuse super::*;\n\tuse std::assert_matches;\n\n\tconst CAPACITY: usize = 8;\n\ttype Fixture = Pow2IndexCoordinator;\n\n\t#[test]\n\tfn new() {\n\t\tassert_matches!(Pow2IndexCoordinator::new(0), Err(Error::ZeroCapacity));\n\n\t\tlet fixture = Pow2IndexCoordinator::new(8).unwrap();\n\t\tassert_eq!(fixture.head, 0);\n\t\tassert_eq!(fixture.len, 0);\n\t\tassert_eq!(fixture.capacity, 8);\n\t\tassert_eq!(fixture.mask, 7);\n\t}\n\n\t#[test]\n\tfn head_index() {\n\t\tFixture::head_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn tail_index() {\n\t\tFixture::tail_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn enqueue_index() {\n\t\tFixture::enqueue_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn dequeue_index() {\n\t\tFixture::dequeue_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn pop_index() {\n\t\tFixture::pop_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn real_to_virtual() {\n\t\tFixture::real_to_virtual_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn virtual_to_real() {\n\t\tFixture::virtual_to_real_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn capacity() {\n\t\tFixture::capacity_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn len() {\n\t\tFixture::len_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn is_empty() {\n\t\tFixture::is_empty_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn is_full() {\n\t\tFixture::is_full_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn clone() {\n\t\tFixture::clone_test(CAPACITY);\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/resizable/pow2_index_coordinator.rs b/circular_buffer/src/resizable/pow2_index_coordinator.rs
+--- a/circular_buffer/src/resizable/pow2_index_coordinator.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/resizable/pow2_index_coordinator.rs	(date 1780733319337)
+@@ -113,8 +113,8 @@
+ 			Pow2IndexCoordinator::new(capacity).unwrap()
+ 		}
+ 
+-		fn mut_capacity(&mut self) -> &mut usize {
+-			&mut self.capacity
++		fn ref_capacity(&self) -> &usize {
++			&self.capacity
+ 		}
+ 
+ 		fn mut_head(&mut self) -> &mut usize {
+Index: circular_buffer/src/resizable/index_coordinator_tests.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#![cfg(test)]\nuse super::index_coordinator::IndexCoordinator;\nuse crate::error::*;\nuse std::assert_matches;\n\nfn expected_real_to_virtual(capacity: usize, index: usize, head: usize) -> usize {\n\t(index + capacity - head) % capacity\n}\n\nfn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {\n\t(index + head) % capacity\n}\n\npub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {\n\tfn fixture(capacity: usize) -> Self;\n\tfn mut_capacity(&mut self) -> &mut usize;\n\tfn mut_head(&mut self) -> &mut usize;\n\tfn mut_len(&mut self) -> &mut usize;\n\n\t//noinspection DuplicatedCode\n\tfn head_index_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\t\tfor (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |l| (h, l))) {\n\t\t\t*fixture.mut_head() = h;\n\t\t\t*fixture.mut_len() = l;\n\n\t\t\tif l == 0 {\n\t\t\t\tassert_matches!(fixture.head_index(), Err(Error::Empty));\n\t\t\t} else {\n\t\t\t\tassert_eq!(fixture.head_index().unwrap(), h);\n\t\t\t}\n\t\t}\n\t}\n\n\tfn tail_index_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |l| (h, l))) {\n\t\t\t*fixture.mut_head() = h;\n\t\t\t*fixture.mut_len() = l;\n\n\t\t\tif l == 0 {\n\t\t\t\tassert_matches!(fixture.tail_index(), Err(Error::Empty));\n\t\t\t} else {\n\t\t\t\tassert_eq!(\n\t\t\t\t\tfixture.tail_index().unwrap(),\n\t\t\t\t\texpected_virtual_to_real(capacity, l - 1, h)\n\t\t\t\t);\n\t\t\t}\n\t\t}\n\t}\n\n\tfn enqueue_index_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor i in 0..capacity {\n\t\t\tassert_eq!(*fixture.mut_len(), i);\n\t\t\tassert_eq!(*fixture.mut_head(), 0);\n\t\t\tfixture.enqueue_index();\n\t\t}\n\n\t\tfor i in 0..capacity {\n\t\t\tassert_eq!(*fixture.mut_len(), capacity);\n\t\t\tassert_eq!(*fixture.mut_head(), i);\n\t\t\tfixture.enqueue_index();\n\t\t}\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn dequeue_index_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\t\tassert_matches!(fixture.dequeue_index(), Err(Error::Empty));\n\n\t\t*fixture.mut_len() = capacity;\n\n\t\tfor i in 0..capacity {\n\t\t\tassert_eq!(*fixture.mut_head(), i);\n\t\t\tassert_eq!(*fixture.mut_len(), capacity - i);\n\t\t\tfixture.dequeue_index().unwrap();\n\t\t}\n\n\t\tassert_eq!(*fixture.mut_head(), 0);\n\t\tassert_eq!(*fixture.mut_len(), 0);\n\n\t\tassert_matches!(fixture.dequeue_index(), Err(Error::Empty));\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn pop_index_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tassert_matches!(fixture.pop_index(), Err(Error::Empty));\n\n\t\t*fixture.mut_len() = capacity;\n\n\t\tfor i in 0..capacity {\n\t\t\tassert_eq!(*fixture.mut_len(), capacity - i);\n\t\t\tassert_eq!(*fixture.mut_head(), 0);\n\t\t\tfixture.pop_index().unwrap();\n\t\t}\n\n\t\tassert_eq!(*fixture.mut_len(), 0);\n\t\tassert_eq!(*fixture.mut_head(), 0);\n\n\t\tassert_matches!(fixture.pop_index(), Err(Error::Empty));\n\t}\n\n\tfn real_to_virtual_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {\n\t\t\t*fixture.mut_head() = h;\n\t\t\t*fixture.mut_len() = l;\n\n\t\t\tif l == 0 {\n\t\t\t\tassert_matches!(\n\t\t\t\t\tfixture.real_to_virtual(0),\n\t\t\t\t\tErr(Error::IndexOutOfRange { index: _, len: _ })\n\t\t\t\t);\n\t\t\t}\n\n\t\t\tfor i in 0..l {\n\t\t\t\tif fixture.real_to_virtual(i).unwrap() != expected_real_to_virtual(capacity, i, h) {\n\t\t\t\t\tassert_eq!(\n\t\t\t\t\t\tfixture.real_to_virtual(i).unwrap(),\n\t\t\t\t\t\texpected_real_to_virtual(capacity, i, h)\n\t\t\t\t\t)\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\tfn virtual_to_real_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor h in 0..capacity {\n\t\t\tfor l in 0..=capacity {\n\t\t\t\t*fixture.mut_head() = h;\n\t\t\t\t*fixture.mut_len() = l;\n\n\t\t\t\tif l == 0 {\n\t\t\t\t\tassert_matches!(\n\t\t\t\t\t\tfixture.virtual_to_real(0),\n\t\t\t\t\t\tErr(Error::IndexOutOfRange { index: _, len: _ })\n\t\t\t\t\t);\n\t\t\t\t} else {\n\t\t\t\t\tfor i in 0..l {\n\t\t\t\t\t\tassert_eq!(\n\t\t\t\t\t\t\tfixture.virtual_to_real(i).unwrap(),\n\t\t\t\t\t\t\texpected_virtual_to_real(capacity, i, h),\n\t\t\t\t\t\t\t\"h:{} l:{} i:{}\",\n\t\t\t\t\t\t\th,\n\t\t\t\t\t\t\tl,\n\t\t\t\t\t\t\ti,\n\t\t\t\t\t\t);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn capacity_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {\n\t\t\t*fixture.mut_head() = h;\n\t\t\t*fixture.mut_len() = l;\n\t\t\tassert_eq!(fixture.capacity(), capacity);\n\t\t}\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn len_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {\n\t\t\t*fixture.mut_head() = h;\n\t\t\t*fixture.mut_len() = l;\n\t\t\tassert_eq!(fixture.len(), l);\n\t\t}\n\t}\n\n\tfn is_empty_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\t\tassert_eq!(*fixture.mut_len(), 0);\n\t\tassert!(fixture.is_empty());\n\n\t\tfor l in 1..=capacity {\n\t\t\t*fixture.mut_len() = l;\n\t\t\tassert!(!fixture.is_empty());\n\t\t}\n\t}\n\n\tfn is_full_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\n\t\tfor l in 0..capacity {\n\t\t\t*fixture.mut_len() = l;\n\t\t\tassert!(!fixture.is_full());\n\t\t}\n\n\t\t*fixture.mut_len() = capacity;\n\t\tassert!(fixture.is_full());\n\t}\n\n\tfn clone_test(capacity: usize) {\n\t\tlet mut fixture = Self::fixture(capacity);\n\t\t*fixture.mut_len() = 10;\n\t\t*fixture.mut_head() = 5;\n\n\t\tlet mut actual = fixture.clone();\n\t\tassert_eq!(*actual.mut_head(), 5);\n\t\tassert_eq!(*actual.mut_len(), 10);\n\t\tassert_eq!(*actual.mut_capacity(), capacity);\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/resizable/index_coordinator_tests.rs b/circular_buffer/src/resizable/index_coordinator_tests.rs
+--- a/circular_buffer/src/resizable/index_coordinator_tests.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/resizable/index_coordinator_tests.rs	(date 1780733255640)
+@@ -13,7 +13,8 @@
+ 
+ pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
+ 	fn fixture(capacity: usize) -> Self;
+-	fn mut_capacity(&mut self) -> &mut usize;
++	//fn mut_capacity(&mut self) -> &mut usize;
++	fn ref_capacity(&self) -> &usize;
+ 	fn mut_head(&mut self) -> &mut usize;
+ 	fn mut_len(&mut self) -> &mut usize;
+ 
+@@ -212,6 +213,6 @@
+ 		let mut actual = fixture.clone();
+ 		assert_eq!(*actual.mut_head(), 5);
+ 		assert_eq!(*actual.mut_len(), 10);
+-		assert_eq!(*actual.mut_capacity(), capacity);
++		assert_eq!(*actual.ref_capacity(), capacity);
+ 	}
+ }
+Index: circular_buffer/src/resizable/general_index_coordinator.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>use super::index_coordinator::IndexCoordinator;\nuse crate::error::*;\n\n#[derive(Clone, Debug)]\npub struct GeneralIndexCoordinator {\n\tcapacity: usize,\n\thead: usize,\n\tlen: usize,\n}\n\nimpl GeneralIndexCoordinator {\n\tpub fn new(capacity: usize) -> Self {\n\t\tSelf {\n\t\t\tcapacity,\n\t\t\thead: 0,\n\t\t\tlen: 0,\n\t\t}\n\t}\n}\n\nimpl IndexCoordinator for GeneralIndexCoordinator {\n\t//noinspection DuplicatedCode\n\tfn head_index(&self) -> Result<usize> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tOk(self.head)\n\t\t}\n\t}\n\n\tfn tail_index(&self) -> Result<usize> {\n\t\tif self.is_empty() {\n\t\t\tErr(crate::Error::Empty)\n\t\t} else {\n\t\t\tOk((self.head + self.len - 1) % self.capacity)\n\t\t}\n\t}\n\n\tfn enqueue_index(&mut self) {\n\t\tif self.len < self.capacity {\n\t\t\tself.len += 1;\n\t\t} else {\n\t\t\tself.head = (self.head + 1) % self.capacity;\n\t\t}\n\t}\n\n\tfn dequeue_index(&mut self) -> Result<()> {\n\t\tif self.is_empty() {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tself.head = (self.head + 1) % self.capacity;\n\t\t\tself.len -= 1;\n\t\t\tOk(())\n\t\t}\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn pop_index(&mut self) -> Result<()> {\n\t\tmatch self.len.checked_sub(1) {\n\t\t\tSome(len) => {\n\t\t\t\tself.len = len;\n\t\t\t\tOk(())\n\t\t\t}\n\t\t\tNone => Err(Error::Empty),\n\t\t}\n\t}\n\n\tfn real_to_virtual(&self, idx: usize) -> Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk((idx + self.capacity - self.head) % self.capacity)\n\t\t}\n\t}\n\n\tfn virtual_to_real(&self, idx: usize) -> Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk((idx + self.head) % self.capacity)\n\t\t}\n\t}\n\n\tfn capacity(&self) -> usize {\n\t\tself.capacity\n\t}\n\n\tfn len(&self) -> usize {\n\t\tself.len\n\t}\n}\n\n#[cfg(test)]\npub(crate) mod ext_impl {\n\tuse crate::resizable::GeneralIndexCoordinator;\n\tuse crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;\n\n\timpl IndexCoordinatorTestExtension for GeneralIndexCoordinator {\n\t\tfn fixture(capacity: usize) -> Self {\n\t\t\tSelf {\n\t\t\t\tcapacity,\n\t\t\t\thead: 0,\n\t\t\t\tlen: 0,\n\t\t\t}\n\t\t}\n\n\t\tfn mut_capacity(&mut self) -> &mut usize {\n\t\t\t&mut self.capacity\n\t\t}\n\n\t\tfn mut_head(&mut self) -> &mut usize {\n\t\t\t&mut self.head\n\t\t}\n\n\t\tfn mut_len(&mut self) -> &mut usize {\n\t\t\t&mut self.len\n\t\t}\n\t}\n}\n\n#[cfg(test)]\nmod test {\n\tuse super::super::index_coordinator_tests::IndexCoordinatorTestExtension;\n\tuse super::*;\n\n\tconst CAPACITY: usize = 10;\n\ttype Fixture = GeneralIndexCoordinator;\n\n\t#[test]\n\tfn new() {\n\t\tlet fixture = GeneralIndexCoordinator::new(10);\n\t\tassert_eq!(fixture.capacity(), 10);\n\t\tassert_eq!(fixture.head, 0);\n\t\tassert_eq!(fixture.len, 0);\n\t}\n\n\t#[test]\n\tfn head_index() {\n\t\tFixture::head_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn tail_index() {\n\t\tFixture::tail_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn enqueue_index() {\n\t\tFixture::enqueue_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn dequeue_index() {\n\t\tFixture::dequeue_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn pop_index() {\n\t\tFixture::pop_index_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn real_to_virtual() {\n\t\tFixture::real_to_virtual_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn virtual_to_real() {\n\t\tFixture::virtual_to_real_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn capacity() {\n\t\tFixture::capacity_test(CAPACITY);\n\t}\n\n\t#[test]\n\tfn len() {\n\t\tFixture::len_test(CAPACITY)\n\t}\n\n\t#[test]\n\tfn is_empty() {\n\t\tFixture::is_empty_test(CAPACITY)\n\t}\n\n\t#[test]\n\tfn is_full() {\n\t\tFixture::is_full_test(CAPACITY)\n\t}\n\n\t#[test]\n\tfn clone() {\n\t\tFixture::clone_test(CAPACITY);\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/resizable/general_index_coordinator.rs b/circular_buffer/src/resizable/general_index_coordinator.rs
+--- a/circular_buffer/src/resizable/general_index_coordinator.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/resizable/general_index_coordinator.rs	(date 1780733293406)
+@@ -110,8 +110,8 @@
+ 			}
+ 		}
+ 
+-		fn mut_capacity(&mut self) -> &mut usize {
+-			&mut self.capacity
++		fn ref_capacity(&self) -> &usize {
++			&self.capacity
+ 		}
+ 
+ 		fn mut_head(&mut self) -> &mut usize {
+Index: circular_buffer/src/fixed/general_index_coordinator.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>use super::index_coordinator::IndexCoordinator;\nuse crate::Error;\n\n#[derive(Clone, Debug)]\npub struct GeneralIndexCoordinator<const N: usize> {\n\thead: usize,\n\tlen: usize,\n}\n\nimpl<const N: usize> Default for GeneralIndexCoordinator<N> {\n\tfn default() -> Self {\n\t\tGeneralIndexCoordinator { head: 0, len: 0 }\n\t}\n}\n\nimpl<const N: usize> IndexCoordinator<N> for GeneralIndexCoordinator<N> {\n\tfn head_index(&self) -> crate::Result<usize> {\n\t\tif self.is_empty() {\n\t\t\tErr(crate::Error::Empty)\n\t\t} else {\n\t\t\tOk(self.head)\n\t\t}\n\t}\n\n\tfn tail_index(&self) -> crate::Result<usize> {\n\t\tif self.is_empty() {\n\t\t\tErr(crate::Error::Empty)\n\t\t} else {\n\t\t\tOk((self.head + self.len - 1) % N)\n\t\t}\n\t}\n\n\tfn enqueue_index(&mut self) {\n\t\tif self.len < N {\n\t\t\tself.len += 1;\n\t\t} else {\n\t\t\tself.head = (self.head + 1) % N;\n\t\t}\n\t}\n\n\tfn dequeue_index(&mut self) -> crate::Result<()> {\n\t\tif self.is_empty() {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tself.head = (self.head + 1) % N;\n\t\t\tself.len -= 1;\n\t\t\tOk(())\n\t\t}\n\t}\n\n\tfn pop_index(&mut self) -> crate::Result<()> {\n\t\tmatch self.len.checked_sub(1) {\n\t\t\tSome(len) => {\n\t\t\t\tself.len = len;\n\t\t\t\tOk(())\n\t\t\t}\n\t\t\tNone => Err(Error::Empty),\n\t\t}\n\t}\n\n\tfn real_to_virtual(&self, idx: usize) -> crate::Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk((idx + N - self.head) % N)\n\t\t}\n\t}\n\n\tfn virtual_to_real(&self, idx: usize) -> crate::Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk((idx + self.head) % N)\n\t\t}\n\t}\n\n\tfn capacity(&self) -> usize {\n\t\tN\n\t}\n\n\tfn len(&self) -> usize {\n\t\tself.len\n\t}\n}\n\n#[cfg(test)]\nmod test {\n\tuse super::super::index_coordinator_test as tests;\n\tuse super::*;\n\n\tconst CAPACITY: usize = 10;\n\ttype Fixture = GeneralIndexCoordinator<CAPACITY>;\n\n\timpl tests::IndexCoordinatorTestExtensions<CAPACITY> for GeneralIndexCoordinator<CAPACITY> {\n\t\tfn mut_len(&mut self) -> &mut usize {\n\t\t\t&mut self.len\n\t\t}\n\n\t\tfn mut_head(&mut self) -> &mut usize {\n\t\t\t&mut self.head\n\t\t}\n\n\t\tfn fixture() -> Self {\n\t\t\tSelf { head: 0, len: 0 }\n\t\t}\n\t}\n\n\t#[test]\n\tfn default() {\n\t\ttests::default::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn head_index() {\n\t\ttests::head_index::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn tail_index() {\n\t\ttests::tail_index::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn enqueue_index() {\n\t\ttests::enqueue_index::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn dequeue_index() {\n\t\ttests::dequeue_index::<CAPACITY, Fixture>()\n\t}\n\n\t#[test]\n\tfn pop_index() {\n\t\ttests::pop_index::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn real_to_virtual() {\n\t\ttests::real_to_virtual::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn virtual_to_real() {\n\t\ttests::virtual_to_real::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn capacity() {\n\t\ttests::capacity::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn len() {\n\t\ttests::len::<CAPACITY, Fixture>();\n\t}\n\n\t#[test]\n\tfn is_empty() {\n\t\ttests::is_empty::<CAPACITY, Fixture>()\n\t}\n\n\t#[test]\n\tfn is_full() {\n\t\ttests::is_full::<CAPACITY, Fixture>()\n\t}\n\n\t#[test]\n\tfn clone() {\n\t\ttests::clone::<CAPACITY, Fixture>();\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/fixed/general_index_coordinator.rs b/circular_buffer/src/fixed/general_index_coordinator.rs
+--- a/circular_buffer/src/fixed/general_index_coordinator.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/fixed/general_index_coordinator.rs	(date 1780733648721)
+@@ -7,9 +7,19 @@
+ 	len: usize,
+ }
+ 
++impl<const N: usize> GeneralIndexCoordinator<N> {
++	const CHECK: () = assert!(N != 0);
++
++	#[allow(clippy::let_unit_value)]
++	fn new() -> Self {
++		_ = Self::CHECK;
++		Self { head: 0, len: 0 }
++	}
++}
++
+ impl<const N: usize> Default for GeneralIndexCoordinator<N> {
+ 	fn default() -> Self {
+-		GeneralIndexCoordinator { head: 0, len: 0 }
++		GeneralIndexCoordinator::new()
+ 	}
+ }
+ 
+Index: circular_buffer/src/resizable.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>mod buffer;\nmod general_index_coordinator;\nmod index_coordinator;\nmod index_coordinator_tests;\nmod iter;\nmod iter_mut;\nmod pow2_index_coordinator;\nmod selector;\n\npub use general_index_coordinator::GeneralIndexCoordinator;\npub use index_coordinator::IndexCoordinator;\npub use pow2_index_coordinator::Pow2IndexCoordinator;\n\n#[cfg(test)]\npub(super) use general_index_coordinator::ext_impl as general_ext;\n\n#[cfg(test)]\npub(super) use pow2_index_coordinator::ext_impl as pow2_ext;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/resizable.rs b/circular_buffer/src/resizable.rs
+--- a/circular_buffer/src/resizable.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/resizable.rs	(date 1780732959420)
+@@ -10,6 +10,7 @@
+ pub use general_index_coordinator::GeneralIndexCoordinator;
+ pub use index_coordinator::IndexCoordinator;
+ pub use pow2_index_coordinator::Pow2IndexCoordinator;
++pub use selector::CoordinatorSelector;
+ 
+ #[cfg(test)]
+ pub(super) use general_index_coordinator::ext_impl as general_ext;
+Index: circular_buffer/src/fixed/pow2_index_coordinator.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>use crate::error::*;\nuse crate::fixed::index_coordinator::IndexCoordinator;\n\n#[derive(Clone)]\npub struct Pow2IndexCoordinator<const N: usize> {\n\thead: usize,\n\tlen: usize,\n}\n\nimpl<const N: usize> Pow2IndexCoordinator<N> {\n\tconst CHECK: () = assert!(N.count_ones() == 1);\n\tconst MASK: usize = N - 1;\n\n\t#[allow(clippy::let_unit_value)]\n\tpub fn new() -> Self {\n\t\t_ = Self::CHECK;\n\t\tSelf { head: 0, len: 0 }\n\t}\n}\n\nimpl<const N: usize> Default for Pow2IndexCoordinator<N> {\n\tfn default() -> Self {\n\t\tSelf::new()\n\t}\n}\n\nimpl<const N: usize> IndexCoordinator<N> for Pow2IndexCoordinator<N> {\n\t//noinspection DuplicatedCode\n\tfn head_index(&self) -> Result<usize> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tOk(self.head)\n\t\t}\n\t}\n\n\tfn tail_index(&self) -> Result<usize> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tOk((self.head + self.len - 1) & Self::MASK)\n\t\t}\n\t}\n\n\tfn enqueue_index(&mut self) {\n\t\tif self.len < N {\n\t\t\tself.len += 1;\n\t\t} else {\n\t\t\tself.head = (self.head + 1) & Self::MASK;\n\t\t}\n\t}\n\n\tfn dequeue_index(&mut self) -> Result<()> {\n\t\tif self.len == 0 {\n\t\t\tErr(Error::Empty)\n\t\t} else {\n\t\t\tself.head = (self.head + 1) & Self::MASK;\n\t\t\tself.len -= 1;\n\t\t\tOk(())\n\t\t}\n\t}\n\n\t//noinspection DuplicatedCode\n\tfn pop_index(&mut self) -> Result<()> {\n\t\tmatch self.len.checked_sub(1) {\n\t\t\tSome(len) => {\n\t\t\t\tself.len = len;\n\t\t\t\tOk(())\n\t\t\t}\n\t\t\tNone => Err(Error::Empty),\n\t\t}\n\t}\n\n\tfn real_to_virtual(&self, idx: usize) -> Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk(idx.wrapping_sub(self.head) & Self::MASK)\n\t\t}\n\t}\n\n\tfn virtual_to_real(&self, idx: usize) -> Result<usize> {\n\t\tif self.len <= idx {\n\t\t\tErr(Error::IndexOutOfRange {\n\t\t\t\tindex: idx,\n\t\t\t\tlen: self.len,\n\t\t\t})\n\t\t} else {\n\t\t\tOk((idx + self.head) & Self::MASK)\n\t\t}\n\t}\n\n\tfn capacity(&self) -> usize {\n\t\tN\n\t}\n\n\tfn len(&self) -> usize {\n\t\tself.len\n\t}\n}\n\n#[cfg(test)]\nmod tests {\n\tuse super::super::index_coordinator_test as tests;\n\tuse super::*;\n\tuse crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;\n\timpl<const N: usize> IndexCoordinatorTestExtensions<N> for Pow2IndexCoordinator<N> {\n\t\tfn mut_len(&mut self) -> &mut usize {\n\t\t\t&mut self.len\n\t\t}\n\n\t\tfn mut_head(&mut self) -> &mut usize {\n\t\t\t&mut self.head\n\t\t}\n\n\t\tfn fixture() -> Self {\n\t\t\tSelf { head: 0, len: 0 }\n\t\t}\n\t}\n\n\tconst BASE: usize = 8;\n\n\ttype Fixture = Pow2IndexCoordinator<BASE>;\n\n\t#[test]\n\tfn new() {\n\t\tlet fixture = Fixture::new();\n\t\tassert_eq!(fixture.head, 0);\n\t\tassert_eq!(fixture.len, 0);\n\t}\n\n\t#[test]\n\tfn default() {\n\t\ttests::default::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn head_index() {\n\t\ttests::head_index::<BASE, Fixture>()\n\t}\n\n\t#[test]\n\tfn tail_index() {\n\t\ttests::tail_index::<BASE, Fixture>()\n\t}\n\n\t#[test]\n\tfn enqueue_index() {\n\t\ttests::enqueue_index::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn dequeue_index() {\n\t\ttests::dequeue_index::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn pop_index() {\n\t\ttests::pop_index::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn real_to_virtual() {\n\t\ttests::real_to_virtual::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn virtual_to_real() {\n\t\ttests::virtual_to_real::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn capacity() {\n\t\ttests::capacity::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn len() {\n\t\ttests::len::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn is_empty() {\n\t\ttests::is_empty::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn is_full() {\n\t\ttests::is_full::<BASE, Fixture>();\n\t}\n\n\t#[test]\n\tfn clone() {\n\t\ttests::clone::<BASE, Fixture>();\n\t}\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/circular_buffer/src/fixed/pow2_index_coordinator.rs b/circular_buffer/src/fixed/pow2_index_coordinator.rs
+--- a/circular_buffer/src/fixed/pow2_index_coordinator.rs	(revision 07c28f7209ad5529ce0c38708cff9d32d1f58f07)
++++ b/circular_buffer/src/fixed/pow2_index_coordinator.rs	(date 1780733655338)
+@@ -8,11 +8,11 @@
+ }
+ 
+ impl<const N: usize> Pow2IndexCoordinator<N> {
+-	const CHECK: () = assert!(N.count_ones() == 1);
++	const CHECK: () = assert!(N.count_ones() == 1 && N != 0);
+ 	const MASK: usize = N - 1;
+ 
+ 	#[allow(clippy::let_unit_value)]
+-	pub fn new() -> Self {
++	fn new() -> Self {
+ 		_ = Self::CHECK;
+ 		Self { head: 0, len: 0 }
+ 	}
+Index: playground/src/bin/enum_survey.rs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/playground/src/bin/enum_survey.rs b/playground/src/bin/enum_survey.rs
+new file mode 100644
+--- /dev/null	(date 1780732895734)
++++ b/playground/src/bin/enum_survey.rs	(date 1780732895734)
+@@ -0,0 +1,19 @@
++#[derive(Debug)]
++pub enum Sample {
++	Integer(i64),
++	Text(String),
++}
++
++fn main() {
++	let mut s = Sample::Integer(10);
++	println!("{:?}", s);
++	change(&mut s);
++	println!("{:?}", s);
++}
++
++fn change(sample: &mut Sample) {
++	*sample = match sample {
++		Sample::Integer(_) => Sample::Text("text".to_string()),
++		Sample::Text(_) => Sample::Integer(42),
++	};
++}
