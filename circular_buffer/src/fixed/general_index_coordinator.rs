@@ -111,14 +111,11 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 impl<const N: usize> FixedIndexCoordinator<N> for GeneralIndexCoordinator<N> {}
 
 #[cfg(test)]
-mod test {
-	use super::super::index_coordinator_test as tests;
+pub(crate) mod test_extensions {
 	use super::*;
+	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 
-	const CAPACITY: usize = 10;
-	type Fixture = GeneralIndexCoordinator<CAPACITY>;
-
-	impl tests::IndexCoordinatorTestExtensions<CAPACITY> for GeneralIndexCoordinator<CAPACITY> {
+	impl<const N: usize> IndexCoordinatorTestExtensions<N> for GeneralIndexCoordinator<N> {
 		fn mut_len(&mut self) -> &mut usize {
 			&mut self.len
 		}
@@ -131,6 +128,15 @@ mod test {
 			Self { head: 0, len: 0 }
 		}
 	}
+}
+
+#[cfg(test)]
+mod test {
+	use super::super::index_coordinator_test as tests;
+	use super::*;
+
+	const CAPACITY: usize = 10;
+	type Fixture = GeneralIndexCoordinator<CAPACITY>;
 
 	#[test]
 	fn default() {

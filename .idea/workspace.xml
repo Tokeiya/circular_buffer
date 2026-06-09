@@ -14,16 +14,11 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Rename `IndexCoordinator` to `FixedIndexCoordinator`, update trait references across modules, refactor implementations for `GeneralIndexCoordinator` and `Pow2IndexCoordinator`, and adjust related tests and `.idea` configurations.">
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/buffer.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/general_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/general_index_coordinator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/index_coordinator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/index_coordinator_tests.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/index_coordinator_tests.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/iter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/iter.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/iter_mut.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/iter_mut.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/pow2_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/pow2_index_coordinator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/resizable/selector.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/resizable/selector.rs" afterDir="false" />
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations.">
+      <change afterPath="$PROJECT_DIR$/circular_buffer/src/iter.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/lib.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +31,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="57" />
+    <option name="cachedIndexableFilesCount" value="59" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
@@ -62,61 +57,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="5.891331659025874E-103" />
-      <entry key="MS500" value="3.6002040207142295E-21" />
-      <entry key="S2" value="1.8257463424053345E-5" />
-      <entry key="S5" value="0.04755668679345384" />
-      <entry key="S10" value="0.7339153199863475" />
-      <entry key="S30" value="5.733058490047017" />
-      <entry key="S60" value="11.433484154406898" />
-      <entry key="M2" value="20.226310695266154" />
-      <entry key="M5" value="42.84911627083531" />
-      <entry key="M10" value="66.94145644202418" />
-      <entry key="M15" value="80.29786505696809" />
-      <entry key="M30" value="98.07408744282448" />
-      <entry key="H1" value="109.1911040169532" />
-      <entry key="H2" value="120.27079857990631" />
-      <entry key="H4" value="166.35280855507952" />
-      <entry key="D1" value="442.0464320445812" />
-      <entry key="W1" value="566.911642361351" />
+      <entry key="MS100" value="1.000000000223346" />
+      <entry key="MS500" value="1.0118705268791357" />
+      <entry key="S2" value="1.435365562328814" />
+      <entry key="S5" value="2.0495811949519944" />
+      <entry key="S10" value="2.4649268706885326" />
+      <entry key="S30" value="3.326504176881375" />
+      <entry key="S60" value="5.483604340759719" />
+      <entry key="M2" value="10.797614480724095" />
+      <entry key="M5" value="23.107105787911728" />
+      <entry key="M10" value="38.05209980794335" />
+      <entry key="M15" value="50.996016699560876" />
+      <entry key="M30" value="91.49874825680047" />
+      <entry key="H1" value="179.5516627410861" />
+      <entry key="H2" value="312.8086443619888" />
+      <entry key="H4" value="464.3448568887131" />
+      <entry key="D1" value="893.179878262944" />
+      <entry key="W1" value="1078.2747179018947" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0000550546553753" />
-      <entry key="S5" value="1.0376563347982486" />
-      <entry key="S10" value="1.3534760387131235" />
-      <entry key="S30" value="3.1175255248439653" />
-      <entry key="S60" value="4.9087280231492265" />
-      <entry key="M2" value="7.492724975971403" />
-      <entry key="M5" value="16.340904059242334" />
-      <entry key="M10" value="26.378053479229717" />
-      <entry key="M15" value="31.803404324152336" />
-      <entry key="M30" value="38.83846897644304" />
-      <entry key="H1" value="43.140430388371364" />
-      <entry key="H2" value="47.79891598491944" />
-      <entry key="H4" value="69.40605582491456" />
-      <entry key="D1" value="201.1275265306119" />
-      <entry key="W1" value="260.9709330584014" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="4.4796460016447454E-92" />
+      <entry key="S2" value="1.455878290796365E-23" />
+      <entry key="S5" value="7.736947371705579E-10" />
+      <entry key="S10" value="3.365113030060641E-5" />
+      <entry key="S30" value="0.05778655444802238" />
+      <entry key="S60" value="0.4575198702979139" />
+      <entry key="M2" value="1.542728078072195" />
+      <entry key="M5" value="4.3746587558369585" />
+      <entry key="M10" value="8.276174371717328" />
+      <entry key="M15" value="12.138789060717244" />
+      <entry key="M30" value="25.494138776307036" />
+      <entry key="H1" value="54.96214243020569" />
+      <entry key="H2" value="99.95398176415932" />
+      <entry key="H4" value="154.58262473137398" />
+      <entry key="D1" value="336.98859428927557" />
+      <entry key="W1" value="420.7696160235251" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="3.0097433608806125E-5" />
-      <entry key="MS500" value="0.12465390641900867" />
-      <entry key="S2" value="0.5942515250386583" />
-      <entry key="S5" value="0.8932934260647852" />
-      <entry key="S10" value="1.9690715598028123" />
-      <entry key="S30" value="8.765422495749792" />
-      <entry key="S60" value="16.26697756213809" />
-      <entry key="M2" value="27.656571913590685" />
-      <entry key="M5" value="59.13492535928452" />
-      <entry key="M10" value="93.27514853632483" />
-      <entry key="M15" value="112.0655951466156" />
-      <entry key="M30" value="136.89073985125356" />
-      <entry key="H1" value="152.31939965208397" />
-      <entry key="H2" value="168.06283038353487" />
-      <entry key="H4" value="235.75318077166008" />
-      <entry key="D1" value="643.1706751269531" />
-      <entry key="W1" value="827.881953886018" />
+      <entry key="MS100" value="0.9395227492249639" />
+      <entry key="MS500" value="0.9941213654709167" />
+      <entry key="S2" value="1.3787637024841002" />
+      <entry key="S5" value="1.9991545724700823" />
+      <entry key="S10" value="2.431113309252356" />
+      <entry key="S30" value="3.3651613974467174" />
+      <entry key="S60" value="5.916203204889053" />
+      <entry key="M2" value="12.308989213398666" />
+      <entry key="M5" value="27.450740962540458" />
+      <entry key="M10" value="46.29985116169137" />
+      <entry key="M15" value="63.107492171529984" />
+      <entry key="M30" value="116.96550069733296" />
+      <entry key="H1" value="234.48612245363728" />
+      <entry key="H2" value="412.7388167932279" />
+      <entry key="H4" value="618.9097650528627" />
+      <entry key="D1" value="1230.1623033861172" />
+      <entry key="W1" value="1499.0432404177245" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -132,6 +127,10 @@
   "keyToString": {
     "Cargo.Test buffer::tests (1).executor": "Run",
     "Cargo.Test buffer::tests.executor": "Run",
+    "Cargo.Test iter::test.executor": "Run",
+    "Cargo.Test iter::test::len_size_hint.executor": "Run",
+    "Cargo.Test iter::test::next.executor": "Run",
+    "Cargo.Test iter::test::next_back.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_enqueue.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_mut_drop_test.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_mut_read_write.executor": "Run",
@@ -170,43 +169,9 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="tool" value="Clippy" />
   </component>
-  <component name="RunManager" selected="Cargo.Test resizable::buffer::tests::index_mut_drop_test">
+  <component name="RunManager" selected="Cargo.Test iter::test::next_back">
     <configuration name="Run enum_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="run --package playground --bin enum_survey" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Test buffer::tests (1)" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- fixed::buffer::tests" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Test buffer::tests" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- resizable::buffer::tests" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
       <option name="emulateTerminal" value="true" />
@@ -240,8 +205,59 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test resizable::buffer::tests::index_enqueue" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- resizable::buffer::tests::index_enqueue --exact" />
+    <configuration name="Test iter::test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package circular_buffer --lib -- iter::test" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test iter::test::len_size_hint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package circular_buffer --lib -- iter::test::len_size_hint --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test iter::test::next" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package circular_buffer --lib -- iter::test::next --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test iter::test::next_back" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package circular_buffer --lib -- iter::test::next_back --exact" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
       <option name="emulateTerminal" value="true" />
@@ -274,30 +290,13 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test resizable::buffer::tests::index_mut_read_write" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- resizable::buffer::tests::index_mut_read_write --exact" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test iter::test::next_back" />
+        <item itemvalue="Cargo.Test iter::test::len_size_hint" />
+        <item itemvalue="Cargo.Test iter::test" />
+        <item itemvalue="Cargo.Test iter::test::next" />
         <item itemvalue="Cargo.Test resizable::buffer::tests::index_mut_drop_test" />
-        <item itemvalue="Cargo.Test resizable::buffer::tests::index_mut_read_write" />
-        <item itemvalue="Cargo.Test resizable::buffer::tests::index_enqueue" />
-        <item itemvalue="Cargo.Test buffer::tests" />
-        <item itemvalue="Cargo.Test buffer::tests (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -317,7 +316,8 @@
       <workItem from="1780836165269" duration="1439000" />
       <workItem from="1780837621764" duration="4035000" />
       <workItem from="1780905458220" duration="3944000" />
-      <workItem from="1780925440066" duration="4190000" />
+      <workItem from="1780925440066" duration="8784000" />
+      <workItem from="1780976050841" duration="6141000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -383,7 +383,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780969071516</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations.">
+      <option name="closed" value="true" />
+      <created>1780969654854</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780969654854</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -398,6 +406,7 @@
     <MESSAGE value="Remove unused variable `c` in `buffer.rs` to simplify the code." />
     <MESSAGE value="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point." />
     <MESSAGE value="Rename `IndexCoordinator` to `FixedIndexCoordinator`, update trait references across modules, refactor implementations for `GeneralIndexCoordinator` and `Pow2IndexCoordinator`, and adjust related tests and `.idea` configurations." />
-    <option name="LAST_COMMIT_MESSAGE" value="Rename `IndexCoordinator` to `FixedIndexCoordinator`, update trait references across modules, refactor implementations for `GeneralIndexCoordinator` and `Pow2IndexCoordinator`, and adjust related tests and `.idea` configurations." />
+    <MESSAGE value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
+    <option name="LAST_COMMIT_MESSAGE" value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
   </component>
 </project>
