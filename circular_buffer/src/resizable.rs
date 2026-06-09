@@ -8,7 +8,7 @@ mod pow2_index_coordinator;
 mod selector;
 
 pub use general_index_coordinator::GeneralIndexCoordinator;
-pub use index_coordinator::IndexCoordinator;
+pub use index_coordinator::ResizableIndexCoordinator;
 pub use pow2_index_coordinator::Pow2IndexCoordinator;
 pub use selector::CoordinatorSelector;
 

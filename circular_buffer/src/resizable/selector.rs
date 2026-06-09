@@ -1,7 +1,8 @@
 use super::GeneralIndexCoordinator;
-use super::IndexCoordinator;
 use super::Pow2IndexCoordinator;
+use super::ResizableIndexCoordinator;
 use crate::error::*;
+use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone, Debug)]
 pub enum CoordinatorSelector {
@@ -89,6 +90,8 @@ impl IndexCoordinator for CoordinatorSelector {
 		}
 	}
 }
+
+impl ResizableIndexCoordinator for CoordinatorSelector {}
 
 #[cfg(test)]
 mod tests {

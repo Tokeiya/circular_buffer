@@ -1,5 +1,5 @@
 #![cfg(test)]
-use super::index_coordinator::IndexCoordinator;
+use super::index_coordinator::ResizableIndexCoordinator;
 use crate::error::*;
 use std::assert_matches;
 
@@ -11,7 +11,7 @@ fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize
 	(index + head) % capacity
 }
 
-pub(super) trait IndexCoordinatorTestExtension: IndexCoordinator + Sized {
+pub(super) trait IndexCoordinatorTestExtension: ResizableIndexCoordinator + Sized {
 	fn fixture(capacity: usize) -> Self;
 	fn ref_capacity(&self) -> &usize;
 	fn mut_head(&mut self) -> &mut usize;

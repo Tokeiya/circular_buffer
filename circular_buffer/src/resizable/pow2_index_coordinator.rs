@@ -1,5 +1,6 @@
 use crate::error::*;
-use crate::resizable::index_coordinator::IndexCoordinator;
+use crate::index_coordinator::IndexCoordinator;
+use crate::resizable::index_coordinator::ResizableIndexCoordinator;
 #[derive(Clone, Debug)]
 pub struct Pow2IndexCoordinator {
 	head: usize,
@@ -26,7 +27,6 @@ impl Pow2IndexCoordinator {
 }
 
 impl IndexCoordinator for Pow2IndexCoordinator {
-	//noinspection DuplicatedCode
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -101,6 +101,10 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 	fn len(&self) -> usize {
 		self.len
 	}
+}
+
+impl ResizableIndexCoordinator for Pow2IndexCoordinator {
+	//noinspection DuplicatedCode
 }
 
 #[cfg(test)]

@@ -1,5 +1,6 @@
-use super::index_coordinator::IndexCoordinator;
+use super::index_coordinator::ResizableIndexCoordinator;
 use crate::error::*;
+use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone, Debug)]
 pub struct GeneralIndexCoordinator {
@@ -99,6 +100,8 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		self.len
 	}
 }
+
+impl ResizableIndexCoordinator for GeneralIndexCoordinator {}
 
 #[cfg(test)]
 pub(crate) mod ext_impl {

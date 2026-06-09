@@ -1,20 +1,20 @@
 use super::iter::Iter;
 use super::iter_mut::IterMut;
 use crate::CircularBuffer;
-use crate::resizable::IndexCoordinator;
+use crate::resizable::ResizableIndexCoordinator;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 #[cfg(test)]
 use std::{cell::Cell, rc::Rc};
 
-pub struct Buffer<T, C: IndexCoordinator> {
+pub struct Buffer<T, C: ResizableIndexCoordinator> {
 	#[cfg(test)]
 	probe: Option<Rc<Cell<usize>>>,
 	pub(super) storage: Vec<MaybeUninit<T>>,
 	pub(super) coordinator: C,
 }
 
-impl<T, C: IndexCoordinator> Buffer<T, C> {
+impl<T, C: ResizableIndexCoordinator> Buffer<T, C> {
 	pub fn new(coordinator: C) -> Self {
 		Self {
 			#[cfg(test)]
@@ -25,7 +25,7 @@ impl<T, C: IndexCoordinator> Buffer<T, C> {
 	}
 }
 
-impl<T, C: IndexCoordinator> Index<usize> for Buffer<T, C> {
+impl<T, C: ResizableIndexCoordinator> Index<usize> for Buffer<T, C> {
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
@@ -36,7 +36,7 @@ impl<T, C: IndexCoordinator> Index<usize> for Buffer<T, C> {
 	}
 }
 
-impl<T, C: IndexCoordinator> IndexMut<usize> for Buffer<T, C> {
+impl<T, C: ResizableIndexCoordinator> IndexMut<usize> for Buffer<T, C> {
 	fn index_mut(&mut self, index: usize) -> &mut T {
 		match self.coordinator.virtual_to_real(index) {
 			Ok(i) => unsafe { self.storage.get_unchecked_mut(i).assume_init_mut() },
@@ -45,7 +45,7 @@ impl<T, C: IndexCoordinator> IndexMut<usize> for Buffer<T, C> {
 	}
 }
 
-impl<T, C: IndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
+impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	type Iter<'a>
 		= Iter<'a, T, C>
 	where
@@ -106,7 +106,7 @@ impl<T, C: IndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	}
 }
 
-impl<T, C: IndexCoordinator> Drop for Buffer<T, C> {
+impl<T, C: ResizableIndexCoordinator> Drop for Buffer<T, C> {
 	//noinspection DuplicatedCode
 	fn drop(&mut self) {
 		for i in 0..self.coordinator.len() {
@@ -127,6 +127,7 @@ impl<T, C: IndexCoordinator> Drop for Buffer<T, C> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::index_coordinator::IndexCoordinator;
 	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
