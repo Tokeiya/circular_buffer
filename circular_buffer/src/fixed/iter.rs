@@ -1,13 +1,13 @@
 use super::buffer::Buffer;
-use super::index_coordinator::IndexCoordinator;
+use super::index_coordinator::FixedIndexCoordinator;
 use std::iter::FusedIterator;
 
-pub struct Iter<'a, T, C: IndexCoordinator<N>, const N: usize> {
+pub struct Iter<'a, T, C: FixedIndexCoordinator<N>, const N: usize> {
 	backend: &'a Buffer<T, C, N>,
 	coordinator: C,
 }
 
-impl<'a, T, C: IndexCoordinator<N>, const N: usize> Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> Iter<'a, T, C, N> {
 	pub(super) fn new(item: &'a Buffer<T, C, N>) -> Self {
 		Self {
 			backend: item,
@@ -16,7 +16,7 @@ impl<'a, T, C: IndexCoordinator<N>, const N: usize> Iter<'a, T, C, N> {
 	}
 }
 
-impl<'a, T, C: IndexCoordinator<N>, const N: usize> Iterator for Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> Iterator for Iter<'a, T, C, N> {
 	type Item = &'a T;
 
 	fn next(&mut self) -> Option<Self::Item> {
@@ -35,13 +35,13 @@ impl<'a, T, C: IndexCoordinator<N>, const N: usize> Iterator for Iter<'a, T, C, 
 	}
 }
 
-impl<'a, T, C: IndexCoordinator<N>, const N: usize> ExactSizeIterator for Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> ExactSizeIterator for Iter<'a, T, C, N> {
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
 
-impl<'a, T, C: IndexCoordinator<N>, const N: usize> DoubleEndedIterator for Iter<'a, T, C, N> {
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> DoubleEndedIterator for Iter<'a, T, C, N> {
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.len() == 0 {
 			None
@@ -53,7 +53,7 @@ impl<'a, T, C: IndexCoordinator<N>, const N: usize> DoubleEndedIterator for Iter
 	}
 }
 
-impl<'a, T, C: IndexCoordinator<N>, const N: usize> FusedIterator for Iter<'a, T, C, N> {}
+impl<'a, T, C: FixedIndexCoordinator<N>, const N: usize> FusedIterator for Iter<'a, T, C, N> {}
 
 #[cfg(test)]
 mod test {

@@ -14,10 +14,15 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Remove unused variable `c` in `buffer.rs` to simplify the code.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/index_coordinator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/lib.rs" afterDir="false" />
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point.">
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/buffer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/buffer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/index_coordinator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/index_coordinator_test.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/index_coordinator_test.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/iter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/iter.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/iter_mut.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/iter_mut.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/pow2_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/pow2_index_coordinator.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,61 +61,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0000013071378082" />
-      <entry key="S5" value="1.0260632045433193" />
-      <entry key="S10" value="1.7461203991859078" />
-      <entry key="S30" value="8.09735145306594" />
-      <entry key="S60" value="13.490391099918297" />
-      <entry key="M2" value="17.574994236911355" />
-      <entry key="M5" value="20.64372817989917" />
-      <entry key="M10" value="21.788418735677944" />
-      <entry key="M15" value="22.184657884435886" />
-      <entry key="M30" value="22.588482814997242" />
-      <entry key="H1" value="22.86114092767635" />
-      <entry key="H2" value="28.332460910339904" />
-      <entry key="H4" value="73.00201818144335" />
-      <entry key="D1" value="346.13581931539994" />
-      <entry key="W1" value="468.4912802635754" />
+      <entry key="MS100" value="3.2026828689029033E-10" />
+      <entry key="MS500" value="0.012621262150150124" />
+      <entry key="S2" value="0.3351781571253221" />
+      <entry key="S5" value="0.6473066398237727" />
+      <entry key="S10" value="0.915457260224147" />
+      <entry key="S30" value="3.4291986383186197" />
+      <entry key="S60" value="7.302312746094958" />
+      <entry key="M2" value="14.448702684122988" />
+      <entry key="M5" value="32.577688507347624" />
+      <entry key="M10" value="47.735107972669184" />
+      <entry key="M15" value="54.91457981431106" />
+      <entry key="M30" value="63.560589833594356" />
+      <entry key="H1" value="68.5940357177061" />
+      <entry key="H2" value="76.35975116323722" />
+      <entry key="H4" value="121.34237089687915" />
+      <entry key="D1" value="395.49683638882993" />
+      <entry key="W1" value="519.1803356981263" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.8825796398096384E-157" />
-      <entry key="MS500" value="4.518046240967192E-32" />
-      <entry key="S2" value="1.4579333412093399E-8" />
-      <entry key="S5" value="7.336603812299804E-4" />
-      <entry key="S10" value="0.027086165864329714" />
-      <entry key="S30" value="0.3003187939455889" />
-      <entry key="S60" value="0.5480134979593009" />
-      <entry key="M2" value="0.740279337790338" />
-      <entry key="M5" value="0.8866623163976531" />
-      <entry key="M10" value="0.9416274828177288" />
-      <entry key="M15" value="0.9606962239745258" />
-      <entry key="M30" value="0.9801564285130997" />
-      <entry key="H1" value="1.0207812997312367" />
-      <entry key="H2" value="3.546950122348992" />
-      <entry key="H4" value="24.778719941077707" />
-      <entry key="D1" value="155.5500819435456" />
-      <entry key="W1" value="214.2404600706224" />
+      <entry key="MS100" value="1.0011146182049744" />
+      <entry key="MS500" value="1.3134710187080323" />
+      <entry key="S2" value="2.1999634152496124" />
+      <entry key="S5" value="2.6237534223280976" />
+      <entry key="S10" value="2.8274874441435776" />
+      <entry key="S30" value="3.860061368243704" />
+      <entry key="S60" value="6.55958768046765" />
+      <entry key="M2" value="12.501877654555528" />
+      <entry key="M5" value="23.065726979363223" />
+      <entry key="M10" value="29.623696073293136" />
+      <entry key="M15" value="32.37685840171599" />
+      <entry key="M30" value="35.48452756727152" />
+      <entry key="H1" value="37.21531136935317" />
+      <entry key="H2" value="40.501210833045974" />
+      <entry key="H4" value="61.70190977935666" />
+      <entry key="D1" value="192.79867465824051" />
+      <entry key="W1" value="252.09628927647776" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="7.338192542463046E-8" />
-      <entry key="MS500" value="0.03742120951934152" />
-      <entry key="S2" value="0.43982581341970245" />
-      <entry key="S5" value="0.7464899426494845" />
-      <entry key="S10" value="1.6179149815053258" />
-      <entry key="S30" value="8.332192146356288" />
-      <entry key="S60" value="14.000596899266057" />
-      <entry key="M2" value="18.294483588270086" />
-      <entry key="M5" value="21.521510900081868" />
-      <entry key="M10" value="22.72550151860703" />
-      <entry key="M15" value="23.14230011424679" />
-      <entry key="M30" value="23.56709991714871" />
-      <entry key="H1" value="23.881136836905974" />
-      <entry key="H2" value="31.878490666197948" />
-      <entry key="H4" value="97.77803346327224" />
-      <entry key="D1" value="501.68312477928606" />
-      <entry key="W1" value="682.7311939936523" />
+      <entry key="MS100" value="0.021678164823833345" />
+      <entry key="MS500" value="0.6362828084672971" />
+      <entry key="S2" value="2.1662010842159396" />
+      <entry key="S5" value="3.083772599207859" />
+      <entry key="S10" value="3.6351403660125254" />
+      <entry key="S30" value="7.205294082820567" />
+      <entry key="S60" value="13.770733075296004" />
+      <entry key="M2" value="26.857346044379067" />
+      <entry key="M5" value="55.5715070377454" />
+      <entry key="M10" value="77.31162549259768" />
+      <entry key="M15" value="87.2567781887752" />
+      <entry key="M30" value="99.02595558409504" />
+      <entry key="H1" value="105.79924832671563" />
+      <entry key="H2" value="116.85527908281463" />
+      <entry key="H4" value="183.03921212404444" />
+      <entry key="D1" value="588.2923369253434" />
+      <entry key="W1" value="771.2760203380566" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -311,7 +316,7 @@
       <workItem from="1780836165269" duration="1439000" />
       <workItem from="1780837621764" duration="4035000" />
       <workItem from="1780905458220" duration="3944000" />
-      <workItem from="1780925440066" duration="3220000" />
+      <workItem from="1780925440066" duration="3772000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -361,7 +366,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780926757439</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point.">
+      <option name="closed" value="true" />
+      <created>1780968551218</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780968551218</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -374,6 +387,7 @@
     <MESSAGE value="test unpassed." />
     <MESSAGE value="Refactor `should_panic` utility, replace redundant `catch_unwind` logic in tests, update indexing methods for `UsizeFixture`, and adjust `.idea` workspace configurations." />
     <MESSAGE value="Remove unused variable `c` in `buffer.rs` to simplify the code." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove unused variable `c` in `buffer.rs` to simplify the code." />
+    <MESSAGE value="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point." />
   </component>
 </project>

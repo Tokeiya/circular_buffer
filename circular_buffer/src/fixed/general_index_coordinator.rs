@@ -1,5 +1,6 @@
-use super::index_coordinator::IndexCoordinator;
+use super::index_coordinator::FixedIndexCoordinator;
 use crate::Error;
+use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone, Debug)]
 pub struct GeneralIndexCoordinator<const N: usize> {
@@ -23,7 +24,7 @@ impl<const N: usize> Default for GeneralIndexCoordinator<N> {
 	}
 }
 
-impl<const N: usize> IndexCoordinator<N> for GeneralIndexCoordinator<N> {
+impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 	fn head_index(&self) -> crate::Result<usize> {
 		if self.is_empty() {
 			Err(crate::Error::Empty)
@@ -97,7 +98,17 @@ impl<const N: usize> IndexCoordinator<N> for GeneralIndexCoordinator<N> {
 	fn len(&self) -> usize {
 		self.len
 	}
+
+	fn is_empty(&self) -> bool {
+		self.len == 0
+	}
+
+	fn is_full(&self) -> bool {
+		self.len == N
+	}
 }
+
+impl<const N: usize> FixedIndexCoordinator<N> for GeneralIndexCoordinator<N> {}
 
 #[cfg(test)]
 mod test {

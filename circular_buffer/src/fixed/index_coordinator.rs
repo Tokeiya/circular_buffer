@@ -1,38 +1,20 @@
 use super::super::error::*;
+use crate::index_coordinator::IndexCoordinator;
 
-pub trait IndexCoordinator<const N: usize>: Clone + Default {
-	fn head_index(&self) -> Result<usize>;
-	fn tail_index(&self) -> Result<usize>;
-	fn enqueue_index(&mut self);
-	fn dequeue_index(&mut self) -> Result<()>;
-	fn pop_index(&mut self) -> Result<()>;
-	fn real_to_virtual(&self, idx: usize) -> Result<usize>;
-	fn virtual_to_real(&self, idx: usize) -> Result<usize>;
-	fn capacity(&self) -> usize {
-		N
-	}
-	fn len(&self) -> usize;
-
-	fn is_empty(&self) -> bool {
-		self.len() == 0
-	}
-
-	fn is_full(&self) -> bool {
-		self.len() == N
-	}
-}
+pub trait FixedIndexCoordinator<const N: usize>: IndexCoordinator + Default {}
 
 #[cfg(test)]
 mod tests {
 	use super::*;
 	use crate::fixed::index_coordinator_test as tests;
+	use crate::index_coordinator::IndexCoordinator;
 
 	#[derive(Default, Clone)]
 	struct Dummy<const N: usize> {
 		pub len: usize,
 	}
 
-	impl<const N: usize> IndexCoordinator<N> for Dummy<N> {
+	impl<const N: usize> IndexCoordinator for Dummy<N> {
 		fn head_index(&self) -> Result<usize> {
 			unimplemented!()
 		}
@@ -53,11 +35,15 @@ mod tests {
 			unimplemented!()
 		}
 
-		fn real_to_virtual(&self, _: usize) -> Result<usize> {
+		fn real_to_virtual(&self, idx: usize) -> Result<usize> {
 			unimplemented!()
 		}
 
-		fn virtual_to_real(&self, _: usize) -> Result<usize> {
+		fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+			unimplemented!()
+		}
+
+		fn capacity(&self) -> usize {
 			unimplemented!()
 		}
 
@@ -65,6 +51,8 @@ mod tests {
 			self.len
 		}
 	}
+
+	impl<const N: usize> FixedIndexCoordinator<N> for Dummy<N> {}
 
 	impl<const N: usize> tests::IndexCoordinatorTestExtensions<N> for Dummy<N> {
 		fn mut_len(&mut self) -> &mut usize {
