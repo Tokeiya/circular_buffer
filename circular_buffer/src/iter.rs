@@ -1,13 +1,14 @@
 pub use super::IndexCoordinator;
 use std::iter::FusedIterator;
+use std::mem::MaybeUninit;
 
 pub struct Iter<'a, T, C: IndexCoordinator> {
-	buff: &'a [T],
+	buff: &'a [MaybeUninit<T>],
 	coordinator: C,
 }
 
 impl<'a, T, C: IndexCoordinator> Iter<'a, T, C> {
-	pub(crate) fn new(buff: &'a [T], coordinator: C) -> Self {
+	pub(crate) fn new(buff: &'a [MaybeUninit<T>], coordinator: C) -> Self {
 		Self { buff, coordinator }
 	}
 }
@@ -19,7 +20,8 @@ impl<'a, T, C: IndexCoordinator> Iterator for Iter<'a, T, C> {
 		if self.coordinator.len() == 0 {
 			None
 		} else {
-			let item = &self.buff[self.coordinator.head_index().unwrap()];
+			let item =
+				unsafe { self.buff[self.coordinator.head_index().unwrap()].assume_init_ref() };
 			self.coordinator.dequeue_index().unwrap();
 			Some(item)
 		}
@@ -42,7 +44,8 @@ impl<'a, T, C: IndexCoordinator> DoubleEndedIterator for Iter<'a, T, C> {
 		if self.coordinator.len() == 0 {
 			None
 		} else {
-			let item = &self.buff[self.coordinator.tail_index().unwrap()];
+			let item =
+				unsafe { self.buff[self.coordinator.tail_index().unwrap()].assume_init_ref() };
 			self.coordinator.pop_index().unwrap();
 			Some(item)
 		}
@@ -56,7 +59,8 @@ mod test {
 	use super::*;
 	use crate::fixed::GeneralIndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-	use std::alloc::handle_alloc_error;
+	use crate::resizable::CoordinatorSelector::Pow2;
+	use std::arch::x86_64::_mm256_fixupimm_ps;
 	use std::array::from_fn;
 
 	const SIZE: usize = 8;
@@ -64,8 +68,8 @@ mod test {
 
 	type Coordinator = GeneralIndexCoordinator<SIZE>;
 
-	fn gen_sample() -> [usize; SIZE] {
-		from_fn(|i| i)
+	fn gen_sample() -> [MaybeUninit<usize>; SIZE] {
+		from_fn(|i| MaybeUninit::new(i))
 	}
 
 	fn expected_real_to_virtual(capacity: usize, index: usize, head: usize) -> usize {
@@ -74,6 +78,24 @@ mod test {
 
 	fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {
 		(index + head) % capacity
+	}
+
+	#[test]
+	fn new() {
+		let scr = gen_sample();
+		let mut coordinator = Coordinator::default();
+		*coordinator.mut_head() = SIZE / 2;
+		*coordinator.mut_len() = SIZE;
+
+		let mut fixture = Iter::new(scr.as_slice(), coordinator.clone());
+
+		assert_eq!(*fixture.coordinator.mut_head(), SIZE / 2);
+		assert_eq!(*fixture.coordinator.mut_len(), SIZE);
+
+		for i in 0..SIZE {
+			let act = *unsafe { fixture.buff[i].assume_init_ref() };
+			assert_eq!(act, i);
+		}
 	}
 
 	#[test]
@@ -88,8 +110,8 @@ mod test {
 				*coordinator.mut_len() = len;
 
 				for e in scr.iter_mut() {
-					*e += offset;
-					*e &= MASK;
+					*unsafe { e.assume_init_mut() } += offset;
+					*unsafe { e.assume_init_mut() } &= MASK;
 				}
 
 				for (e, &a) in Iter::new(scr.as_slice(), coordinator.clone()).enumerate() {
@@ -123,7 +145,7 @@ mod test {
 
 	#[test]
 	fn next_back() {
-		let mut scr = gen_sample();
+		let scr = gen_sample();
 		let mut coordinator = Coordinator::default();
 
 		for (l, h) in (0..=SIZE).flat_map(|l| (0..SIZE).map(move |h| (l, h))) {
@@ -138,10 +160,40 @@ mod test {
 				let mut idx = l - 1;
 
 				while let Some(a) = iter.next_back() {
-					assert_eq!(a, &scr[expected_virtual_to_real(SIZE, idx, h)]);
+					assert_eq!(a, unsafe {
+						scr[expected_virtual_to_real(SIZE, idx, h)].assume_init_ref()
+					});
 					idx = idx.saturating_sub(1);
 				}
 			}
 		}
+	}
+
+	#[test]
+	fn complex() {
+		let mut scr = gen_sample();
+		let mut coordinator = Coordinator::default();
+
+		*coordinator.mut_head() = SIZE / 2;
+		*coordinator.mut_len() = SIZE;
+
+		for i in 0..SIZE {
+			scr[expected_virtual_to_real(SIZE, i, SIZE / 2)].write(i);
+		}
+
+		let mut iter = Iter::new(scr.as_slice(), coordinator.clone());
+
+		assert_eq!(iter.next(), Some(&0));
+		assert_eq!(iter.next_back(), Some(&7));
+		assert_eq!(iter.next(), Some(&1));
+		assert_eq!(iter.next_back(), Some(&6));
+		assert_eq!(iter.next(), Some(&2));
+		assert_eq!(iter.next_back(), Some(&5));
+		assert_eq!(iter.next(), Some(&3));
+		assert_eq!(iter.next_back(), Some(&4));
+		assert_eq!(iter.next(), None);
+		assert_eq!(iter.next_back(), None);
+		assert_eq!(iter.next(), None);
+		assert_eq!(iter.next_back(), None);
 	}
 }

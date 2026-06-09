@@ -4,6 +4,7 @@ pub mod fixed;
 
 mod index_coordinator;
 mod iter;
+mod iter_mut;
 pub mod resizable;
 #[cfg(test)]
 #[path = "../tests/drop_observe/mod.rs"]

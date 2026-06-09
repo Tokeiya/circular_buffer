@@ -14,10 +14,11 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations.">
-      <change afterPath="$PROJECT_DIR$/circular_buffer/src/iter.rs" afterDir="false" />
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Add `Iter` module to implement iterator traits for `CircularBuffer`, refactor `GeneralIndexCoordinator` test extensions, expand unit tests, and update `.idea` project configurations.">
+      <change afterPath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/iter_mut.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/iter_mut.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/iter.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/iter.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/circular_buffer/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/lib.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -57,61 +58,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.000000000223346" />
-      <entry key="MS500" value="1.0118705268791357" />
-      <entry key="S2" value="1.435365562328814" />
-      <entry key="S5" value="2.0495811949519944" />
-      <entry key="S10" value="2.4649268706885326" />
-      <entry key="S30" value="3.326504176881375" />
-      <entry key="S60" value="5.483604340759719" />
-      <entry key="M2" value="10.797614480724095" />
-      <entry key="M5" value="23.107105787911728" />
-      <entry key="M10" value="38.05209980794335" />
-      <entry key="M15" value="50.996016699560876" />
-      <entry key="M30" value="91.49874825680047" />
-      <entry key="H1" value="179.5516627410861" />
-      <entry key="H2" value="312.8086443619888" />
-      <entry key="H4" value="464.3448568887131" />
-      <entry key="D1" value="893.179878262944" />
-      <entry key="W1" value="1078.2747179018947" />
+      <entry key="MS100" value="1.2284578625573501" />
+      <entry key="MS500" value="1.7443239558718067" />
+      <entry key="S2" value="1.9627878910455827" />
+      <entry key="S5" value="2.2323105911934964" />
+      <entry key="S10" value="2.548332693485524" />
+      <entry key="S30" value="3.1811349353497675" />
+      <entry key="S60" value="3.8781248193621116" />
+      <entry key="M2" value="7.000608034231575" />
+      <entry key="M5" value="23.163062355464856" />
+      <entry key="M10" value="52.74650168090534" />
+      <entry key="M15" value="80.21850347780767" />
+      <entry key="M30" value="139.3927891450496" />
+      <entry key="H1" value="208.1926370850901" />
+      <entry key="H2" value="321.3737588683294" />
+      <entry key="H4" value="503.2521408654561" />
+      <entry key="D1" value="1081.6705678795777" />
+      <entry key="W1" value="1343.5813477694664" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="4.4796460016447454E-92" />
-      <entry key="S2" value="1.455878290796365E-23" />
-      <entry key="S5" value="7.736947371705579E-10" />
-      <entry key="S10" value="3.365113030060641E-5" />
-      <entry key="S30" value="0.05778655444802238" />
-      <entry key="S60" value="0.4575198702979139" />
-      <entry key="M2" value="1.542728078072195" />
-      <entry key="M5" value="4.3746587558369585" />
-      <entry key="M10" value="8.276174371717328" />
-      <entry key="M15" value="12.138789060717244" />
-      <entry key="M30" value="25.494138776307036" />
-      <entry key="H1" value="54.96214243020569" />
-      <entry key="H2" value="99.95398176415932" />
-      <entry key="H4" value="154.58262473137398" />
-      <entry key="D1" value="336.98859428927557" />
-      <entry key="W1" value="420.7696160235251" />
+      <entry key="MS100" value="7.711402801349261E-14" />
+      <entry key="MS500" value="0.0023846611575569034" />
+      <entry key="S2" value="0.22098215418020467" />
+      <entry key="S5" value="0.5490548780035452" />
+      <entry key="S10" value="0.7879962930358171" />
+      <entry key="S30" value="1.2708536138145816" />
+      <entry key="S60" value="1.6485630237566204" />
+      <entry key="M2" value="2.842284497901102" />
+      <entry key="M5" value="9.157992400636997" />
+      <entry key="M10" value="20.16515217618971" />
+      <entry key="M15" value="29.602335361791383" />
+      <entry key="M30" value="48.50417668729103" />
+      <entry key="H1" value="69.46234093468537" />
+      <entry key="H2" value="104.93641571832973" />
+      <entry key="H4" value="165.75340966709112" />
+      <entry key="D1" value="393.10972326480857" />
+      <entry key="W1" value="505.3219986880826" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9395227492249639" />
-      <entry key="MS500" value="0.9941213654709167" />
-      <entry key="S2" value="1.3787637024841002" />
-      <entry key="S5" value="1.9991545724700823" />
-      <entry key="S10" value="2.431113309252356" />
-      <entry key="S30" value="3.3651613974467174" />
-      <entry key="S60" value="5.916203204889053" />
-      <entry key="M2" value="12.308989213398666" />
-      <entry key="M5" value="27.450740962540458" />
-      <entry key="M10" value="46.29985116169137" />
-      <entry key="M15" value="63.107492171529984" />
-      <entry key="M30" value="116.96550069733296" />
-      <entry key="H1" value="234.48612245363728" />
-      <entry key="H2" value="412.7388167932279" />
-      <entry key="H4" value="618.9097650528627" />
-      <entry key="D1" value="1230.1623033861172" />
-      <entry key="W1" value="1499.0432404177245" />
+      <entry key="MS100" value="0.8708934453458649" />
+      <entry key="MS500" value="1.1754392141661623" />
+      <entry key="S2" value="1.7307981472911766" />
+      <entry key="S5" value="2.365451045067025" />
+      <entry key="S10" value="2.9869646616678995" />
+      <entry key="S30" value="3.9528336204873935" />
+      <entry key="S60" value="4.885627668901622" />
+      <entry key="M2" value="9.205753363257196" />
+      <entry key="M5" value="31.869119472533242" />
+      <entry key="M10" value="72.61043523194967" />
+      <entry key="M15" value="109.5900178684715" />
+      <entry key="M30" value="187.75643023022428" />
+      <entry key="H1" value="277.5724670575955" />
+      <entry key="H2" value="426.25991370424083" />
+      <entry key="H4" value="668.9733796399618" />
+      <entry key="D1" value="1474.7707983396037" />
+      <entry key="W1" value="1848.9017028127193" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -128,7 +129,9 @@
     "Cargo.Test buffer::tests (1).executor": "Run",
     "Cargo.Test buffer::tests.executor": "Run",
     "Cargo.Test iter::test.executor": "Run",
+    "Cargo.Test iter::test::complex.executor": "Run",
     "Cargo.Test iter::test::len_size_hint.executor": "Run",
+    "Cargo.Test iter::test::new.executor": "Run",
     "Cargo.Test iter::test::next.executor": "Run",
     "Cargo.Test iter::test::next_back.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_enqueue.executor": "Run",
@@ -169,7 +172,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="tool" value="Clippy" />
   </component>
-  <component name="RunManager" selected="Cargo.Test iter::test::next_back">
+  <component name="RunManager" selected="Cargo.Test iter::test">
     <configuration name="Run enum_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="run --package playground --bin enum_survey" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -222,6 +225,23 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test iter::test::complex" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package circular_buffer --lib -- iter::test::complex --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Test iter::test::len_size_hint" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="test --package circular_buffer --lib -- iter::test::len_size_hint --exact" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -239,8 +259,8 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test iter::test::next" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- iter::test::next --exact" />
+    <configuration name="Test iter::test::new" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="test --package circular_buffer --lib -- iter::test::new --exact" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
       <envs />
       <option name="emulateTerminal" value="true" />
@@ -273,30 +293,13 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test resizable::buffer::tests::index_mut_drop_test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- resizable::buffer::tests::index_mut_drop_test --exact" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test iter::test" />
+        <item itemvalue="Cargo.Test iter::test::new" />
+        <item itemvalue="Cargo.Test iter::test::complex" />
         <item itemvalue="Cargo.Test iter::test::next_back" />
         <item itemvalue="Cargo.Test iter::test::len_size_hint" />
-        <item itemvalue="Cargo.Test iter::test" />
-        <item itemvalue="Cargo.Test iter::test::next" />
-        <item itemvalue="Cargo.Test resizable::buffer::tests::index_mut_drop_test" />
       </list>
     </recent_temporary>
   </component>
@@ -317,7 +320,7 @@
       <workItem from="1780837621764" duration="4035000" />
       <workItem from="1780905458220" duration="3944000" />
       <workItem from="1780925440066" duration="8784000" />
-      <workItem from="1780976050841" duration="6141000" />
+      <workItem from="1780976050841" duration="10745000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -391,7 +394,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780969654854</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Add `Iter` module to implement iterator traits for `CircularBuffer`, refactor `GeneralIndexCoordinator` test extensions, expand unit tests, and update `.idea` project configurations.">
+      <option name="closed" value="true" />
+      <created>1780982456883</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780982456883</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -407,6 +418,7 @@
     <MESSAGE value="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point." />
     <MESSAGE value="Rename `IndexCoordinator` to `FixedIndexCoordinator`, update trait references across modules, refactor implementations for `GeneralIndexCoordinator` and `Pow2IndexCoordinator`, and adjust related tests and `.idea` configurations." />
     <MESSAGE value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
-    <option name="LAST_COMMIT_MESSAGE" value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
+    <MESSAGE value="Add `Iter` module to implement iterator traits for `CircularBuffer`, refactor `GeneralIndexCoordinator` test extensions, expand unit tests, and update `.idea` project configurations." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `Iter` module to implement iterator traits for `CircularBuffer`, refactor `GeneralIndexCoordinator` test extensions, expand unit tests, and update `.idea` project configurations." />
   </component>
 </project>
