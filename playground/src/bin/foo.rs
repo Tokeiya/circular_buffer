@@ -1,8 +1,11 @@
 fn main() {
-	let mut v = vec![1i32, 2, 3];
+	let mut integer = 42i32;
+	let mut_ref = &mut integer;
+	*mut_ref += 1;
 
-	let a = v[0];
-	v.push(10);
+	let mut string = String::from("Hello");
+	let mut_ref = &mut string;
+	mut_ref.push_str(", world!");
 
-	let b = v[0];
+	*mut_ref = String::from("hogemoge");
 }
