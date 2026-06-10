@@ -14,11 +14,9 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations.">
-      <change afterPath="$PROJECT_DIR$/circular_buffer/src/iter.rs" afterDir="false" />
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/fixed/general_index_coordinator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/bin/pointer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/bin/pointer.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +29,7 @@
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="59" />
+    <option name="cachedIndexableFilesCount" value="60" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
@@ -57,61 +55,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.000000000223346" />
-      <entry key="MS500" value="1.0118705268791357" />
-      <entry key="S2" value="1.435365562328814" />
-      <entry key="S5" value="2.0495811949519944" />
-      <entry key="S10" value="2.4649268706885326" />
-      <entry key="S30" value="3.326504176881375" />
-      <entry key="S60" value="5.483604340759719" />
-      <entry key="M2" value="10.797614480724095" />
-      <entry key="M5" value="23.107105787911728" />
-      <entry key="M10" value="38.05209980794335" />
-      <entry key="M15" value="50.996016699560876" />
-      <entry key="M30" value="91.49874825680047" />
-      <entry key="H1" value="179.5516627410861" />
-      <entry key="H2" value="312.8086443619888" />
-      <entry key="H4" value="464.3448568887131" />
-      <entry key="D1" value="893.179878262944" />
-      <entry key="W1" value="1078.2747179018947" />
+      <entry key="MS100" value="1.2314521165028987" />
+      <entry key="MS500" value="2.285240781573289" />
+      <entry key="S2" value="2.7897432485164524" />
+      <entry key="S5" value="2.91300470764618" />
+      <entry key="S10" value="2.956005064978287" />
+      <entry key="S30" value="2.985527523373685" />
+      <entry key="S60" value="3.0130793055598435" />
+      <entry key="M2" value="3.47602303241346" />
+      <entry key="M5" value="14.482805351289919" />
+      <entry key="M10" value="45.75257732496068" />
+      <entry key="M15" value="73.90885401962517" />
+      <entry key="M30" value="138.5792889719826" />
+      <entry key="H1" value="242.193822585728" />
+      <entry key="H2" value="390.71578662390226" />
+      <entry key="H4" value="558.9163767821166" />
+      <entry key="D1" value="1015.9485339992426" />
+      <entry key="W1" value="1211.190310148379" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="4.4796460016447454E-92" />
-      <entry key="S2" value="1.455878290796365E-23" />
-      <entry key="S5" value="7.736947371705579E-10" />
-      <entry key="S10" value="3.365113030060641E-5" />
-      <entry key="S30" value="0.05778655444802238" />
-      <entry key="S60" value="0.4575198702979139" />
-      <entry key="M2" value="1.542728078072195" />
-      <entry key="M5" value="4.3746587558369585" />
-      <entry key="M10" value="8.276174371717328" />
-      <entry key="M15" value="12.138789060717244" />
-      <entry key="M30" value="25.494138776307036" />
-      <entry key="H1" value="54.96214243020569" />
-      <entry key="H2" value="99.95398176415932" />
-      <entry key="H4" value="154.58262473137398" />
-      <entry key="D1" value="336.98859428927557" />
-      <entry key="W1" value="420.7696160235251" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="1.3131236548907726E-129" />
+      <entry key="S5" value="5.5557639721601405E-52" />
+      <entry key="S10" value="4.84222468031832E-26" />
+      <entry key="S30" value="1.3805171955737751E-8" />
+      <entry key="S60" value="3.975711378047044E-4" />
+      <entry key="M2" value="0.08126648874121972" />
+      <entry key="M5" value="2.580283342976542" />
+      <entry key="M10" value="9.710894014207408" />
+      <entry key="M15" value="16.355878979625587" />
+      <entry key="M30" value="33.470043154255514" />
+      <entry key="H1" value="64.91471673662156" />
+      <entry key="H2" value="113.00946508356341" />
+      <entry key="H4" value="171.88735579416024" />
+      <entry key="D1" value="362.55802960005815" />
+      <entry key="W1" value="449.98490295940996" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9395227492249639" />
-      <entry key="MS500" value="0.9941213654709167" />
-      <entry key="S2" value="1.3787637024841002" />
-      <entry key="S5" value="1.9991545724700823" />
-      <entry key="S10" value="2.431113309252356" />
-      <entry key="S30" value="3.3651613974467174" />
-      <entry key="S60" value="5.916203204889053" />
-      <entry key="M2" value="12.308989213398666" />
-      <entry key="M5" value="27.450740962540458" />
-      <entry key="M10" value="46.29985116169137" />
-      <entry key="M15" value="63.107492171529984" />
-      <entry key="M30" value="116.96550069733296" />
-      <entry key="H1" value="234.48612245363728" />
-      <entry key="H2" value="412.7388167932279" />
-      <entry key="H4" value="618.9097650528627" />
-      <entry key="D1" value="1230.1623033861172" />
-      <entry key="W1" value="1499.0432404177245" />
+      <entry key="MS100" value="0.77639307380688" />
+      <entry key="MS500" value="2.1157789227337824" />
+      <entry key="S2" value="2.7386213843456777" />
+      <entry key="S5" value="2.891703031576511" />
+      <entry key="S10" value="2.9452054964191756" />
+      <entry key="S30" value="2.9818875592104654" />
+      <entry key="S60" value="3.0114601647432924" />
+      <entry key="M2" value="3.554895995509936" />
+      <entry key="M5" value="17.05166169814337" />
+      <entry key="M10" value="55.44203412619589" />
+      <entry key="M15" value="90.23968719860738" />
+      <entry key="M30" value="172.0214728655867" />
+      <entry key="H1" value="307.08007357843144" />
+      <entry key="H2" value="503.70032585987997" />
+      <entry key="H4" value="730.7849580439936" />
+      <entry key="D1" value="1378.5000641547826" />
+      <entry key="W1" value="1661.1740630255165" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -123,44 +121,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Cargo.Test buffer::tests (1).executor": "Run",
-    "Cargo.Test buffer::tests.executor": "Run",
-    "Cargo.Test iter::test.executor": "Run",
-    "Cargo.Test iter::test::len_size_hint.executor": "Run",
-    "Cargo.Test iter::test::next.executor": "Run",
-    "Cargo.Test iter::test::next_back.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::index_enqueue.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::index_mut_drop_test.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::index_mut_read_write.executor": "Run",
-    "Cargo.Test resizable::buffer::tests::new.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "code.cleanup.on.save": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "initial__devel",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true",
-    "rearrange.code.on.save": "true",
-    "settings.editor.selected.configurable": "language.rust.cargo.check",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Test buffer::tests (1).executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test buffer::tests.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test iter::test.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test iter::test::len_size_hint.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test iter::test::next.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test iter::test::next_back.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::index_enqueue.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::index_mut_drop_test.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::index_mut_read_write.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Test resizable::buffer::tests::new.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;code.cleanup.on.save&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;initial__devel&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -318,6 +316,7 @@
       <workItem from="1780905458220" duration="3944000" />
       <workItem from="1780925440066" duration="8784000" />
       <workItem from="1780976050841" duration="6141000" />
+      <workItem from="1781060860331" duration="1995000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -391,7 +390,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780969654854</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait">
+      <option name="closed" value="true" />
+      <created>1781062198182</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1781062198183</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -407,6 +414,7 @@
     <MESSAGE value="Add `IndexCoordinator` trait to unify resizable and fixed iterators, update `.idea` workspace configurations, and adjust test setup.&#10;&#10;before broken change.(save point." />
     <MESSAGE value="Rename `IndexCoordinator` to `FixedIndexCoordinator`, update trait references across modules, refactor implementations for `GeneralIndexCoordinator` and `Pow2IndexCoordinator`, and adjust related tests and `.idea` configurations." />
     <MESSAGE value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
-    <option name="LAST_COMMIT_MESSAGE" value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
+    <MESSAGE value="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait" />
   </component>
 </project>

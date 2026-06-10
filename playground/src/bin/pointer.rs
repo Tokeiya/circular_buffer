@@ -6,7 +6,7 @@ struct IterMut<'a, T> {
 	pointer: *mut T,
 	len: usize,
 	capacity: usize,
-	_phantom: PhantomData<&'a T>,
+	_phantom: PhantomData<&'a mut T>,
 }
 
 impl<'a, T> IterMut<'a, T> {
