@@ -14,9 +14,10 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait">
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup.">
+      <change afterPath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/bin/pointer.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/bin/pointer.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/lib.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,61 +56,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.2314521165028987" />
-      <entry key="MS500" value="2.285240781573289" />
-      <entry key="S2" value="2.7897432485164524" />
-      <entry key="S5" value="2.91300470764618" />
-      <entry key="S10" value="2.956005064978287" />
-      <entry key="S30" value="2.985527523373685" />
-      <entry key="S60" value="3.0130793055598435" />
-      <entry key="M2" value="3.47602303241346" />
-      <entry key="M5" value="14.482805351289919" />
-      <entry key="M10" value="45.75257732496068" />
-      <entry key="M15" value="73.90885401962517" />
-      <entry key="M30" value="138.5792889719826" />
-      <entry key="H1" value="242.193822585728" />
-      <entry key="H2" value="390.71578662390226" />
-      <entry key="H4" value="558.9163767821166" />
-      <entry key="D1" value="1015.9485339992426" />
-      <entry key="W1" value="1211.190310148379" />
+      <entry key="MS100" value="3.0009613932869745E-8" />
+      <entry key="MS500" value="0.03137976515287154" />
+      <entry key="S2" value="0.6672652539257362" />
+      <entry key="S5" value="2.4278173846185807" />
+      <entry key="S10" value="5.3938793823771025" />
+      <entry key="S30" value="14.670012305333598" />
+      <entry key="S60" value="27.234224228213787" />
+      <entry key="M2" value="53.32596124441058" />
+      <entry key="M5" value="106.66459954640432" />
+      <entry key="M10" value="158.73005955094078" />
+      <entry key="M15" value="196.45094632470978" />
+      <entry key="M30" value="275.6916667488139" />
+      <entry key="H1" value="390.0279100932152" />
+      <entry key="H2" value="547.3444300702649" />
+      <entry key="H4" value="723.5518315180159" />
+      <entry key="D1" value="1192.9536118561762" />
+      <entry key="W1" value="1392.348851694487" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="1.3131236548907726E-129" />
-      <entry key="S5" value="5.5557639721601405E-52" />
-      <entry key="S10" value="4.84222468031832E-26" />
-      <entry key="S30" value="1.3805171955737751E-8" />
-      <entry key="S60" value="3.975711378047044E-4" />
-      <entry key="M2" value="0.08126648874121972" />
-      <entry key="M5" value="2.580283342976542" />
-      <entry key="M10" value="9.710894014207408" />
-      <entry key="M15" value="16.355878979625587" />
-      <entry key="M30" value="33.470043154255514" />
-      <entry key="H1" value="64.91471673662156" />
-      <entry key="H2" value="113.00946508356341" />
-      <entry key="H4" value="171.88735579416024" />
-      <entry key="D1" value="362.55802960005815" />
-      <entry key="W1" value="449.98490295940996" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000035705349846" />
+      <entry key="S2" value="1.0669532295464812" />
+      <entry key="S5" value="1.6417639950651521" />
+      <entry key="S10" value="2.6905750987275523" />
+      <entry key="S30" value="5.983305427559234" />
+      <entry key="S60" value="9.353725606242618" />
+      <entry key="M2" value="14.131549425361454" />
+      <entry key="M5" value="22.16903781687968" />
+      <entry key="M10" value="30.902860399124368" />
+      <entry key="M15" value="38.247935427395205" />
+      <entry key="M30" value="56.62583828058823" />
+      <entry key="H1" value="89.03526006084569" />
+      <entry key="H2" value="138.42037104839437" />
+      <entry key="H4" value="198.9680451223491" />
+      <entry key="D1" value="392.8656250891615" />
+      <entry key="W1" value="481.68599794080376" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.77639307380688" />
-      <entry key="MS500" value="2.1157789227337824" />
-      <entry key="S2" value="2.7386213843456777" />
-      <entry key="S5" value="2.891703031576511" />
-      <entry key="S10" value="2.9452054964191756" />
-      <entry key="S30" value="2.9818875592104654" />
-      <entry key="S60" value="3.0114601647432924" />
-      <entry key="M2" value="3.554895995509936" />
-      <entry key="M5" value="17.05166169814337" />
-      <entry key="M10" value="55.44203412619589" />
-      <entry key="M15" value="90.23968719860738" />
-      <entry key="M30" value="172.0214728655867" />
-      <entry key="H1" value="307.08007357843144" />
-      <entry key="H2" value="503.70032585987997" />
-      <entry key="H4" value="730.7849580439936" />
-      <entry key="D1" value="1378.5000641547826" />
-      <entry key="W1" value="1661.1740630255165" />
+      <entry key="MS100" value="7.359777670601073E-5" />
+      <entry key="MS500" value="0.16529741731629702" />
+      <entry key="S2" value="1.2543731946500236" />
+      <entry key="S5" value="3.7190048500374164" />
+      <entry key="S10" value="7.786860285233957" />
+      <entry key="S30" value="20.431883008254033" />
+      <entry key="S60" value="36.40887597729308" />
+      <entry key="M2" value="67.31217348128074" />
+      <entry key="M5" value="128.7340068006065" />
+      <entry key="M10" value="189.5611340678385" />
+      <entry key="M15" value="234.63872475981557" />
+      <entry key="M30" value="332.27110114721074" />
+      <entry key="H1" value="479.0250842004829" />
+      <entry key="H2" value="685.734770407817" />
+      <entry key="H4" value="922.4983556711802" />
+      <entry key="D1" value="1585.812219804042" />
+      <entry key="W1" value="1874.0336220055838" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -317,6 +318,7 @@
       <workItem from="1780925440066" duration="8784000" />
       <workItem from="1780976050841" duration="6141000" />
       <workItem from="1781060860331" duration="1995000" />
+      <workItem from="1781078331609" duration="754000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -398,7 +400,23 @@
       <option name="project" value="LOCAL" />
       <updated>1781062198183</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Update `.idea/workspace.xml` configurations and adjust `IterMut` phantom type for mutable references.">
+      <option name="closed" value="true" />
+      <created>1781078390844</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1781078390844</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup.">
+      <option name="closed" value="true" />
+      <created>1781078571524</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1781078571524</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -415,6 +433,8 @@
     <MESSAGE value="Rename `IndexCoordinator` to `FixedIndexCoordinator`, update trait references across modules, refactor implementations for `GeneralIndexCoordinator` and `Pow2IndexCoordinator`, and adjust related tests and `.idea` configurations." />
     <MESSAGE value="Rename `IndexCoordinator` to `ResizableIndexCoordinator`, update trait references across resizable module, refactor iterators and coordinators, add implementations for new trait, and adjust tests and `.idea` project configurations." />
     <MESSAGE value="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait" />
+    <MESSAGE value="Update `.idea/workspace.xml` configurations and adjust `IterMut` phantom type for mutable references." />
+    <MESSAGE value="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup." />
+    <option name="LAST_COMMIT_MESSAGE" value="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup." />
   </component>
 </project>
