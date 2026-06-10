@@ -35,11 +35,11 @@ mod tests {
 			unimplemented!()
 		}
 
-		fn real_to_virtual(&self, idx: usize) -> Result<usize> {
+		fn real_to_virtual(&self, _: usize) -> Result<usize> {
 			unimplemented!()
 		}
 
-		fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+		fn virtual_to_real(&self, _: usize) -> Result<usize> {
 			unimplemented!()
 		}
 

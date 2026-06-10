@@ -56,7 +56,6 @@ mod test {
 	use super::*;
 	use crate::fixed::GeneralIndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-	use std::alloc::handle_alloc_error;
 	use std::array::from_fn;
 
 	const SIZE: usize = 8;
@@ -123,7 +122,7 @@ mod test {
 
 	#[test]
 	fn next_back() {
-		let mut scr = gen_sample();
+		let scr = gen_sample();
 		let mut coordinator = Coordinator::default();
 
 		for (l, h) in (0..=SIZE).flat_map(|l| (0..SIZE).map(move |h| (l, h))) {
