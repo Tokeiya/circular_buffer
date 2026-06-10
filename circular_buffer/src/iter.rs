@@ -67,11 +67,7 @@ mod test {
 	type Coordinator = GeneralIndexCoordinator<SIZE>;
 
 	fn gen_sample() -> [MaybeUninit<usize>; SIZE] {
-		from_fn(|i| MaybeUninit::new(i))
-	}
-
-	fn expected_real_to_virtual(capacity: usize, index: usize, head: usize) -> usize {
-		(index + capacity - head) % capacity
+		from_fn(MaybeUninit::new)
 	}
 
 	fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {
