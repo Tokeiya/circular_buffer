@@ -42,3 +42,78 @@ impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
 		todo!()
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::CircularBuffer;
+	use std::ops::{Index, IndexMut};
+
+	pub struct Dummy;
+
+	impl Index<usize> for Dummy {
+		type Output = usize;
+
+		fn index(&self, _: usize) -> &Self::Output {
+			unimplemented!()
+		}
+	}
+
+	impl IndexMut<usize> for Dummy {
+		fn index_mut(&mut self, _: usize) -> &mut Self::Output {
+			unimplemented!()
+		}
+	}
+
+	impl CircularBuffer<usize> for Dummy {
+		type Iter<'a> = std::iter::Empty<&'a usize>;
+		type MutIter<'a> = std::iter::Empty<&'a mut usize>;
+
+		fn capacity(&self) -> usize {
+			unimplemented!()
+		}
+
+		fn enqueue(&mut self, _: usize) {
+			unimplemented!()
+		}
+
+		fn dequeue(&mut self) -> Option<usize> {
+			unimplemented!()
+		}
+
+		fn iter(&self) -> Self::Iter<'_> {
+			unimplemented!()
+		}
+
+		fn iter_mut(&mut self) -> Self::MutIter<'_> {
+			unimplemented!()
+		}
+
+		fn len(&self) -> usize {
+			unimplemented!()
+		}
+	}
+
+	const SIZE: usize = 8;
+	type Coordinator = crate::fixed::Pow2IndexCoordinator<SIZE>;
+
+	#[test]
+	fn new() {
+		todo!();
+	}
+
+	#[test]
+	fn next() {
+		todo!();
+	}
+
+	#[test]
+	fn size_hint_len() {
+		todo!();
+	}
+
+	#[test]
+	fn next_back() {
+		todo!();
+	}
+}

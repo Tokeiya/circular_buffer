@@ -14,10 +14,12 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup.">
-      <change afterPath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" afterDir="false" />
+    <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Add `IterMut` module and placeholder trait implementations for mutable iteration over buffer elements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/circular_buffer/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/droppable.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/bin/drop_survey.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/droppable.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/playground/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/lib.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +35,7 @@
     <option name="cachedIndexableFilesCount" value="60" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:dev" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -56,61 +58,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="3.0009613932869745E-8" />
-      <entry key="MS500" value="0.03137976515287154" />
-      <entry key="S2" value="0.6672652539257362" />
-      <entry key="S5" value="2.4278173846185807" />
-      <entry key="S10" value="5.3938793823771025" />
-      <entry key="S30" value="14.670012305333598" />
-      <entry key="S60" value="27.234224228213787" />
-      <entry key="M2" value="53.32596124441058" />
-      <entry key="M5" value="106.66459954640432" />
-      <entry key="M10" value="158.73005955094078" />
-      <entry key="M15" value="196.45094632470978" />
-      <entry key="M30" value="275.6916667488139" />
-      <entry key="H1" value="390.0279100932152" />
-      <entry key="H2" value="547.3444300702649" />
-      <entry key="H4" value="723.5518315180159" />
-      <entry key="D1" value="1192.9536118561762" />
-      <entry key="W1" value="1392.348851694487" />
+      <entry key="MS100" value="8.323116295642587E-40" />
+      <entry key="MS500" value="1.5277672380101503E-8" />
+      <entry key="S2" value="0.011152985197838952" />
+      <entry key="S5" value="0.18302534896635173" />
+      <entry key="S10" value="0.6468144730107356" />
+      <entry key="S30" value="4.673521555838437" />
+      <entry key="S60" value="11.210236313903295" />
+      <entry key="M2" value="23.338359261689156" />
+      <entry key="M5" value="49.17368653503378" />
+      <entry key="M10" value="77.36537579881113" />
+      <entry key="M15" value="108.48183554540537" />
+      <entry key="M30" value="210.30760436410307" />
+      <entry key="H1" value="377.1305887089856" />
+      <entry key="H2" value="595.5068143872714" />
+      <entry key="H4" value="830.3451835912255" />
+      <entry key="D1" value="1389.6597776044318" />
+      <entry key="W1" value="1617.6436818037052" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000035705349846" />
-      <entry key="S2" value="1.0669532295464812" />
-      <entry key="S5" value="1.6417639950651521" />
-      <entry key="S10" value="2.6905750987275523" />
-      <entry key="S30" value="5.983305427559234" />
-      <entry key="S60" value="9.353725606242618" />
-      <entry key="M2" value="14.131549425361454" />
-      <entry key="M5" value="22.16903781687968" />
-      <entry key="M10" value="30.902860399124368" />
-      <entry key="M15" value="38.247935427395205" />
-      <entry key="M30" value="56.62583828058823" />
-      <entry key="H1" value="89.03526006084569" />
-      <entry key="H2" value="138.42037104839437" />
-      <entry key="H4" value="198.9680451223491" />
-      <entry key="D1" value="392.8656250891615" />
-      <entry key="W1" value="481.68599794080376" />
+      <entry key="MS100" value="1.0000000000236398" />
+      <entry key="MS500" value="1.007546689566126" />
+      <entry key="S2" value="1.42702974292734" />
+      <entry key="S5" value="2.4752312286557627" />
+      <entry key="S10" value="3.8834789621980543" />
+      <entry key="S30" value="7.132353927921133" />
+      <entry key="S60" value="9.576283412259277" />
+      <entry key="M2" value="13.174423118191857" />
+      <entry key="M5" value="19.874017612947505" />
+      <entry key="M10" value="27.55214939324713" />
+      <entry key="M15" value="36.05715008732055" />
+      <entry key="M30" value="62.45152702669481" />
+      <entry key="H1" value="106.57323858001156" />
+      <entry key="H2" value="169.2346928237161" />
+      <entry key="H4" value="243.6550483194606" />
+      <entry key="D1" value="461.54264560987286" />
+      <entry key="W1" value="559.7157130834578" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="7.359777670601073E-5" />
-      <entry key="MS500" value="0.16529741731629702" />
-      <entry key="S2" value="1.2543731946500236" />
-      <entry key="S5" value="3.7190048500374164" />
-      <entry key="S10" value="7.786860285233957" />
-      <entry key="S30" value="20.431883008254033" />
-      <entry key="S60" value="36.40887597729308" />
-      <entry key="M2" value="67.31217348128074" />
-      <entry key="M5" value="128.7340068006065" />
-      <entry key="M10" value="189.5611340678385" />
-      <entry key="M15" value="234.63872475981557" />
-      <entry key="M30" value="332.27110114721074" />
-      <entry key="H1" value="479.0250842004829" />
-      <entry key="H2" value="685.734770407817" />
-      <entry key="H4" value="922.4983556711802" />
-      <entry key="D1" value="1585.812219804042" />
-      <entry key="W1" value="1874.0336220055838" />
+      <entry key="MS100" value="0.0629347218793994" />
+      <entry key="MS500" value="0.579030469346369" />
+      <entry key="S2" value="1.242692832849377" />
+      <entry key="S5" value="2.4997040405518085" />
+      <entry key="S10" value="4.385535038430782" />
+      <entry key="S30" value="11.683351303930934" />
+      <entry key="S60" value="20.68378734809504" />
+      <entry key="M2" value="36.42507673228622" />
+      <entry key="M5" value="68.98268957122308" />
+      <entry key="M10" value="104.86720579508531" />
+      <entry key="M15" value="144.4927126482777" />
+      <entry key="M30" value="272.7159006249497" />
+      <entry key="H1" value="483.6641852163081" />
+      <entry key="H2" value="764.7083934999224" />
+      <entry key="H4" value="1073.9757914621237" />
+      <entry key="D1" value="1851.194506391429" />
+      <entry key="W1" value="2177.358015389872" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -122,44 +124,45 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Cargo.Test buffer::tests (1).executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test buffer::tests.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test iter::test.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test iter::test::len_size_hint.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test iter::test::next.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test iter::test::next_back.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test resizable::buffer::tests::index_enqueue.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test resizable::buffer::tests::index_mut_drop_test.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test resizable::buffer::tests::index_mut_read_write.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Test resizable::buffer::tests::new.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;code.cleanup.on.save&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;initial__devel&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;rearrange.code.on.save&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Cargo.Run drop_survey.executor": "Run",
+    "Cargo.Test buffer::tests (1).executor": "Run",
+    "Cargo.Test buffer::tests.executor": "Run",
+    "Cargo.Test iter::test.executor": "Run",
+    "Cargo.Test iter::test::len_size_hint.executor": "Run",
+    "Cargo.Test iter::test::next.executor": "Run",
+    "Cargo.Test iter::test::next_back.executor": "Run",
+    "Cargo.Test resizable::buffer::tests::index_enqueue.executor": "Run",
+    "Cargo.Test resizable::buffer::tests::index_mut_drop_test.executor": "Run",
+    "Cargo.Test resizable::buffer::tests::index_mut_read_write.executor": "Run",
+    "Cargo.Test resizable::buffer::tests::new.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "code.cleanup.on.save": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "initial__devel",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "rearrange.code.on.save": "true",
+    "settings.editor.selected.configurable": "language.rust.cargo.check",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -168,7 +171,25 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="tool" value="Clippy" />
   </component>
-  <component name="RunManager" selected="Cargo.Test iter::test::next_back">
+  <component name="RunManager" selected="Cargo.Run drop_survey">
+    <configuration name="Run drop_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="buildProfileId" value="dev" />
+      <option name="command" value="run --package playground --bin drop_survey" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run enum_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="command" value="run --package playground --bin enum_survey" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -272,30 +293,13 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test resizable::buffer::tests::index_mut_drop_test" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- resizable::buffer::tests::index_mut_drop_test --exact" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Run drop_survey" />
         <item itemvalue="Cargo.Test iter::test::next_back" />
         <item itemvalue="Cargo.Test iter::test::len_size_hint" />
         <item itemvalue="Cargo.Test iter::test" />
         <item itemvalue="Cargo.Test iter::test::next" />
-        <item itemvalue="Cargo.Test resizable::buffer::tests::index_mut_drop_test" />
       </list>
     </recent_temporary>
   </component>
@@ -318,7 +322,7 @@
       <workItem from="1780925440066" duration="8784000" />
       <workItem from="1780976050841" duration="6141000" />
       <workItem from="1781060860331" duration="1995000" />
-      <workItem from="1781078331609" duration="754000" />
+      <workItem from="1781078331609" duration="3650000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />
@@ -416,7 +420,15 @@
       <option name="project" value="LOCAL" />
       <updated>1781078571524</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Add `IterMut` module and placeholder trait implementations for mutable iteration over buffer elements">
+      <option name="closed" value="true" />
+      <created>1781079086931</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1781079086931</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -435,6 +447,18 @@
     <MESSAGE value="Add `IterMut` struct for mutable iteration over `Envelope` items and implement `Iterator` trait" />
     <MESSAGE value="Update `.idea/workspace.xml` configurations and adjust `IterMut` phantom type for mutable references." />
     <MESSAGE value="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup." />
-    <option name="LAST_COMMIT_MESSAGE" value="Before impl integrated iter_mut&#10;&#10;Remove unused imports, update test logic, and refactor function parameters for improved clarity and cleanup." />
+    <MESSAGE value="Add `IterMut` module and placeholder trait implementations for mutable iteration over buffer elements" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `IterMut` module and placeholder trait implementations for mutable iteration over buffer elements" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/playground/src/bin/drop_survey.rs</url>
+          <line>15</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
