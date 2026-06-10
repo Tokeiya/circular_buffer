@@ -59,8 +59,6 @@ mod test {
 	use super::*;
 	use crate::fixed::GeneralIndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-	use crate::resizable::CoordinatorSelector::Pow2;
-	use std::arch::x86_64::_mm256_fixupimm_ps;
 	use std::array::from_fn;
 
 	const SIZE: usize = 8;

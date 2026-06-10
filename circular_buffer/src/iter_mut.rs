@@ -1,15 +1,15 @@
-use super::{CircularBuffer, IndexCoordinator};
+use super::CircularBuffer;
+use super::IndexCoordinator;
 use std::iter::FusedIterator;
-
-pub struct IterMut<'a, T, C: IndexCoordinator> {
+pub struct IterMut<'a, T, C> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,
 	coordinator: C,
-	_phantom: std::marker::PhantomData<&'a ()>,
+	_phantom: std::marker::PhantomData<&'a T>,
 }
 
-impl<'a, T, C: IndexCoordinator> IterMut<'a, T, C> {
-	pub(crate) fn new(
-		_: &'a impl CircularBuffer<T>,
+impl<'a, T, C> IterMut<'a, T, C> {
+	pub(super) fn new<B: CircularBuffer<T>>(
+		_: &'a mut B,
 		head_pointer: *mut std::mem::MaybeUninit<T>,
 		coordinator: C,
 	) -> Self {
@@ -29,14 +29,16 @@ impl<'a, T: 'a, C: IndexCoordinator> Iterator for IterMut<'a, T, C> {
 	}
 }
 
-impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
-	fn len(&self) -> usize {
+impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
+	fn next_back(&mut self) -> Option<Self::Item> {
 		todo!()
 	}
 }
 
-impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
-	fn next_back(&mut self) -> Option<Self::Item> {
+impl<'a, T: 'a, C: IndexCoordinator> FusedIterator for IterMut<'a, T, C> {}
+
+impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
+	fn len(&self) -> usize {
 		todo!()
 	}
 }
@@ -44,88 +46,74 @@ impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::fixed::GeneralIndexCoordinator;
-	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-	use crate::iter::Iter;
-	use std::array::from_fn;
-	use std::io::Empty;
+	use crate::CircularBuffer;
 	use std::ops::{Index, IndexMut};
 
-	struct Dummy;
+	pub struct Dummy;
 
 	impl Index<usize> for Dummy {
 		type Output = usize;
 
 		fn index(&self, _: usize) -> &Self::Output {
-			todo!()
+			unimplemented!()
 		}
 	}
 
 	impl IndexMut<usize> for Dummy {
 		fn index_mut(&mut self, _: usize) -> &mut Self::Output {
-			todo!()
+			unimplemented!()
 		}
 	}
-	impl CircularBuffer<usize> for Dummy {
-		type Iter<'a>
-			= std::iter::Empty<&'a usize>
-		where
-			Self: 'a;
 
-		type MutIter<'a>
-			= std::iter::Empty<&'a mut usize>
-		where
-			Self: 'a;
+	impl CircularBuffer<usize> for Dummy {
+		type Iter<'a> = std::iter::Empty<&'a usize>;
+		type MutIter<'a> = std::iter::Empty<&'a mut usize>;
 
 		fn capacity(&self) -> usize {
-			todo!()
+			unimplemented!()
 		}
 
-		fn enqueue(&mut self, item: usize) {
-			todo!()
+		fn enqueue(&mut self, _: usize) {
+			unimplemented!()
 		}
 
 		fn dequeue(&mut self) -> Option<usize> {
-			todo!()
+			unimplemented!()
 		}
 
-		fn iter(&self) -> std::iter::Empty<&usize> {
-			todo!()
+		fn iter(&self) -> Self::Iter<'_> {
+			unimplemented!()
 		}
 
-		fn iter_mut(&mut self) -> std::iter::Empty<&mut usize> {
-			todo!()
+		fn iter_mut(&mut self) -> Self::MutIter<'_> {
+			unimplemented!()
 		}
 
 		fn len(&self) -> usize {
-			todo!()
+			unimplemented!()
 		}
 	}
 
 	const SIZE: usize = 8;
-	type Fixture<'a> = IterMut<'a, i64, GeneralIndexCoordinator<SIZE>>;
-	type Coordinator = GeneralIndexCoordinator<SIZE>;
+	type Coordinator = crate::fixed::Pow2IndexCoordinator<SIZE>;
 
-	fn gen_sample() -> [usize; SIZE] {
-		from_fn(|i| i)
+	#[test]
+	fn new() {
+		todo!();
 	}
 
-	fn expected_real_to_virtual(capacity: usize, index: usize, head: usize) -> usize {
-		(index + capacity - head) % capacity
+	#[test]
+	fn next() {
+		todo!();
 	}
 
-	fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {
-		(index + head) % capacity
+	#[test]
+	fn size_hint_len() {
+		todo!();
 	}
 
-	// #[test]
-	// fn new() {
-	// 	let mut c = Coordinator::default();
-	// 	*c.mut_head() = SIZE / 2;
-	// 	*c.mut_len() = SIZE - 1;
-	//
-	// 	let scr = gen_sample();
-	// 	let dummy = Dummy;
-	// 	let fixture = IterMut::new(&dummy, scr.as_mut_ptr(), c.clone());
-	// }
+	#[test]
+	fn next_back() {
+		todo!();
+	}
 }
