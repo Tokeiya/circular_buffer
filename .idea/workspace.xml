@@ -16,10 +16,8 @@
   <component name="ChangeListManager">
     <list default="true" id="448c5928-24fa-422c-8b2d-21614347c6f6" name="Changes" comment="Add `IterMut` module and placeholder trait implementations for mutable iteration over buffer elements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/circular_buffer/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" beforeDir="false" afterPath="$PROJECT_DIR$/circular_buffer/src/iter_mut.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/droppable.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/bin/drop_survey.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/droppable.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/playground/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/playground/src/lib.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +33,7 @@
     <option name="cachedIndexableFilesCount" value="60" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:dev" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -58,61 +56,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="8.323116295642587E-40" />
-      <entry key="MS500" value="1.5277672380101503E-8" />
-      <entry key="S2" value="0.011152985197838952" />
-      <entry key="S5" value="0.18302534896635173" />
-      <entry key="S10" value="0.6468144730107356" />
-      <entry key="S30" value="4.673521555838437" />
-      <entry key="S60" value="11.210236313903295" />
-      <entry key="M2" value="23.338359261689156" />
-      <entry key="M5" value="49.17368653503378" />
-      <entry key="M10" value="77.36537579881113" />
-      <entry key="M15" value="108.48183554540537" />
-      <entry key="M30" value="210.30760436410307" />
-      <entry key="H1" value="377.1305887089856" />
-      <entry key="H2" value="595.5068143872714" />
-      <entry key="H4" value="830.3451835912255" />
-      <entry key="D1" value="1389.6597776044318" />
-      <entry key="W1" value="1617.6436818037052" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="3.409549519038684E-78" />
+      <entry key="S2" value="7.522838137429208E-20" />
+      <entry key="S5" value="4.110428984151304E-8" />
+      <entry key="S10" value="3.79907834911951E-4" />
+      <entry key="S30" value="0.23430457312000555" />
+      <entry key="S60" value="1.5216878166888197" />
+      <entry key="M2" value="4.461603157560168" />
+      <entry key="M5" value="9.211298353170488" />
+      <entry key="M10" value="14.784789740572464" />
+      <entry key="M15" value="23.61107166707091" />
+      <entry key="M30" value="69.77958237448861" />
+      <entry key="H1" value="204.19788707359098" />
+      <entry key="H2" value="459.04976026829627" />
+      <entry key="H4" value="784.6858872928747" />
+      <entry key="D1" value="1546.4457031525667" />
+      <entry key="W1" value="1846.1644056798798" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0000000000236398" />
-      <entry key="MS500" value="1.007546689566126" />
-      <entry key="S2" value="1.42702974292734" />
-      <entry key="S5" value="2.4752312286557627" />
-      <entry key="S10" value="3.8834789621980543" />
-      <entry key="S30" value="7.132353927921133" />
-      <entry key="S60" value="9.576283412259277" />
-      <entry key="M2" value="13.174423118191857" />
-      <entry key="M5" value="19.874017612947505" />
-      <entry key="M10" value="27.55214939324713" />
-      <entry key="M15" value="36.05715008732055" />
-      <entry key="M30" value="62.45152702669481" />
-      <entry key="H1" value="106.57323858001156" />
-      <entry key="H2" value="169.2346928237161" />
-      <entry key="H4" value="243.6550483194606" />
-      <entry key="D1" value="461.54264560987286" />
-      <entry key="W1" value="559.7157130834578" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.000000014863685" />
+      <entry key="S10" value="1.0002043515746217" />
+      <entry key="S30" value="1.1597526581544486" />
+      <entry key="S60" value="1.9592333263669424" />
+      <entry key="M2" value="3.498874564665035" />
+      <entry key="M5" value="5.626516736238107" />
+      <entry key="M10" value="7.5175869307935415" />
+      <entry key="M15" value="10.076565799219411" />
+      <entry key="M30" value="23.50428634111396" />
+      <entry key="H1" value="62.586076270814566" />
+      <entry key="H2" value="137.1177735985863" />
+      <entry key="H4" value="236.8332565193817" />
+      <entry key="D1" value="512.82336072677" />
+      <entry key="W1" value="634.7099376502824" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.0629347218793994" />
-      <entry key="MS500" value="0.579030469346369" />
-      <entry key="S2" value="1.242692832849377" />
-      <entry key="S5" value="2.4997040405518085" />
-      <entry key="S10" value="4.385535038430782" />
-      <entry key="S30" value="11.683351303930934" />
-      <entry key="S60" value="20.68378734809504" />
-      <entry key="M2" value="36.42507673228622" />
-      <entry key="M5" value="68.98268957122308" />
-      <entry key="M10" value="104.86720579508531" />
-      <entry key="M15" value="144.4927126482777" />
-      <entry key="M30" value="272.7159006249497" />
-      <entry key="H1" value="483.6641852163081" />
-      <entry key="H2" value="764.7083934999224" />
-      <entry key="H4" value="1073.9757914621237" />
-      <entry key="D1" value="1851.194506391429" />
-      <entry key="W1" value="2177.358015389872" />
+      <entry key="MS100" value="0.00689611715852074" />
+      <entry key="MS500" value="0.3695906078184605" />
+      <entry key="S2" value="0.7797048426113233" />
+      <entry key="S5" value="0.9052574718415645" />
+      <entry key="S10" value="0.9520165619869597" />
+      <entry key="S30" value="1.3728727532267586" />
+      <entry key="S60" value="3.457299883905776" />
+      <entry key="M2" value="7.935005785843725" />
+      <entry key="M5" value="14.819548834473432" />
+      <entry key="M10" value="22.288202088038567" />
+      <entry key="M15" value="33.67192399006858" />
+      <entry key="M30" value="93.2599373086055" />
+      <entry key="H1" value="266.75216880112754" />
+      <entry key="H2" value="596.1344743132165" />
+      <entry key="H4" value="1021.4916210093609" />
+      <entry key="D1" value="2059.2595394764317" />
+      <entry key="W1" value="2480.8726726309737" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -135,6 +133,7 @@
     "Cargo.Test iter::test::new.executor": "Run",
     "Cargo.Test iter::test::next.executor": "Run",
     "Cargo.Test iter::test::next_back.executor": "Run",
+    "Cargo.Test iter_mut::tests::next.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_enqueue.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_mut_drop_test.executor": "Run",
     "Cargo.Test resizable::buffer::tests::index_mut_read_write.executor": "Run",
@@ -173,7 +172,7 @@
   <component name="RsExternalLinterProjectSettings">
     <option name="tool" value="Clippy" />
   </component>
-  <component name="RunManager" selected="Cargo.Run drop_survey">
+  <component name="RunManager" selected="Cargo.Test iter_mut::tests::next">
     <configuration name="Run drop_survey" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="buildProfileId" value="dev" />
       <option name="command" value="run --package playground --bin drop_survey" />
@@ -261,23 +260,6 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Test iter::test::next" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
-      <option name="command" value="test --package circular_buffer --lib -- iter::test::next --exact" />
-      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <envs />
-      <option name="emulateTerminal" value="true" />
-      <option name="channel" value="DEFAULT" />
-      <option name="requiredFeatures" value="true" />
-      <option name="allFeatures" value="false" />
-      <option name="withSudo" value="false" />
-      <option name="buildTarget" value="REMOTE" />
-      <option name="backtrace" value="SHORT" />
-      <option name="isRedirectInput" value="false" />
-      <option name="redirectInputPath" value="" />
-      <method v="2">
-        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Test iter::test::next_back" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
       <option name="command" value="test --package circular_buffer --lib -- iter::test::next_back --exact" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
@@ -295,13 +277,31 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test iter_mut::tests::next" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="buildProfileId" value="test" />
+      <option name="command" value="test --package circular_buffer --lib -- iter_mut::tests::next --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Cargo.Test iter_mut::tests::next" />
         <item itemvalue="Cargo.Run drop_survey" />
         <item itemvalue="Cargo.Test iter::test::next_back" />
         <item itemvalue="Cargo.Test iter::test::len_size_hint" />
         <item itemvalue="Cargo.Test iter::test" />
-        <item itemvalue="Cargo.Test iter::test::next" />
       </list>
     </recent_temporary>
   </component>
@@ -325,6 +325,7 @@
       <workItem from="1780976050841" duration="6141000" />
       <workItem from="1781060860331" duration="1995000" />
       <workItem from="1781078331609" duration="3650000" />
+      <workItem from="1781090502572" duration="8412000" />
     </task>
     <task id="LOCAL-00001" summary="Remove redundant files (rust-toolchain.toml, misc.xml), add feature-gated nightly support in `bench` and `lib`, make `nightly` a workspace feature, scope iterator constructors, and update `.idea` project configurations.">
       <option name="closed" value="true" />

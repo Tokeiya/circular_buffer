@@ -47,9 +47,29 @@ impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
 mod tests {
 	use super::*;
 	use crate::CircularBuffer;
+	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
+	use crate::iter::Iter;
+	use std::mem::MaybeUninit;
 	use std::ops::{Index, IndexMut};
 
 	pub struct Dummy;
+
+	fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {
+		(index + head) % capacity
+	}
+
+	fn sample() -> [MaybeUninit<usize>; SIZE] {
+		std::array::from_fn(|i| MaybeUninit::new(i))
+	}
+
+	struct PairIter {
+		pub head: usize,
+		pub len: usize,
+	}
+
+	fn pair_iter() -> impl Iterator<Item = PairIter> {
+		(0..SIZE).flat_map(|h| (0..=SIZE).map(move |l| PairIter { head: h, len: l }))
+	}
 
 	impl Index<usize> for Dummy {
 		type Output = usize;
@@ -99,17 +119,84 @@ mod tests {
 
 	#[test]
 	fn new() {
-		todo!();
+		let mut coordinator = Coordinator::default();
+		*coordinator.mut_head() = SIZE / 2;
+		*coordinator.mut_len() = SIZE;
+
+		let mut dummy = Dummy;
+		let mut scr = sample();
+
+		let mut iter = IterMut::new(&mut dummy, std::ptr::null_mut(), coordinator);
+		assert_eq!(*iter.coordinator.mut_head(), SIZE / 2);
+		assert_eq!(*iter.coordinator.mut_len(), SIZE);
+		assert_eq!(iter.head_ptr, scr.as_mut_ptr());
 	}
 
+	#[allow(clippy::while_let_on_iterator)]
 	#[test]
 	fn next() {
-		todo!();
+		const OFFSET: usize = 1_000;
+
+		for env in pair_iter() {
+			let mut coordinator = Coordinator::default();
+			*coordinator.mut_head() = env.head;
+			*coordinator.mut_len() = env.len;
+			let mut dummy = Dummy;
+
+			let mut sample = sample();
+			for i in 0..env.len {
+				sample[expected_virtual_to_real(env.len, i, env.head)] = MaybeUninit::new(i);
+			}
+
+			let mut fixture = IterMut::new(&mut dummy, sample.as_mut_ptr(), coordinator.clone());
+			let mut cnt = 0usize;
+
+			while let Some(elem) = fixture.next() {
+				assert_eq!(*elem, cnt);
+				cnt += 1;
+				*elem += OFFSET;
+			}
+
+			let iter = Iter::new(sample.as_slice(), coordinator.clone());
+
+			for (i, act) in iter.enumerate() {
+				assert_eq!(i + OFFSET, *act);
+			}
+		}
 	}
 
 	#[test]
 	fn size_hint_len() {
-		todo!();
+		for env in pair_iter() {
+			let mut coordinator = Coordinator::default();
+			*coordinator.mut_head() = env.head;
+			*coordinator.mut_len() = env.len;
+
+			let mut dummy = Dummy;
+			let mut sample = sample();
+
+			let mut fixture = IterMut::new(&mut dummy, sample.as_mut_ptr(), coordinator.clone());
+
+			let mut expected = env.len;
+
+			while fixture.next().is_some() {
+				assert_eq!(fixture.size_hint(), (expected, Some(expected)));
+				assert_eq!(fixture.len(), expected);
+				expected -= 1;
+			}
+
+			assert_eq!(fixture.size_hint(), (0, Some(0)));
+			assert_eq!(fixture.len(), 0);
+
+			fixture = IterMut::new(&mut dummy, sample.as_mut_ptr(), coordinator.clone());
+			expected = env.len;
+
+			while fixture.next_back().is_some() {
+				assert_eq!(fixture.size_hint(), (expected, Some(expected)));
+				assert_eq!(fixture.len(), expected);
+				expected -= 1;
+			}
+		}
 	}
 
 	#[test]

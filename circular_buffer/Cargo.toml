@@ -9,6 +9,5 @@ rand = "*"
 rand_chacha = "*"
 
 
-
 [dependencies]
 thiserror = "*"
