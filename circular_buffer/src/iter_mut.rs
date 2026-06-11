@@ -158,7 +158,19 @@ mod tests {
 		assert_eq!(*iter.coordinator.mut_len(), SIZE);
 		assert_eq!(iter.head_ptr, scr.as_mut_ptr());
 	}
-
+	
+	#[test]
+	fn index_test() {
+		let mut c=Coordinator::default();
+		*c.mut_len()=1;
+		*c.mut_head()=1;
+		
+		for i in  0..*c.mut_len() {
+			println!("v[{i}]=r[{}]=e[{}]",c.virtual_to_real(i).unwrap(),expected_virtual_to_real(SIZE, i, *c.mut_head()));
+		}
+	}
+	
+	
 	#[allow(clippy::while_let_on_iterator)]
 	#[test]
 	fn next() {
@@ -173,21 +185,14 @@ mod tests {
 			
 
 			let mut sample:[MaybeUninit<usize>;SIZE] = std::array::from_fn(|_|MaybeUninit::new(500));
-			for i in 0..env.len {
-				sample[expected_virtual_to_real(env.len, i, env.head)] = MaybeUninit::new(i);
+			for (i,idx) in (0..env.len).map(|i|(env.head+i)%SIZE).enumerate() {
+				sample[idx] = MaybeUninit::new(i);
 			}
 			
 
 			let mut fixture = IterMut::new(&mut dummy, sample.as_mut_ptr(), coordinator.clone());
 			let mut cnt = 0usize;
 			
-			if env.head==1&&env.len==1{
-				dbg!(unsafe{sample[expected_virtual_to_real(env.len,0,env.head)].assume_init_ref()});
-				dbg!(fixture.coordinator.head_index().unwrap());
-				dbg!(fixture.coordinator.virtual_to_real(0).unwrap());
-				dbg!(expected_virtual_to_real(env.len, 0, env.head));
-			}
-
 			while let Some(elem) = fixture.next() {
 				assert_eq!(*elem, cnt,"act:{:?} exp:{:?} head:{:?} len:{:?}",*elem,cnt,env.head,env.len);
 				cnt += 1;
@@ -238,6 +243,7 @@ mod tests {
 			}
 		}
 	}
+	
 
 	#[allow(clippy::needless_range_loop)]
 	#[test]
