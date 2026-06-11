@@ -1,4 +1,3 @@
-use super::super::error::*;
 use crate::index_coordinator::IndexCoordinator;
 
 pub trait FixedIndexCoordinator<const N: usize>: IndexCoordinator + Default {}
@@ -6,6 +5,7 @@ pub trait FixedIndexCoordinator<const N: usize>: IndexCoordinator + Default {}
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::error::*;
 	use crate::fixed::index_coordinator_test as tests;
 	use crate::index_coordinator::IndexCoordinator;
 

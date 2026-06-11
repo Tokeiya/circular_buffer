@@ -116,9 +116,9 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 		s.probe = Some(probe);
 		s
 	}
-	pub(super) fn get_raw(&self, real_index: usize) -> &T {
-		unsafe { self.storage[real_index].assume_init_ref() }
-	}
+	// pub(super) fn get_raw(&self, real_index: usize) -> &T {
+	// 	unsafe { self.storage[real_index].assume_init_ref() }
+	// }
 }
 
 impl<T, C: FixedIndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
