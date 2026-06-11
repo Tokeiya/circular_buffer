@@ -169,17 +169,27 @@ mod tests {
 			*coordinator.mut_head() = env.head;
 			*coordinator.mut_len() = env.len;
 			let mut dummy = Dummy;
+			
+			
 
-			let mut sample = sample();
+			let mut sample:[MaybeUninit<usize>;SIZE] = std::array::from_fn(|_|MaybeUninit::new(500));
 			for i in 0..env.len {
 				sample[expected_virtual_to_real(env.len, i, env.head)] = MaybeUninit::new(i);
 			}
+			
 
 			let mut fixture = IterMut::new(&mut dummy, sample.as_mut_ptr(), coordinator.clone());
 			let mut cnt = 0usize;
+			
+			if env.head==1&&env.len==1{
+				dbg!(unsafe{sample[expected_virtual_to_real(env.len,0,env.head)].assume_init_ref()});
+				dbg!(fixture.coordinator.head_index().unwrap());
+				dbg!(fixture.coordinator.virtual_to_real(0).unwrap());
+				dbg!(expected_virtual_to_real(env.len, 0, env.head));
+			}
 
 			while let Some(elem) = fixture.next() {
-				assert_eq!(*elem, cnt);
+				assert_eq!(*elem, cnt,"act:{:?} exp:{:?} head:{:?} len:{:?}",*elem,cnt,env.head,env.len);
 				cnt += 1;
 				*elem += OFFSET;
 			}
