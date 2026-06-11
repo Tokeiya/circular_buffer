@@ -1,10 +1,11 @@
 use super::CircularBuffer;
 use super::IndexCoordinator;
 use std::iter::FusedIterator;
+use std::marker::PhantomData;
 pub struct IterMut<'a, T, C> {
 	head_ptr: *mut std::mem::MaybeUninit<T>,
 	coordinator: C,
-	_phantom: std::marker::PhantomData<&'a T>,
+	_phantom: PhantomData<&'a T>,
 }
 
 impl<'a, T, C> IterMut<'a, T, C> {
@@ -13,7 +14,11 @@ impl<'a, T, C> IterMut<'a, T, C> {
 		head_pointer: *mut std::mem::MaybeUninit<T>,
 		coordinator: C,
 	) -> Self {
-		todo!()
+		Self{
+			head_ptr:head_pointer,
+			coordinator,
+			_phantom:PhantomData::default()
+		}
 	}
 }
 
@@ -21,17 +26,39 @@ impl<'a, T: 'a, C: IndexCoordinator> Iterator for IterMut<'a, T, C> {
 	type Item = &'a mut T;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		todo!()
+		if self.coordinator.is_empty(){
+			None
+		}else {
+			let ret = unsafe {
+				let uninit_ref = &mut *self.head_ptr.add(self.coordinator.head_index().unwrap());
+				Some(uninit_ref.assume_init_mut())
+			};
+			
+			self.coordinator.dequeue_index().unwrap();
+			ret
+		}
 	}
 
 	fn size_hint(&self) -> (usize, Option<usize>) {
-		todo!()
+		(self.coordinator.len(), Some(self.coordinator.len()))
 	}
 }
 
 impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
 	fn next_back(&mut self) -> Option<Self::Item> {
-		todo!()
+		if self.coordinator.is_empty() {
+			None
+		} else {
+			let ret = unsafe {
+				let index = self.coordinator.tail_index().unwrap();
+				
+				let uninit_ref = &mut *self.head_ptr.add(index);
+				Some(uninit_ref.assume_init_mut())
+			};
+			self.coordinator.pop_index().unwrap();
+			ret
+		}
+		
 	}
 }
 
@@ -39,7 +66,7 @@ impl<'a, T: 'a, C: IndexCoordinator> FusedIterator for IterMut<'a, T, C> {}
 
 impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
 	fn len(&self) -> usize {
-		todo!()
+		self.coordinator.len()
 	}
 }
 
@@ -126,7 +153,7 @@ mod tests {
 		let mut dummy = Dummy;
 		let mut scr = sample();
 
-		let mut iter = IterMut::new(&mut dummy, std::ptr::null_mut(), coordinator);
+		let mut iter = IterMut::new(&mut dummy, scr.as_mut_ptr(), coordinator);
 		assert_eq!(*iter.coordinator.mut_head(), SIZE / 2);
 		assert_eq!(*iter.coordinator.mut_len(), SIZE);
 		assert_eq!(iter.head_ptr, scr.as_mut_ptr());
@@ -238,7 +265,9 @@ mod tests {
 	#[test]
 	fn complex() {
 		let mut scr = sample();
-		let coordinator = Coordinator::default();
+		let mut coordinator = Coordinator::default();
+		*coordinator.mut_len()=8;
+		
 		let mut dummy = Dummy;
 		let mut fixture = IterMut::new(&mut dummy, scr.as_mut_ptr(), coordinator);
 
