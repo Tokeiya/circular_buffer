@@ -210,9 +210,9 @@ mod tests {
 			let mut expected = env.len;
 
 			while fixture.next().is_some() {
-				assert_eq!(fixture.size_hint(), (expected, Some(expected)));
-				assert_eq!(fixture.len(), expected);
 				expected -= 1;
+				assert_eq!(fixture.size_hint(), (expected, Some(expected)),"act:{:?} exp:{:?} head:{} len:{}",fixture.size_hint(),(expected,Some(expected)),env.head,env.len);
+				assert_eq!(fixture.len(), expected);
 			}
 
 			assert_eq!(fixture.size_hint(), (0, Some(0)));
@@ -222,9 +222,9 @@ mod tests {
 			expected = env.len;
 
 			while fixture.next_back().is_some() {
+				expected -= 1;
 				assert_eq!(fixture.size_hint(), (expected, Some(expected)));
 				assert_eq!(fixture.len(), expected);
-				expected -= 1;
 			}
 		}
 	}
