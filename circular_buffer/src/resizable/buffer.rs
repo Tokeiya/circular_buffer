@@ -17,7 +17,7 @@ pub struct Buffer<T, C: ResizableIndexCoordinator> {
 impl<T, C: ResizableIndexCoordinator> Buffer<T, C> {
 	pub fn new(coordinator: C) -> Self {
 		let mut vec = Vec::with_capacity(coordinator.capacity());
-		for i in 0..coordinator.capacity() {
+		for _ in 0..coordinator.capacity() {
 			vec.push(MaybeUninit::uninit());
 		}
 		Self {
