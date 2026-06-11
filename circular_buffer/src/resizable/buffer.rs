@@ -16,10 +16,14 @@ pub struct Buffer<T, C: ResizableIndexCoordinator> {
 
 impl<T, C: ResizableIndexCoordinator> Buffer<T, C> {
 	pub fn new(coordinator: C) -> Self {
+		let mut vec = Vec::with_capacity(coordinator.capacity());
+		for i in 0..coordinator.capacity() {
+			vec.push(MaybeUninit::uninit());
+		}
 		Self {
 			#[cfg(test)]
 			probe: None,
-			storage: Vec::new(),
+			storage: vec,
 			coordinator,
 		}
 	}
@@ -193,6 +197,7 @@ mod tests {
 		assert_eq!(fixture.coordinator.ref_capacity(), &CAPACITY);
 		assert_eq!(fixture.coordinator.mut_head(), &mut 0usize);
 		assert_eq!(fixture.coordinator.mut_len(), &mut 0usize);
+		assert_eq!(fixture.storage.len(), CAPACITY);
 	}
 
 	#[test]
