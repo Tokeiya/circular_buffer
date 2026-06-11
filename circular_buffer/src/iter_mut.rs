@@ -157,6 +157,9 @@ mod tests {
 				*elem += OFFSET;
 			}
 
+			assert_eq!(cnt, env.len);
+			assert!(fixture.next().is_none());
+
 			let iter = Iter::new(sample.as_slice(), coordinator.clone());
 
 			for (i, act) in iter.enumerate() {
@@ -199,8 +202,85 @@ mod tests {
 		}
 	}
 
+	#[allow(clippy::needless_range_loop)]
 	#[test]
 	fn next_back() {
-		todo!();
+		const OFFSET: usize = 1_000;
+
+		for env in pair_iter() {
+			let mut scr = sample();
+			let mut coordinator = Coordinator::default();
+
+			*coordinator.mut_len() = env.len;
+			*coordinator.mut_head() = env.head;
+			let mut dummy = Dummy;
+			let mut fixture = IterMut::new(&mut dummy, scr.as_mut_ptr(), coordinator.clone());
+
+			if env.len == 0 {
+				assert!(fixture.next_back().is_none());
+			} else {
+				for idx in (0..env.len).rev() {
+					let act = fixture.next_back().unwrap();
+					assert_eq!(act, unsafe {
+						scr[expected_virtual_to_real(SIZE, idx, env.head)].assume_init_ref()
+					});
+
+					*act += OFFSET;
+				}
+
+				for idx in 0..scr.len() {
+					assert_eq!(*unsafe { scr[idx].assume_init_ref() }, idx + OFFSET);
+				}
+			}
+		}
+	}
+
+	#[test]
+	fn complex() {
+		let mut scr = sample();
+		let coordinator = Coordinator::default();
+		let mut dummy = Dummy;
+		let mut fixture = IterMut::new(&mut dummy, scr.as_mut_ptr(), coordinator);
+
+		assert_eq!(fixture.len(), 8);
+		assert_eq!(fixture.size_hint(), (8, Some(8)));
+
+		fixture.next().unwrap();
+		assert_eq!(fixture.len(), 7);
+		assert_eq!(fixture.size_hint(), (7, Some(7)));
+
+		fixture.next_back().unwrap();
+		assert_eq!(fixture.len(), 6);
+		assert_eq!(fixture.size_hint(), (6, Some(6)));
+
+		fixture.next().unwrap();
+		assert_eq!(fixture.len(), 5);
+		assert_eq!(fixture.size_hint(), (5, Some(5)));
+
+		fixture.next_back().unwrap();
+		assert_eq!(fixture.len(), 4);
+		assert_eq!(fixture.size_hint(), (4, Some(4)));
+
+		fixture.next().unwrap();
+		assert_eq!(fixture.len(), 3);
+		assert_eq!(fixture.size_hint(), (3, Some(3)));
+
+		fixture.next_back().unwrap();
+		assert_eq!(fixture.len(), 2);
+		assert_eq!(fixture.size_hint(), (2, Some(2)));
+
+		fixture.next().unwrap();
+		assert_eq!(fixture.len(), 1);
+		assert_eq!(fixture.size_hint(), (1, Some(1)));
+
+		fixture.next_back().unwrap();
+		assert_eq!(fixture.len(), 0);
+		assert_eq!(fixture.size_hint(), (0, Some(0)));
+
+		assert!(fixture.next().is_none());
+		assert!(fixture.next_back().is_none());
+
+		assert_eq!(fixture.len(), 0);
+		assert_eq!(fixture.size_hint(), (0, Some(0)));
 	}
 }
