@@ -44,7 +44,7 @@ mod tests {
 		}
 
 		fn capacity(&self) -> usize {
-			unimplemented!()
+			N
 		}
 
 		fn len(&self) -> usize {

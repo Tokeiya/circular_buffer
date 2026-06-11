@@ -12,6 +12,8 @@ enum Process {
 	Dequeue,
 	IndexMut,
 	IterMut,
+	Index,
+	Iter,
 }
 
 fn gen_rnd() -> (u64, ChaCha8Rng) {
@@ -115,6 +117,19 @@ fn index_mut_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(
 	}
 }
 
+fn index_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut TestPair<A, E>) {
+	for idx in 0..pair.len() {
+		let (a, e) = pair.get(idx);
+		assert_eq!(a.id(), e.id());
+	}
+}
+
+fn iter_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut TestPair<A, E>) {
+	for (a, e) in pair.iter() {
+		assert_eq!(a.id(), e.id());
+	}
+}
+
 pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
 	actual: A,
 	expected: E,
@@ -129,6 +144,8 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, cons
 		Process::Dequeue,
 		Process::IterMut,
 		Process::IndexMut,
+		Process::Index,
+		Process::Iter,
 	];
 
 	#[allow(unreachable_patterns)]
@@ -149,6 +166,12 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, cons
 			}
 			Process::IndexMut => {
 				index_mut_process(&mut pair, &mut rng);
+			}
+			Process::Index => {
+				index_process(&mut pair);
+			}
+			Process::Iter => {
+				iter_process(&mut pair);
 			}
 			_ => unreachable!(),
 		}
