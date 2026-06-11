@@ -3,11 +3,9 @@ name = "circular_buffer"
 version = "0.12.0"
 edition = "2024"
 
-
 [dev-dependencies]
 rand = "*"
 rand_chacha = "*"
-
 
 [dependencies]
 thiserror = "*"
