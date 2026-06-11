@@ -2,8 +2,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
-use super::iter::Iter;
-use super::iter_mut::IterMut;
+// use super::iter::Iter;
+// use super::iter_mut::IterMut;
+use crate::Iter;
+use crate::IterMut;
 use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
@@ -48,13 +50,13 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> IndexMut<usize> for Buffer<
 
 impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffer<T, C, N> {
 	type Iter<'a>
-		= Iter<'a, T, C, N>
+		= Iter<'a, T, C>
 	where
 		T: 'a,
 		Self: 'a;
 
 	type MutIter<'a>
-		= IterMut<'a, T, C, N>
+		= IterMut<'a, T, C>
 	where
 		T: 'a,
 		Self: 'a;
@@ -94,11 +96,12 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 	}
 
 	fn iter(&self) -> Self::Iter<'_> {
-		Iter::new(self)
+		Iter::new(&self.storage, self.coordinator.clone())
 	}
 
 	fn iter_mut(&mut self) -> Self::MutIter<'_> {
-		Self::MutIter::new(self)
+		let ptr = self.storage.as_mut_ptr();
+		Self::MutIter::new(self, ptr, self.coordinator.clone())
 	}
 
 	fn len(&self) -> usize {
