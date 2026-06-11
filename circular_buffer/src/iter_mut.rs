@@ -14,10 +14,10 @@ impl<'a, T, C> IterMut<'a, T, C> {
 		head_pointer: *mut std::mem::MaybeUninit<T>,
 		coordinator: C,
 	) -> Self {
-		Self{
-			head_ptr:head_pointer,
+		Self {
+			head_ptr: head_pointer,
 			coordinator,
-			_phantom:PhantomData::default()
+			_phantom: PhantomData::default(),
 		}
 	}
 }
@@ -26,14 +26,14 @@ impl<'a, T: 'a, C: IndexCoordinator> Iterator for IterMut<'a, T, C> {
 	type Item = &'a mut T;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		if self.coordinator.is_empty(){
+		if self.coordinator.is_empty() {
 			None
-		}else {
+		} else {
 			let ret = unsafe {
 				let uninit_ref = &mut *self.head_ptr.add(self.coordinator.head_index().unwrap());
 				Some(uninit_ref.assume_init_mut())
 			};
-			
+
 			self.coordinator.dequeue_index().unwrap();
 			ret
 		}
@@ -51,14 +51,13 @@ impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
 		} else {
 			let ret = unsafe {
 				let index = self.coordinator.tail_index().unwrap();
-				
+
 				let uninit_ref = &mut *self.head_ptr.add(index);
 				Some(uninit_ref.assume_init_mut())
 			};
 			self.coordinator.pop_index().unwrap();
 			ret
 		}
-		
 	}
 }
 
@@ -89,6 +88,7 @@ mod tests {
 		std::array::from_fn(|i| MaybeUninit::new(i))
 	}
 
+	#[derive(Debug)]
 	struct PairIter {
 		pub head: usize,
 		pub len: usize,
@@ -158,19 +158,22 @@ mod tests {
 		assert_eq!(*iter.coordinator.mut_len(), SIZE);
 		assert_eq!(iter.head_ptr, scr.as_mut_ptr());
 	}
-	
+
 	#[test]
 	fn index_test() {
-		let mut c=Coordinator::default();
-		*c.mut_len()=1;
-		*c.mut_head()=1;
-		
-		for i in  0..*c.mut_len() {
-			println!("v[{i}]=r[{}]=e[{}]",c.virtual_to_real(i).unwrap(),expected_virtual_to_real(SIZE, i, *c.mut_head()));
+		let mut c = Coordinator::default();
+		*c.mut_len() = 1;
+		*c.mut_head() = 1;
+
+		for i in 0..*c.mut_len() {
+			println!(
+				"v[{i}]=r[{}]=e[{}]",
+				c.virtual_to_real(i).unwrap(),
+				expected_virtual_to_real(SIZE, i, *c.mut_head())
+			);
 		}
 	}
-	
-	
+
 	#[allow(clippy::while_let_on_iterator)]
 	#[test]
 	fn next() {
@@ -181,20 +184,22 @@ mod tests {
 			*coordinator.mut_head() = env.head;
 			*coordinator.mut_len() = env.len;
 			let mut dummy = Dummy;
-			
-			
 
-			let mut sample:[MaybeUninit<usize>;SIZE] = std::array::from_fn(|_|MaybeUninit::new(500));
-			for (i,idx) in (0..env.len).map(|i|(env.head+i)%SIZE).enumerate() {
+			let mut sample: [MaybeUninit<usize>; SIZE] =
+				std::array::from_fn(|_| MaybeUninit::new(500));
+			for (i, idx) in (0..env.len).map(|i| (env.head + i) % SIZE).enumerate() {
 				sample[idx] = MaybeUninit::new(i);
 			}
-			
 
 			let mut fixture = IterMut::new(&mut dummy, sample.as_mut_ptr(), coordinator.clone());
 			let mut cnt = 0usize;
-			
+
 			while let Some(elem) = fixture.next() {
-				assert_eq!(*elem, cnt,"act:{:?} exp:{:?} head:{:?} len:{:?}",*elem,cnt,env.head,env.len);
+				assert_eq!(
+					*elem, cnt,
+					"act:{:?} exp:{:?} head:{:?} len:{:?}",
+					*elem, cnt, env.head, env.len
+				);
 				cnt += 1;
 				*elem += OFFSET;
 			}
@@ -226,7 +231,15 @@ mod tests {
 
 			while fixture.next().is_some() {
 				expected -= 1;
-				assert_eq!(fixture.size_hint(), (expected, Some(expected)),"act:{:?} exp:{:?} head:{} len:{}",fixture.size_hint(),(expected,Some(expected)),env.head,env.len);
+				assert_eq!(
+					fixture.size_hint(),
+					(expected, Some(expected)),
+					"act:{:?} exp:{:?} head:{} len:{}",
+					fixture.size_hint(),
+					(expected, Some(expected)),
+					env.head,
+					env.len
+				);
 				assert_eq!(fixture.len(), expected);
 			}
 
@@ -243,7 +256,6 @@ mod tests {
 			}
 		}
 	}
-	
 
 	#[allow(clippy::needless_range_loop)]
 	#[test]
@@ -271,8 +283,10 @@ mod tests {
 					*act += OFFSET;
 				}
 
-				for idx in 0..scr.len() {
-					assert_eq!(*unsafe { scr[idx].assume_init_ref() }, idx + OFFSET);
+				let iter = Iter::new(scr.as_slice(), coordinator.clone());
+
+				for (i, act) in iter.enumerate() {
+					assert_eq!(*act, ((i + env.head) % SIZE) + OFFSET);
 				}
 			}
 		}
@@ -282,8 +296,8 @@ mod tests {
 	fn complex() {
 		let mut scr = sample();
 		let mut coordinator = Coordinator::default();
-		*coordinator.mut_len()=8;
-		
+		*coordinator.mut_len() = 8;
+
 		let mut dummy = Dummy;
 		let mut fixture = IterMut::new(&mut dummy, scr.as_mut_ptr(), coordinator);
 
