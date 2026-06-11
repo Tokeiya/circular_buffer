@@ -14,3 +14,5 @@ pub use circular_buffer::CircularBuffer;
 pub use error::Error;
 pub use error::Result;
 pub use index_coordinator::IndexCoordinator;
+pub use iter::Iter;
+pub use iter_mut::IterMut;

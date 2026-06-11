@@ -2,8 +2,6 @@ mod buffer;
 mod general_index_coordinator;
 mod index_coordinator;
 mod index_coordinator_tests;
-mod iter;
-mod iter_mut;
 mod pow2_index_coordinator;
 mod selector;
 

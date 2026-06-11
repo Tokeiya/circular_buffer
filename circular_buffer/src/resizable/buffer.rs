@@ -1,6 +1,6 @@
-use super::iter::Iter;
-use super::iter_mut::IterMut;
 use crate::CircularBuffer;
+use crate::Iter;
+use crate::IterMut;
 use crate::resizable::ResizableIndexCoordinator;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
@@ -94,11 +94,12 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	}
 
 	fn iter(&self) -> Self::Iter<'_> {
-		todo!()
+		Iter::new(&self.storage, self.coordinator.clone())
 	}
 
 	fn iter_mut(&mut self) -> Self::MutIter<'_> {
-		todo!()
+		let ptr = self.storage.as_mut_ptr();
+		IterMut::new(self, ptr, self.coordinator.clone())
 	}
 
 	fn len(&self) -> usize {
@@ -321,12 +322,30 @@ mod tests {
 
 	#[test]
 	fn iter() {
-		unimplemented!("Delay until implementation is completed")
+		let mut fixture = usize_fixture();
+		for i in 0..CAPACITY {
+			fixture.enqueue(i);
+		}
+
+		for (idx, i) in fixture.iter().enumerate() {
+			assert_eq!(*i, idx);
+		}
 	}
 
 	#[test]
 	fn iter_mut() {
-		unimplemented!("Delay until implementation is completed")
+		let mut fixture = usize_fixture();
+		for i in 0..CAPACITY {
+			fixture.enqueue(i);
+		}
+
+		for iter in fixture.iter_mut() {
+			*iter += 10;
+		}
+
+		for (idx, i) in fixture.iter().enumerate() {
+			assert_eq!(*i, idx + 10);
+		}
 	}
 
 	#[test]
