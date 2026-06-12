@@ -2,6 +2,7 @@ mod circular_buffer;
 mod error;
 pub mod fixed;
 
+mod drop_gurd;
 mod index_coordinator;
 mod iter;
 mod iter_mut;
