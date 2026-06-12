@@ -9,7 +9,7 @@ fn main() {
 
 	println!(
 		"[0]:{},head:{} tail:{} len:{}",
-		coordinator.virtual_to_real(0).unwrap(),
+		coordinator.resolve_index(0).unwrap(),
 		coordinator.head_index().unwrap(),
 		coordinator.tail_index().unwrap(),
 		coordinator.len()
@@ -19,7 +19,7 @@ fn main() {
 		if coordinator.len() != 0 {
 			println!(
 				"[0]:{},head:{} tail:{} len:{}",
-				coordinator.virtual_to_real(0).unwrap(),
+				coordinator.resolve_index(0).unwrap(),
 				coordinator.head_index().unwrap(),
 				coordinator.tail_index().unwrap(),
 				coordinator.len()

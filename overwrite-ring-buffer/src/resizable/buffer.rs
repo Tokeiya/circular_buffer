@@ -34,7 +34,7 @@ impl<T, C: ResizableIndexCoordinator> Index<usize> for Buffer<T, C> {
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
-		match self.coordinator.virtual_to_real(index) {
+		match self.coordinator.resolve_index(index) {
 			Ok(i) => unsafe { self.storage.get_unchecked(i).assume_init_ref() },
 			Err(_) => panic!("Index out of range"),
 		}
@@ -43,7 +43,7 @@ impl<T, C: ResizableIndexCoordinator> Index<usize> for Buffer<T, C> {
 
 impl<T, C: ResizableIndexCoordinator> IndexMut<usize> for Buffer<T, C> {
 	fn index_mut(&mut self, index: usize) -> &mut T {
-		match self.coordinator.virtual_to_real(index) {
+		match self.coordinator.resolve_index(index) {
 			Ok(i) => unsafe { self.storage.get_unchecked_mut(i).assume_init_mut() },
 			Err(_) => panic!("Index out of range"),
 		}
@@ -86,7 +86,7 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 		if self.coordinator.len() == 0 {
 			None
 		} else {
-			let index = self.coordinator.virtual_to_real(0).unwrap();
+			let index = self.coordinator.resolve_index(0).unwrap();
 			let ret = unsafe {
 				std::mem::replace(&mut self.storage[index], MaybeUninit::uninit()).assume_init()
 			};
@@ -229,7 +229,7 @@ mod tests {
 		let c = fixture.coordinator.clone();
 
 		for i in 0..CAPACITY {
-			fixture.storage[c.virtual_to_real(i).unwrap()] = MaybeUninit::new(i);
+			fixture.storage[c.resolve_index(i).unwrap()] = MaybeUninit::new(i);
 		}
 
 		for i in 0..CAPACITY {

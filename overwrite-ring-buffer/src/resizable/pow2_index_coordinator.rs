@@ -75,7 +75,7 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
-	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+	fn resolve_index(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
 				index: idx,
@@ -170,7 +170,7 @@ mod tests {
 
 	#[test]
 	fn virtual_to_real() {
-		Fixture::virtual_to_real_test(CAPACITY);
+		Fixture::resolve_index_test(CAPACITY);
 	}
 
 	#[test]

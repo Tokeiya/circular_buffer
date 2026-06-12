@@ -38,7 +38,7 @@ mod tests {
 			unimplemented!()
 		}
 
-		fn virtual_to_real(&self, _: usize) -> Result<usize> {
+		fn resolve_index(&self, _: usize) -> Result<usize> {
 			unimplemented!()
 		}
 

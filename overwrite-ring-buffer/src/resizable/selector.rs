@@ -65,10 +65,10 @@ impl IndexCoordinator for CoordinatorSelector {
 		}
 	}
 
-	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+	fn resolve_index(&self, idx: usize) -> Result<usize> {
 		match self {
-			CoordinatorSelector::General(g) => g.virtual_to_real(idx),
-			CoordinatorSelector::Pow2(p) => p.virtual_to_real(idx),
+			CoordinatorSelector::General(g) => g.resolve_index(idx),
+			CoordinatorSelector::Pow2(p) => p.resolve_index(idx),
 		}
 	}
 
@@ -176,8 +176,8 @@ mod tests {
 
 	#[test]
 	fn virtual_to_real() {
-		Fixture::virtual_to_real_test(POW2);
-		Fixture::virtual_to_real_test(GENERAL);
+		Fixture::resolve_index_test(POW2);
+		Fixture::resolve_index_test(GENERAL);
 	}
 
 	#[test]

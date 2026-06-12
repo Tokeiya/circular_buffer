@@ -72,7 +72,7 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
-	fn virtual_to_real(&self, idx: usize) -> crate::Result<usize> {
+	fn resolve_index(&self, idx: usize) -> crate::Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
 				index: idx,
@@ -162,7 +162,7 @@ mod test {
 
 	#[test]
 	fn virtual_to_real() {
-		tests::virtual_to_real::<CAPACITY, Fixture>();
+		tests::resolve_index::<CAPACITY, Fixture>();
 	}
 
 	#[test]

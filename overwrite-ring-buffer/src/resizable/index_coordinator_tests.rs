@@ -3,11 +3,7 @@ use super::index_coordinator::ResizableIndexCoordinator;
 use crate::error::*;
 use std::assert_matches;
 
-fn expected_real_to_virtual(capacity: usize, index: usize, head: usize) -> usize {
-	(index + capacity - head) % capacity
-}
-
-fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {
+fn expected_resolve_index(capacity: usize, index: usize, head: usize) -> usize {
 	(index + head) % capacity
 }
 
@@ -44,7 +40,7 @@ pub(super) trait IndexCoordinatorTestExtension: ResizableIndexCoordinator + Size
 			} else {
 				assert_eq!(
 					fixture.tail_index().unwrap(),
-					expected_virtual_to_real(capacity, l - 1, h)
+					expected_resolve_index(capacity, l - 1, h)
 				);
 			}
 		}
@@ -105,7 +101,7 @@ pub(super) trait IndexCoordinatorTestExtension: ResizableIndexCoordinator + Size
 		assert_matches!(fixture.pop_index(), Err(Error::Empty));
 	}
 
-	fn virtual_to_real_test(capacity: usize) {
+	fn resolve_index_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 
 		for h in 0..capacity {
@@ -115,14 +111,14 @@ pub(super) trait IndexCoordinatorTestExtension: ResizableIndexCoordinator + Size
 
 				if l == 0 {
 					assert_matches!(
-						fixture.virtual_to_real(0),
+						fixture.resolve_index(0),
 						Err(Error::IndexOutOfRange { index: _, len: _ })
 					);
 				} else {
 					for i in 0..l {
 						assert_eq!(
-							fixture.virtual_to_real(i).unwrap(),
-							expected_virtual_to_real(capacity, i, h),
+							fixture.resolve_index(i).unwrap(),
+							expected_resolve_index(capacity, i, h),
 							"h:{} l:{} i:{}",
 							h,
 							l,

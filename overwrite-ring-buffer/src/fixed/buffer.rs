@@ -31,7 +31,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Index<usize> for Buffer<T, 
 	type Output = T;
 
 	fn index(&self, index: usize) -> &Self::Output {
-		match self.coordinator.virtual_to_real(index) {
+		match self.coordinator.resolve_index(index) {
 			Ok(i) => unsafe { self.storage[i].assume_init_ref() },
 			Err(_) => panic!("Index out of bounds"),
 		}
@@ -40,7 +40,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Index<usize> for Buffer<T, 
 
 impl<T, C: FixedIndexCoordinator<N>, const N: usize> IndexMut<usize> for Buffer<T, C, N> {
 	fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-		match self.coordinator.virtual_to_real(index) {
+		match self.coordinator.resolve_index(index) {
 			Ok(i) => unsafe { self.storage[i].assume_init_mut() },
 			Err(_) => panic!("Index out of bounds"),
 		}
@@ -83,7 +83,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 		if self.coordinator.len() == 0 {
 			None
 		} else {
-			let index = self.coordinator.virtual_to_real(0).unwrap();
+			let index = self.coordinator.resolve_index(0).unwrap();
 			let ret = unsafe {
 				std::mem::replace(&mut self.storage[index], MaybeUninit::uninit()).assume_init()
 			};

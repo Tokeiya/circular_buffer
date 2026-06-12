@@ -73,7 +73,7 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
-	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
+	fn resolve_index(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
 				index: idx,
@@ -127,6 +127,7 @@ pub(crate) mod ext_impl {
 mod test {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
+	use crate::IndexCoordinator;
 	
 	const CAPACITY: usize = 10;
 	type Fixture = GeneralIndexCoordinator;
@@ -171,7 +172,7 @@ mod test {
 
 	#[test]
 	fn virtual_to_real() {
-		Fixture::virtual_to_real_test(CAPACITY);
+		Fixture::resolve_index_test(CAPACITY);
 	}
 
 	#[test]

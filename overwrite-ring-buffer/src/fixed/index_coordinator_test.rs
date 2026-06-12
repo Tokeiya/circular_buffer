@@ -10,11 +10,7 @@ pub trait IndexCoordinatorTestExtensions<const N: usize>: FixedIndexCoordinator<
 	fn fixture() -> Self;
 }
 
-fn expected_real_to_virtual<const N: usize>(index: usize, head: usize) -> usize {
-	(index + N - head) % N
-}
-
-fn expected_virtual_to_real<const N: usize>(index: usize, head: usize) -> usize {
+fn expected_resolve_index<const N: usize>(index: usize, head: usize) -> usize {
 	(index + head) % N
 }
 
@@ -54,7 +50,7 @@ pub(super) fn tail_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>()
 		} else {
 			assert_eq!(
 				fixture.tail_index().unwrap(),
-				expected_virtual_to_real::<N>(l - 1, h)
+				expected_resolve_index::<N>(l - 1, h)
 			);
 		}
 	}
@@ -114,7 +110,7 @@ pub(super) fn pop_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() 
 	assert_matches!(fixture.pop_index(), Err(Error::Empty));
 }
 
-pub(super) fn virtual_to_real<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
+pub(super) fn resolve_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 
 	for h in 0..N {
@@ -124,14 +120,14 @@ pub(super) fn virtual_to_real<const N: usize, T: IndexCoordinatorTestExtensions<
 
 			if l == 0 {
 				assert_matches!(
-					fixture.virtual_to_real(0),
+					fixture.resolve_index(0),
 					Err(Error::IndexOutOfRange { index: _, len: _ })
 				);
 			} else {
 				for i in 0..l {
 					assert_eq!(
-						fixture.virtual_to_real(i).unwrap(),
-						expected_virtual_to_real::<N>(i, h),
+						fixture.resolve_index(i).unwrap(),
+						expected_resolve_index::<N>(i, h),
 						"h:{} l:{} i:{}",
 						h,
 						l,
