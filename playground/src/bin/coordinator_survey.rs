@@ -6,7 +6,6 @@ fn main() {
 	for _ in 0..100 {
 		coordinator.enqueue_index();
 	}
-
 	println!(
 		"[0]:{},head:{} tail:{} len:{}",
 		coordinator.resolve_index(0).unwrap(),
