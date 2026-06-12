@@ -1,5 +1,6 @@
 use crate::error::*;
 use crate::fixed::index_coordinator::FixedIndexCoordinator;
+use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone)]
@@ -24,6 +25,8 @@ impl<const N: usize> Default for Pow2IndexCoordinator<N> {
 		Self::new()
 	}
 }
+
+impl<const N: usize> Sealed for Pow2IndexCoordinator<N> {}
 
 impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 	//noinspection DuplicatedCode

@@ -1,4 +1,5 @@
 use crate::error::*;
+use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
 use crate::resizable::index_coordinator::ResizableIndexCoordinator;
 #[derive(Clone, Debug)]
@@ -25,6 +26,8 @@ impl Pow2IndexCoordinator {
 		}
 	}
 }
+
+impl Sealed for Pow2IndexCoordinator {}
 
 impl IndexCoordinator for Pow2IndexCoordinator {
 	fn head_index(&self) -> Result<usize> {

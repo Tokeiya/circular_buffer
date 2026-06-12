@@ -1,4 +1,5 @@
 use super::index_coordinator::FixedIndexCoordinator;
+use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
 use crate::Error;
 
@@ -23,6 +24,8 @@ impl<const N: usize> Default for GeneralIndexCoordinator<N> {
 		GeneralIndexCoordinator::new()
 	}
 }
+
+impl<const N: usize> Sealed for GeneralIndexCoordinator<N> {}
 
 impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 	fn head_index(&self) -> crate::Result<usize> {

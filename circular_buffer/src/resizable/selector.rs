@@ -2,6 +2,7 @@ use super::GeneralIndexCoordinator;
 use super::Pow2IndexCoordinator;
 use super::ResizableIndexCoordinator;
 use crate::error::*;
+use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone, Debug)]
@@ -25,6 +26,8 @@ impl CoordinatorSelector {
 		}
 	}
 }
+
+impl Sealed for CoordinatorSelector {}
 
 impl IndexCoordinator for CoordinatorSelector {
 	fn head_index(&self) -> Result<usize> {

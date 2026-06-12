@@ -1,5 +1,6 @@
 use super::index_coordinator::ResizableIndexCoordinator;
 use crate::error::*;
+use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone, Debug)]
@@ -22,6 +23,8 @@ impl GeneralIndexCoordinator {
 		}
 	}
 }
+
+impl Sealed for GeneralIndexCoordinator {}
 
 impl IndexCoordinator for GeneralIndexCoordinator {
 	//noinspection DuplicatedCode

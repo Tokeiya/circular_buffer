@@ -1,5 +1,8 @@
-//IndexCoordinatorを統一化することで、Resizable/FixedのIterとIterMutを統一できないか検討してみる
-pub trait IndexCoordinator: Clone {
+pub(crate) mod sealed {
+	pub trait Sealed {}
+}
+
+pub trait IndexCoordinator: Clone + sealed::Sealed {
 	fn head_index(&self) -> crate::Result<usize>;
 	fn tail_index(&self) -> crate::Result<usize>;
 	fn enqueue_index(&mut self);

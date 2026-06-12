@@ -7,12 +7,15 @@ mod tests {
 	use super::*;
 	use crate::error::*;
 	use crate::fixed::index_coordinator_test as tests;
+	use crate::index_coordinator::sealed::Sealed;
 	use crate::index_coordinator::IndexCoordinator;
 	
 	#[derive(Default, Clone)]
 	struct Dummy<const N: usize> {
 		pub len: usize,
 	}
+
+	impl<const N: usize> Sealed for Dummy<N> {}
 
 	impl<const N: usize> IndexCoordinator for Dummy<N> {
 		fn head_index(&self) -> Result<usize> {
