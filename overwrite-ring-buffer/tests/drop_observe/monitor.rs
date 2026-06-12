@@ -71,7 +71,7 @@ mod tests {
 
 	#[test]
 	#[should_panic]
-	fn dupl_probe() {
+	fn duplicate_probe() {
 		let fixture = Monitor::new(Item::new(42), false);
 		let _ = fixture.payout_probe();
 		fixture.payout_probe();

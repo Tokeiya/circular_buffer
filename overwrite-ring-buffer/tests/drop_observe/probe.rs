@@ -20,6 +20,9 @@ impl Probe {
 
 impl Drop for Probe {
 	fn drop(&mut self) {
+		if self.1 {
+			panic!("Scheduled panic occur")
+		}
 		self.0.mark_dropped();
 	}
 }
@@ -29,6 +32,7 @@ mod tests {
 	use super::super::item::Item;
 	use super::*;
 	use std::mem::{drop as consume, ManuallyDrop};
+	use std::panic::{catch_unwind, AssertUnwindSafe};
 	#[test]
 	fn new() {
 		let fixture = Probe::new(Rc::new(Item::new(42)), false);
@@ -68,6 +72,9 @@ mod tests {
 
 	#[test]
 	fn panic_on_drop() {
-		todo!();
+		let item = Rc::new(Item::new(42));
+		let probe = Probe::new(item.clone(), true);
+
+		assert!(catch_unwind(AssertUnwindSafe(|| std::mem::drop(probe))).is_err());
 	}
 }
