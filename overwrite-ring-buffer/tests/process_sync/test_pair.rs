@@ -92,8 +92,8 @@ where
 	}
 
 	pub fn enqueue(&mut self) {
-		let act = self.exp_gen.generate();
-		let exp = self.act_gen.generate();
+		let act = self.exp_gen.generate(false);
+		let exp = self.act_gen.generate(false);
 		assert_eq!(act.id(), exp.id());
 
 		self.actual.enqueue(act.payout_probe());
@@ -147,8 +147,8 @@ where
 	}
 
 	pub fn get_probe(&mut self) -> (Probe, Probe) {
-		let act = self.act_gen.generate();
-		let exp = self.exp_gen.generate();
+		let act = self.act_gen.generate(false);
+		let exp = self.exp_gen.generate(false);
 		assert_eq!(act.id(), exp.id());
 
 		let ret = (act.payout_probe(), exp.payout_probe());
@@ -189,5 +189,4 @@ where
 		assert_eq!(self.actual.len(), self.expected.len());
 		self.expected.len()
 	}
-	
 }

@@ -7,10 +7,10 @@ impl MonitorGenerator {
 		Self(initial)
 	}
 
-	pub fn generate(&mut self) -> Monitor {
+	pub fn generate(&mut self, panic_on_drop: bool) -> Monitor {
 		let id = self.0;
 		self.0 += 1;
-		Monitor::new(Item::new(id))
+		Monitor::new(Item::new(id), panic_on_drop)
 	}
 }
 
@@ -35,7 +35,7 @@ mod tests {
 	fn generate() {
 		let mut fixture = MonitorGenerator::new(0);
 		for i in 0..10 {
-			let monitor = fixture.generate();
+			let monitor = fixture.generate(false);
 			assert_eq!(monitor.id(), i);
 		}
 	}

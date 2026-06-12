@@ -172,9 +172,9 @@ mod tests {
 		match generator {
 			None => {
 				let mut factory = MonitorGenerator::default();
-				(0..size).map(|_| factory.generate()).collect()
+				(0..size).map(|_| factory.generate(false)).collect()
 			}
-			Some(g) => (0..size).map(|_| g.generate()).collect(),
+			Some(g) => (0..size).map(|_| g.generate(false)).collect(),
 		}
 	}
 

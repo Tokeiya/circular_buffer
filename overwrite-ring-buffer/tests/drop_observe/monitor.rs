@@ -3,11 +3,11 @@ use super::probe::Probe;
 use std::cell::Cell;
 use std::rc::Rc;
 #[derive(Debug)]
-pub struct Monitor(Rc<Item>, Cell<bool>);
+pub struct Monitor(Rc<Item>, Cell<bool>, bool);
 
 impl Monitor {
-	pub(super) fn new(item: Item) -> Self {
-		Self(Rc::new(item), Cell::new(false))
+	pub(super) fn new(item: Item, panic_on_drop: bool) -> Self {
+		Self(Rc::new(item), Cell::new(false), panic_on_drop)
 	}
 
 	pub fn payout_probe(&self) -> Probe {
@@ -15,7 +15,7 @@ impl Monitor {
 			panic!("Probe is already paid out");
 		}
 		self.1.set(true);
-		Probe::new(self.0.clone())
+		Probe::new(self.0.clone(), self.2)
 	}
 
 	pub fn id(&self) -> usize {
@@ -36,7 +36,7 @@ mod tests {
 		let mut generator = MonitorGenerator::default();
 
 		for i in 0..10 {
-			let fixture = generator.generate();
+			let fixture = generator.generate(false);
 			assert_eq!(fixture.id(), i);
 			assert!(!fixture.is_dropped());
 		}
@@ -47,7 +47,7 @@ mod tests {
 		let mut generator = MonitorGenerator::default();
 
 		for i in 0..10 {
-			let fixture = generator.generate();
+			let fixture = generator.generate(false);
 			let specimen = fixture.payout_probe();
 			assert_eq!(specimen.id(), i);
 			assert_eq!(specimen.is_dropped(), false);
@@ -56,7 +56,7 @@ mod tests {
 
 	#[test]
 	fn is_dropped() {
-		let fixture = Monitor::new(Item::new(42));
+		let fixture = Monitor::new(Item::new(42), false);
 
 		assert!(!fixture.is_dropped());
 
@@ -72,7 +72,7 @@ mod tests {
 	#[test]
 	#[should_panic]
 	fn dupl_probe() {
-		let fixture = Monitor::new(Item::new(42));
+		let fixture = Monitor::new(Item::new(42), false);
 		let _ = fixture.payout_probe();
 		fixture.payout_probe();
 	}

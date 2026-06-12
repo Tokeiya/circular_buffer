@@ -344,7 +344,7 @@ mod tests {
 	#[test]
 	fn drop_check() {
 		let mut factory = MonitorGenerator::default();
-		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate(false));
 
 		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 		for m in monitor.as_slice().iter() {
@@ -360,7 +360,7 @@ mod tests {
 		const NUM: usize = 12;
 
 		let mut factory = MonitorGenerator::default();
-		let monitor: [Monitor; NUM] = std::array::from_fn(|_| factory.generate());
+		let monitor: [Monitor; NUM] = std::array::from_fn(|_| factory.generate(false));
 
 		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 		for m in monitor.iter() {
