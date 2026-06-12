@@ -2,11 +2,11 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
+use crate::circular_buffer::CircularBuffer;
 // use super::iter::Iter;
 // use super::iter_mut::IterMut;
 use crate::Iter;
 use crate::IterMut;
-use crate::circular_buffer::CircularBuffer;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
@@ -71,12 +71,12 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 			self.storage[self.coordinator.tail_index().unwrap()].write(item);
 		} else {
 			let index = self.coordinator.head_index().unwrap();
-			unsafe {
-				self.storage[index].assume_init_drop();
-				self.storage[index].write(item);
-			};
 
+			let recent = unsafe { self.storage[index].assume_init_read() };
+			self.storage[index].write(item);
 			self.coordinator.enqueue_index();
+
+			drop(recent);
 		}
 	}
 
@@ -143,9 +143,9 @@ mod tests {
 	use crate::index_coordinator::IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;
-	use std::panic::{AssertUnwindSafe, catch_unwind};
+	use std::panic::{catch_unwind, AssertUnwindSafe};
 	use std::rc::Rc;
-
+	
 	const SIZE: usize = 8;
 	type Fixture = Buffer<u8, Pow2IndexCoordinator<SIZE>, SIZE>;
 

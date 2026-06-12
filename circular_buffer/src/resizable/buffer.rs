@@ -1,7 +1,7 @@
+use crate::resizable::ResizableIndexCoordinator;
 use crate::CircularBuffer;
 use crate::Iter;
 use crate::IterMut;
-use crate::resizable::ResizableIndexCoordinator;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 #[cfg(test)]
@@ -72,12 +72,11 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 			self.storage[self.coordinator.tail_index().unwrap()].write(item);
 		} else {
 			let index = self.coordinator.head_index().unwrap();
-			unsafe {
-				self.storage[index].assume_init_drop();
-				self.storage[index].write(item);
-			};
-
+			let recent = unsafe { self.storage[index].assume_init_read() };
+			self.storage[index].write(item);
 			self.coordinator.enqueue_index();
+
+			drop(recent);
 		}
 	}
 
@@ -133,14 +132,14 @@ impl<T, C: ResizableIndexCoordinator> Drop for Buffer<T, C> {
 mod tests {
 	use super::*;
 	use crate::index_coordinator::IndexCoordinator;
-	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
+	use crate::resizable::Pow2IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::assert_matches;
 	use std::mem::MaybeUninit;
-	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
+	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
 	use std::sync::{LazyLock, Mutex};
-
+	
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator>;
 	type DropCounter = Rc<Cell<usize>>;
