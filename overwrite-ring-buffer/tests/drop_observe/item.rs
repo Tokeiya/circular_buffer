@@ -25,7 +25,7 @@ impl Item {
 
 	pub fn mark_dropped(&self) {
 		if self.flag.get() {
-			panic!("Item is already dropped");
+			panic!("Item is already dropped:{}", self.id);
 		}
 		self.flag.set(true);
 	}
@@ -34,7 +34,7 @@ impl Item {
 #[cfg(test)]
 mod tests {
 	use super::super::item::Item;
-
+	
 	#[test]
 	fn new() {
 		for i in 0..128 {

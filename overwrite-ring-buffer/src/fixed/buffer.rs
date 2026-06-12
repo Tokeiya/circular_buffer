@@ -3,8 +3,7 @@ use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
 use crate::circular_buffer::CircularBuffer;
-// use super::iter::Iter;
-// use super::iter_mut::IterMut;
+use crate::drop_gurd::DropGuard;
 use crate::Iter;
 use crate::IterMut;
 use std::mem::MaybeUninit;
@@ -121,16 +120,15 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
 impl<T, C: FixedIndexCoordinator<N>, const N: usize> Drop for Buffer<T, C, N> {
 	//noinspection DuplicatedCode
 	fn drop(&mut self) {
-		for i in 0..self.coordinator.len() {
+		let mut guard = DropGuard::new(&mut self.storage, self.coordinator.clone());
+
+		while guard.drop_next() {
 			#[cfg(test)]
 			{
 				if let Some(p) = &self.probe {
 					let i = p.get() + 1;
 					p.set(i)
 				}
-			}
-			unsafe {
-				self.storage[self.coordinator.virtual_to_real(i).unwrap()].assume_init_drop();
 			}
 		}
 	}

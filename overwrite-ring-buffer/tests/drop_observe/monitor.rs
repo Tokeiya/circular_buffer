@@ -18,6 +18,14 @@ impl Monitor {
 		Probe::new(self.0.clone(), self.2)
 	}
 
+	pub fn payout_probe_override_behaviour(&self, panic_on_drop: bool) -> Probe {
+		if self.1.get() {
+			panic!("Probe is already paid out");
+		}
+		self.1.set(true);
+		Probe::new(self.0.clone(), panic_on_drop)
+	}
+
 	pub fn id(&self) -> usize {
 		self.0.id()
 	}
@@ -75,5 +83,18 @@ mod tests {
 		let fixture = Monitor::new(Item::new(42), false);
 		let _ = fixture.payout_probe();
 		fixture.payout_probe();
+	}
+
+	#[test]
+	#[should_panic]
+	fn payout_probe_override_behaviour_a() {
+		let fixture = Monitor::new(Item::new(42), false);
+		let _ = fixture.payout_probe_override_behaviour(true);
+	}
+
+	#[test]
+	fn payout_probe_override_behaviour_b() {
+		let fixture = Monitor::new(Item::new(42), true);
+		let _ = fixture.payout_probe_override_behaviour(false);
 	}
 }

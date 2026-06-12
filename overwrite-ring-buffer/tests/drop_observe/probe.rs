@@ -21,7 +21,7 @@ impl Probe {
 impl Drop for Probe {
 	fn drop(&mut self) {
 		if self.1 {
-			panic!("Scheduled panic occur")
+			panic!("Scheduled panic occur:{}", self.0.id());
 		}
 		self.0.mark_dropped();
 	}

@@ -1,5 +1,6 @@
 use crate::resizable::ResizableIndexCoordinator;
 use crate::CircularBuffer;
+use crate::DropGuard;
 use crate::Iter;
 use crate::IterMut;
 use std::mem::MaybeUninit;
@@ -113,16 +114,15 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 impl<T, C: ResizableIndexCoordinator> Drop for Buffer<T, C> {
 	//noinspection DuplicatedCode
 	fn drop(&mut self) {
-		for i in 0..self.coordinator.len() {
+		let mut guard = DropGuard::new(&mut self.storage, self.coordinator.clone());
+
+		while guard.drop_next() {
 			#[cfg(test)]
 			{
 				if let Some(p) = &self.probe {
 					let i = p.get() + 1;
 					p.set(i)
 				}
-			}
-			unsafe {
-				self.storage[self.coordinator.virtual_to_real(i).unwrap()].assume_init_drop();
 			}
 		}
 	}

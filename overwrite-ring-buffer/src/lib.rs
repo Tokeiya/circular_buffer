@@ -17,3 +17,4 @@ pub use error::Result;
 pub use index_coordinator::IndexCoordinator;
 pub use iter::Iter;
 pub use iter_mut::IterMut;
+pub(crate) use drop_gurd::DropGuard;
