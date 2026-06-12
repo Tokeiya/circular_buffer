@@ -1,6 +1,6 @@
 [package]
-name = "circular_buffer"
-version = "0.14.0"
+name = "overwrite-ring-buffer"
+version = "0.15.0"
 edition = "2024"
 
 [dev-dependencies]

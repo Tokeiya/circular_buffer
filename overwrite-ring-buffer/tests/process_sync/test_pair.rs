@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::drop_observe::*;
-use circular_buffer::CircularBuffer;
+use overwrite_ring_buffer::CircularBuffer;
 use std::collections::HashMap;
 use std::iter::{DoubleEndedIterator, ExactSizeIterator};
 

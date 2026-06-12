@@ -1,7 +1,7 @@
 mod drop_observe;
 mod process_sync;
 
-use circular_buffer::resizable::{Buffer, CoordinatorSelector};
+use overwrite_ring_buffer::resizable::{Buffer, CoordinatorSelector};
 use drop_observe::*;
 use process_sync::Expected;
 use process_sync::test_process::{all_process_impl, enqueue_dequeue_impl};

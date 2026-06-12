@@ -1,4 +1,4 @@
-use circular_buffer::CircularBuffer;
+use overwrite_ring_buffer::CircularBuffer;
 use std::collections::{
 	VecDeque,
 	vec_deque::{Iter, IterMut},

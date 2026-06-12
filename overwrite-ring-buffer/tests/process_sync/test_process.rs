@@ -1,6 +1,6 @@
 use crate::drop_observe::Probe;
 use crate::process_sync::test_pair::TestPair;
-use circular_buffer::CircularBuffer;
+use overwrite_ring_buffer::CircularBuffer;
 use rand::prelude::IndexedRandom;
 use rand::{Rng, RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
