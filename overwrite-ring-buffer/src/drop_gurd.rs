@@ -20,3 +20,16 @@ impl<'a, T: 'a, C: IndexCoordinator> Drop for DropGuard<'a, T, C> {
 		todo!()
 	}
 }
+
+#[cfg(test)]
+mod test {
+	use super::*;
+	use crate::test_shared::*;
+	use std::panic::{catch_unwind, AssertUnwindSafe};
+	
+	#[test]
+	fn fo() {
+		let mut generator = MonitorGenerator::default();
+		catch_unwind(AssertUnwindSafe(|| generator.generate(false))).unwrap();
+	}
+}
