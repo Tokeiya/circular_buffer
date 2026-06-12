@@ -1,6 +1,6 @@
 use super::index_coordinator::FixedIndexCoordinator;
-use crate::Error;
 use crate::index_coordinator::IndexCoordinator;
+use crate::Error;
 
 #[derive(Clone, Debug)]
 pub struct GeneralIndexCoordinator<const N: usize> {
@@ -69,17 +69,6 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
-	fn real_to_virtual(&self, idx: usize) -> crate::Result<usize> {
-		if self.len <= idx {
-			Err(Error::IndexOutOfRange {
-				index: idx,
-				len: self.len,
-			})
-		} else {
-			Ok((idx + N - self.head) % N)
-		}
-	}
-
 	fn virtual_to_real(&self, idx: usize) -> crate::Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -114,7 +103,7 @@ impl<const N: usize> FixedIndexCoordinator<N> for GeneralIndexCoordinator<N> {}
 pub(crate) mod test_extensions {
 	use super::*;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-
+	
 	impl<const N: usize> IndexCoordinatorTestExtensions<N> for GeneralIndexCoordinator<N> {
 		fn mut_len(&mut self) -> &mut usize {
 			&mut self.len
@@ -134,7 +123,7 @@ pub(crate) mod test_extensions {
 mod test {
 	use super::super::index_coordinator_test as tests;
 	use super::*;
-
+	
 	const CAPACITY: usize = 10;
 	type Fixture = GeneralIndexCoordinator<CAPACITY>;
 
@@ -166,11 +155,6 @@ mod test {
 	#[test]
 	fn pop_index() {
 		tests::pop_index::<CAPACITY, Fixture>();
-	}
-
-	#[test]
-	fn real_to_virtual() {
-		tests::real_to_virtual::<CAPACITY, Fixture>();
 	}
 
 	#[test]

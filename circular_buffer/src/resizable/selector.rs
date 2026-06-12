@@ -62,13 +62,6 @@ impl IndexCoordinator for CoordinatorSelector {
 		}
 	}
 
-	fn real_to_virtual(&self, idx: usize) -> Result<usize> {
-		match self {
-			CoordinatorSelector::General(g) => g.real_to_virtual(idx),
-			CoordinatorSelector::Pow2(p) => p.real_to_virtual(idx),
-		}
-	}
-
 	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
 		match self {
 			CoordinatorSelector::General(g) => g.virtual_to_real(idx),
@@ -98,7 +91,7 @@ mod tests {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use std::assert_matches;
-
+	
 	#[test]
 	fn new() {
 		assert_matches!(CoordinatorSelector::new(0), Err(Error::ZeroCapacity));
@@ -176,12 +169,6 @@ mod tests {
 	fn pop_index() {
 		Fixture::pop_index_test(POW2);
 		Fixture::pop_index_test(GENERAL);
-	}
-
-	#[test]
-	fn real_to_virtual() {
-		Fixture::real_to_virtual_test(POW2);
-		Fixture::real_to_virtual_test(GENERAL);
 	}
 
 	#[test]

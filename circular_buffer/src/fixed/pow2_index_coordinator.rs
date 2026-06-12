@@ -72,17 +72,6 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
-	fn real_to_virtual(&self, idx: usize) -> Result<usize> {
-		if self.len <= idx {
-			Err(Error::IndexOutOfRange {
-				index: idx,
-				len: self.len,
-			})
-		} else {
-			Ok(idx.wrapping_sub(self.head) & Self::MASK)
-		}
-	}
-
 	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -163,11 +152,6 @@ mod tests {
 	#[test]
 	fn pop_index() {
 		tests::pop_index::<BASE, Fixture>();
-	}
-
-	#[test]
-	fn real_to_virtual() {
-		tests::real_to_virtual::<BASE, Fixture>();
 	}
 
 	#[test]

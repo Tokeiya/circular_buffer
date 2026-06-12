@@ -105,31 +105,6 @@ pub(super) trait IndexCoordinatorTestExtension: ResizableIndexCoordinator + Size
 		assert_matches!(fixture.pop_index(), Err(Error::Empty));
 	}
 
-	fn real_to_virtual_test(capacity: usize) {
-		let mut fixture = Self::fixture(capacity);
-
-		for (h, l) in (0..capacity).flat_map(|h| (0..=capacity).map(move |i| (h, i))) {
-			*fixture.mut_head() = h;
-			*fixture.mut_len() = l;
-
-			if l == 0 {
-				assert_matches!(
-					fixture.real_to_virtual(0),
-					Err(Error::IndexOutOfRange { index: _, len: _ })
-				);
-			}
-
-			for i in 0..l {
-				if fixture.real_to_virtual(i).unwrap() != expected_real_to_virtual(capacity, i, h) {
-					assert_eq!(
-						fixture.real_to_virtual(i).unwrap(),
-						expected_real_to_virtual(capacity, i, h)
-					)
-				}
-			}
-		}
-	}
-
 	fn virtual_to_real_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
 

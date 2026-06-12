@@ -5,7 +5,6 @@ pub trait IndexCoordinator: Clone {
 	fn enqueue_index(&mut self);
 	fn dequeue_index(&mut self) -> crate::Result<()>;
 	fn pop_index(&mut self) -> crate::Result<()>;
-	fn real_to_virtual(&self, idx: usize) -> crate::Result<usize>;
 	fn virtual_to_real(&self, idx: usize) -> crate::Result<usize>;
 	fn capacity(&self) -> usize;
 	fn len(&self) -> usize;

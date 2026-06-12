@@ -8,7 +8,7 @@ mod tests {
 	use crate::error::*;
 	use crate::fixed::index_coordinator_test as tests;
 	use crate::index_coordinator::IndexCoordinator;
-
+	
 	#[derive(Default, Clone)]
 	struct Dummy<const N: usize> {
 		pub len: usize,
@@ -32,10 +32,6 @@ mod tests {
 		}
 
 		fn pop_index(&mut self) -> Result<()> {
-			unimplemented!()
-		}
-
-		fn real_to_virtual(&self, _: usize) -> Result<usize> {
 			unimplemented!()
 		}
 

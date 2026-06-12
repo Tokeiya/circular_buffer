@@ -70,17 +70,6 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
-	fn real_to_virtual(&self, idx: usize) -> Result<usize> {
-		if self.len <= idx {
-			Err(Error::IndexOutOfRange {
-				index: idx,
-				len: self.len,
-			})
-		} else {
-			Ok((idx + self.capacity - self.head) % self.capacity)
-		}
-	}
-
 	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -105,9 +94,9 @@ impl ResizableIndexCoordinator for GeneralIndexCoordinator {}
 
 #[cfg(test)]
 pub(crate) mod ext_impl {
-	use crate::resizable::GeneralIndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
-
+	use crate::resizable::GeneralIndexCoordinator;
+	
 	impl IndexCoordinatorTestExtension for GeneralIndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
 			Self {
@@ -135,7 +124,7 @@ pub(crate) mod ext_impl {
 mod test {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
-
+	
 	const CAPACITY: usize = 10;
 	type Fixture = GeneralIndexCoordinator;
 
@@ -175,11 +164,6 @@ mod test {
 	#[test]
 	fn pop_index() {
 		Fixture::pop_index_test(CAPACITY);
-	}
-
-	#[test]
-	fn real_to_virtual() {
-		Fixture::real_to_virtual_test(CAPACITY);
 	}
 
 	#[test]

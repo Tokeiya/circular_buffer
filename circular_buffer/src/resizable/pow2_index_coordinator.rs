@@ -72,17 +72,6 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
-	fn real_to_virtual(&self, idx: usize) -> Result<usize> {
-		if self.len <= idx {
-			Err(Error::IndexOutOfRange {
-				index: idx,
-				len: self.len,
-			})
-		} else {
-			Ok(idx.wrapping_sub(self.head) & self.mask)
-		}
-	}
-
 	fn virtual_to_real(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -109,9 +98,9 @@ impl ResizableIndexCoordinator for Pow2IndexCoordinator {
 
 #[cfg(test)]
 pub(crate) mod ext_impl {
-	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
-
+	use crate::resizable::Pow2IndexCoordinator;
+	
 	impl IndexCoordinatorTestExtension for Pow2IndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
 			Pow2IndexCoordinator::try_new(capacity).unwrap()
@@ -136,7 +125,7 @@ mod tests {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use std::assert_matches;
-
+	
 	const CAPACITY: usize = 8;
 	type Fixture = Pow2IndexCoordinator;
 
@@ -174,11 +163,6 @@ mod tests {
 	#[test]
 	fn pop_index() {
 		Fixture::pop_index_test(CAPACITY);
-	}
-
-	#[test]
-	fn real_to_virtual() {
-		Fixture::real_to_virtual_test(CAPACITY);
 	}
 
 	#[test]

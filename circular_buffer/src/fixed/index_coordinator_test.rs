@@ -114,31 +114,6 @@ pub(super) fn pop_index<const N: usize, T: IndexCoordinatorTestExtensions<N>>() 
 	assert_matches!(fixture.pop_index(), Err(Error::Empty));
 }
 
-pub(super) fn real_to_virtual<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
-	let mut fixture = T::fixture();
-
-	for (h, l) in (0..N).flat_map(|h| (0..=N).map(move |i| (h, i))) {
-		*fixture.mut_head() = h;
-		*fixture.mut_len() = l;
-
-		if l == 0 {
-			assert_matches!(
-				fixture.real_to_virtual(0),
-				Err(Error::IndexOutOfRange { index: _, len: _ })
-			);
-		}
-
-		for i in 0..l {
-			if fixture.real_to_virtual(i).unwrap() != expected_real_to_virtual::<N>(i, h) {
-				assert_eq!(
-					fixture.real_to_virtual(i).unwrap(),
-					expected_real_to_virtual::<N>(i, h)
-				)
-			}
-		}
-	}
-}
-
 pub(super) fn virtual_to_real<const N: usize, T: IndexCoordinatorTestExtensions<N>>() {
 	let mut fixture = T::fixture();
 
