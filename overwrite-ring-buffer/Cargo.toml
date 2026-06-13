@@ -1,6 +1,6 @@
 [package]
 name = "overwrite-ring-buffer"
-version = "0.17.0"
+version = "0.18.0"
 edition = "2024"
 
 [dev-dependencies]
@@ -8,4 +8,4 @@ rand = "*"
 rand_chacha = "*"
 
 [dependencies]
-thiserror = "*"
+thiserror = "2.*"
