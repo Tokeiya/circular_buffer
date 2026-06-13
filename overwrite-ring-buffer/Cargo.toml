@@ -8,8 +8,8 @@ repository = "https://github.com/Tokeiya/overwrite-ring-buffer"
 keywords = ["ring-buffer", "circular-buffer", "buffer"]
 categories = ["data-structures"]
 [dev-dependencies]
-rand = "*"
-rand_chacha = "*"
+rand = "0.10.1"
+rand_chacha = "0.10.0"
 
 [dependencies]
-thiserror = "2.*"
+thiserror = "2.0.18"
