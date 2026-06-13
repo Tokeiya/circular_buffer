@@ -2,7 +2,11 @@
 name = "overwrite-ring-buffer"
 version = "0.18.0"
 edition = "2024"
-
+description = "A fixed-size and resizable overwrite ring buffer for Rust."
+license = "MIT"
+repository = "https://github.com/Tokeiya/overwrite-ring-buffer"
+keywords = ["ring-buffer", "circular-buffer", "buffer"]
+categories = ["data-structures"]
 [dev-dependencies]
 rand = "*"
 rand_chacha = "*"
