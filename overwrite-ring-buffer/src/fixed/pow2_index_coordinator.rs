@@ -106,10 +106,10 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 impl<const N: usize> FixedIndexCoordinator<N> for Pow2IndexCoordinator<N> {}
 
 #[cfg(test)]
-mod tests {
-	use super::super::index_coordinator_test as tests;
-	use super::*;
+pub(super) mod test_extensions {
+	use crate::fixed::Pow2IndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
+
 	impl<const N: usize> IndexCoordinatorTestExtensions<N> for Pow2IndexCoordinator<N> {
 		fn mut_len(&mut self) -> &mut usize {
 			&mut self.len
@@ -123,6 +123,13 @@ mod tests {
 			Self { head: 0, len: 0 }
 		}
 	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::super::index_coordinator_test as tests;
+	use super::*;
+	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 
 	const BASE: usize = 8;
 

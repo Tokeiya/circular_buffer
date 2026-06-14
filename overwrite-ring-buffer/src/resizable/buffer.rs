@@ -385,4 +385,18 @@ mod tests {
 		assert!(init.iter().all(|x| x.is_dropped()));
 		assert_eq!(cnt.take(), CAPACITY);
 	}
+
+	#[test]
+	fn clear() {
+		let (mut fixture, _) = probe_fixture();
+		let init = create_monitor(CAPACITY, None);
+
+		for p in init.iter().map(|m| m.payout_probe()) {
+			fixture.enqueue(p);
+		}
+
+		fixture.clear();
+
+		assert!(init.iter().all(|x| x.is_dropped()));
+	}
 }

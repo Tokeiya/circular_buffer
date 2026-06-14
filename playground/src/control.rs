@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use overwrite_ring_buffer::CircularBuffer;
 use std::collections::{
 	VecDeque,

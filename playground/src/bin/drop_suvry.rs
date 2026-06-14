@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 struct Foo;
 impl Drop for Foo {
 	fn drop(&mut self) {
@@ -20,6 +22,5 @@ impl Drop for Hoge {
 }
 
 fn main() {
-	let foo = Bar(Foo);
 	panic!("Scheduled")
 }
