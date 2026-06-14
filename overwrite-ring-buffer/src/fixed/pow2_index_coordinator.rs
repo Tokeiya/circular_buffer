@@ -1,7 +1,7 @@
 use crate::error::*;
 use crate::fixed::index_coordinator::FixedIndexCoordinator;
-use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
+use crate::index_coordinator::sealed::Sealed;
 
 #[derive(Clone)]
 pub struct Pow2IndexCoordinator<const N: usize> {
@@ -29,6 +29,7 @@ impl<const N: usize> Default for Pow2IndexCoordinator<N> {
 impl<const N: usize> Sealed for Pow2IndexCoordinator<N> {}
 
 impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
+	#[inline]
 	//noinspection DuplicatedCode
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
@@ -38,6 +39,7 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn tail_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -46,6 +48,7 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn enqueue_index(&mut self) {
 		if self.len < N {
 			self.len += 1;
@@ -54,6 +57,7 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn dequeue_index(&mut self) -> Result<()> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -64,6 +68,7 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	//noinspection DuplicatedCode
 	fn pop_index(&mut self) -> Result<()> {
 		match self.len.checked_sub(1) {
@@ -75,6 +80,7 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn resolve_index(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -86,10 +92,12 @@ impl<const N: usize> IndexCoordinator for Pow2IndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn capacity(&self) -> usize {
 		N
 	}
 
+	#[inline]
 	fn len(&self) -> usize {
 		self.len
 	}

@@ -1,7 +1,7 @@
 use super::index_coordinator::FixedIndexCoordinator;
-use crate::index_coordinator::sealed::Sealed;
-use crate::index_coordinator::IndexCoordinator;
 use crate::Error;
+use crate::index_coordinator::IndexCoordinator;
+use crate::index_coordinator::sealed::Sealed;
 
 #[derive(Clone, Debug)]
 pub struct GeneralIndexCoordinator<const N: usize> {
@@ -28,6 +28,7 @@ impl<const N: usize> Default for GeneralIndexCoordinator<N> {
 impl<const N: usize> Sealed for GeneralIndexCoordinator<N> {}
 
 impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
+	#[inline]
 	fn head_index(&self) -> crate::Result<usize> {
 		if self.is_empty() {
 			Err(crate::Error::Empty)
@@ -36,6 +37,7 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn tail_index(&self) -> crate::Result<usize> {
 		if self.is_empty() {
 			Err(crate::Error::Empty)
@@ -44,6 +46,7 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn enqueue_index(&mut self) {
 		if self.len < N {
 			self.len += 1;
@@ -52,6 +55,7 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn dequeue_index(&mut self) -> crate::Result<()> {
 		if self.is_empty() {
 			Err(Error::Empty)
@@ -62,6 +66,7 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn pop_index(&mut self) -> crate::Result<()> {
 		match self.len.checked_sub(1) {
 			Some(len) => {
@@ -72,6 +77,7 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn resolve_index(&self, idx: usize) -> crate::Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -83,18 +89,22 @@ impl<const N: usize> IndexCoordinator for GeneralIndexCoordinator<N> {
 		}
 	}
 
+	#[inline]
 	fn capacity(&self) -> usize {
 		N
 	}
 
+	#[inline]
 	fn len(&self) -> usize {
 		self.len
 	}
 
+	#[inline]
 	fn is_empty(&self) -> bool {
 		self.len == 0
 	}
 
+	#[inline]
 	fn is_full(&self) -> bool {
 		self.len == N
 	}
@@ -106,7 +116,7 @@ impl<const N: usize> FixedIndexCoordinator<N> for GeneralIndexCoordinator<N> {}
 pub(crate) mod test_extensions {
 	use super::*;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-	
+
 	impl<const N: usize> IndexCoordinatorTestExtensions<N> for GeneralIndexCoordinator<N> {
 		fn mut_len(&mut self) -> &mut usize {
 			&mut self.len
@@ -126,7 +136,7 @@ pub(crate) mod test_extensions {
 mod test {
 	use super::super::index_coordinator_test as tests;
 	use super::*;
-	
+
 	const CAPACITY: usize = 10;
 	type Fixture = GeneralIndexCoordinator<CAPACITY>;
 

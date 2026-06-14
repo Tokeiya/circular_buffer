@@ -1,7 +1,7 @@
 use super::index_coordinator::ResizableIndexCoordinator;
 use crate::error::*;
-use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
+use crate::index_coordinator::sealed::Sealed;
 
 #[derive(Clone, Debug)]
 pub struct GeneralIndexCoordinator {
@@ -27,6 +27,7 @@ impl GeneralIndexCoordinator {
 impl Sealed for GeneralIndexCoordinator {}
 
 impl IndexCoordinator for GeneralIndexCoordinator {
+	#[inline]
 	//noinspection DuplicatedCode
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
@@ -36,6 +37,7 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn tail_index(&self) -> Result<usize> {
 		if self.is_empty() {
 			Err(crate::Error::Empty)
@@ -44,6 +46,7 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn enqueue_index(&mut self) {
 		if self.len < self.capacity {
 			self.len += 1;
@@ -52,6 +55,7 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn dequeue_index(&mut self) -> Result<()> {
 		if self.is_empty() {
 			Err(Error::Empty)
@@ -62,6 +66,7 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
+	#[inline]
 	//noinspection DuplicatedCode
 	fn pop_index(&mut self) -> Result<()> {
 		match self.len.checked_sub(1) {
@@ -73,6 +78,7 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn resolve_index(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -84,10 +90,12 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn capacity(&self) -> usize {
 		self.capacity
 	}
 
+	#[inline]
 	fn len(&self) -> usize {
 		self.len
 	}
@@ -97,9 +105,9 @@ impl ResizableIndexCoordinator for GeneralIndexCoordinator {}
 
 #[cfg(test)]
 pub(crate) mod ext_impl {
-	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use crate::resizable::GeneralIndexCoordinator;
-	
+	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
+
 	impl IndexCoordinatorTestExtension for GeneralIndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
 			Self {
@@ -128,7 +136,7 @@ mod test {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use crate::IndexCoordinator;
-	
+
 	const CAPACITY: usize = 10;
 	type Fixture = GeneralIndexCoordinator;
 

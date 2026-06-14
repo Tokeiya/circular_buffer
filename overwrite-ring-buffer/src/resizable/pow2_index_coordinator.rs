@@ -1,6 +1,6 @@
 use crate::error::*;
-use crate::index_coordinator::sealed::Sealed;
 use crate::index_coordinator::IndexCoordinator;
+use crate::index_coordinator::sealed::Sealed;
 use crate::resizable::index_coordinator::ResizableIndexCoordinator;
 #[derive(Clone, Debug)]
 pub struct Pow2IndexCoordinator {
@@ -30,6 +30,7 @@ impl Pow2IndexCoordinator {
 impl Sealed for Pow2IndexCoordinator {}
 
 impl IndexCoordinator for Pow2IndexCoordinator {
+	#[inline]
 	fn head_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -38,6 +39,7 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn tail_index(&self) -> Result<usize> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -46,6 +48,7 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn enqueue_index(&mut self) {
 		if self.len < self.capacity {
 			self.len += 1;
@@ -54,6 +57,7 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn dequeue_index(&mut self) -> Result<()> {
 		if self.len == 0 {
 			Err(Error::Empty)
@@ -64,6 +68,7 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
+	#[inline]
 	//noinspection DuplicatedCode
 	fn pop_index(&mut self) -> Result<()> {
 		match self.len.checked_sub(1) {
@@ -75,6 +80,7 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn resolve_index(&self, idx: usize) -> Result<usize> {
 		if self.len <= idx {
 			Err(Error::IndexOutOfRange {
@@ -86,10 +92,12 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 		}
 	}
 
+	#[inline]
 	fn capacity(&self) -> usize {
 		self.capacity
 	}
 
+	#[inline]
 	fn len(&self) -> usize {
 		self.len
 	}
@@ -101,9 +109,9 @@ impl ResizableIndexCoordinator for Pow2IndexCoordinator {
 
 #[cfg(test)]
 pub(crate) mod ext_impl {
-	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use crate::resizable::Pow2IndexCoordinator;
-	
+	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
+
 	impl IndexCoordinatorTestExtension for Pow2IndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
 			Pow2IndexCoordinator::try_new(capacity).unwrap()
@@ -128,7 +136,7 @@ mod tests {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use std::assert_matches;
-	
+
 	const CAPACITY: usize = 8;
 	type Fixture = Pow2IndexCoordinator;
 
