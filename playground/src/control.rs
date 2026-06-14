@@ -25,7 +25,7 @@ impl<T, const N: usize> IndexMut<usize> for Expected<T, N> {
 
 impl<T, const N: usize> Index<usize> for Expected<T, N> {
 	type Output = T;
-	
+
 	fn index(&self, index: usize) -> &Self::Output {
 		&self.storage[index]
 	}
@@ -33,42 +33,46 @@ impl<T, const N: usize> Index<usize> for Expected<T, N> {
 
 impl<T, const N: usize> CircularBuffer<T> for Expected<T, N> {
 	type Iter<'a>
-	= Iter<'a, T>
+		= Iter<'a, T>
 	where
 		T: 'a,
 		Self: 'a;
-	
+
 	type MutIter<'a>
-	= IterMut<'a, T>
+		= IterMut<'a, T>
 	where
 		T: 'a,
 		Self: 'a;
-	
+
 	fn capacity(&self) -> usize {
 		N
 	}
-	
+
 	fn enqueue(&mut self, item: T) {
 		if self.storage.len() >= self.capacity() {
 			drop(self.storage.pop_front().unwrap());
 		}
 		self.storage.push_back(item);
 	}
-	
+
 	fn dequeue(&mut self) -> Option<T> {
 		self.storage.pop_front()
 	}
-	
+
 	fn iter(&self) -> Self::Iter<'_> {
 		self.storage.iter()
 	}
-	
+
 	fn iter_mut(&mut self) -> Self::MutIter<'_> {
 		self.storage.iter_mut()
 	}
-	
+
 	fn len(&self) -> usize {
 		self.storage.len()
+	}
+
+	fn clear(&mut self) {
+		self.storage.clear();
 	}
 }
 
@@ -80,41 +84,41 @@ mod test {
 	#[test]
 	fn enqueue() {
 		let mut fixture = Fixture::default();
-		
+
 		for i in 0..SIZE {
 			assert_eq!(fixture.storage.len(), i);
 			fixture.enqueue(i);
 		}
-		
+
 		for i in 0..SIZE {
 			assert_eq!(fixture[i], i);
 		}
-		
+
 		for i in 0..(SIZE / 2) {
 			fixture.enqueue(i + 100);
 		}
-		
+
 		for i in 0..(SIZE / 2) {
 			fixture.enqueue(i + 4);
 		}
-		
+
 		for i in (SIZE / 2)..SIZE {
 			fixture.enqueue(i + 100);
 		}
 	}
-	
+
 	#[test]
 	fn dequeue() {
 		let mut fixture = Fixture::default();
-		
+
 		for i in 0..SIZE {
 			fixture.enqueue(i);
 		}
-		
+
 		for i in 0..(SIZE / 2) {
 			assert_eq!(fixture.dequeue().unwrap(), i);
 		}
-		
+
 		for i in 0..(SIZE / 2) {
 			assert_eq!(fixture[i], i + 4);
 		}

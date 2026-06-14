@@ -35,17 +35,17 @@ impl<'a, T: 'a, C: IndexCoordinator> Drop for DropGuard<'a, T, C> {
 #[cfg(test)]
 mod test {
 	use super::*;
-	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 	use crate::fixed::Pow2IndexCoordinator;
+	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 	use crate::test_shared::*;
-	
+
 	const SIZE: usize = 8;
 	type Coordinator = Pow2IndexCoordinator<SIZE>;
 
 	#[test]
 	fn new() {
 		let mut generator = MonitorGenerator::default();
-		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate(false));
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate());
 		let mut sample: [_; SIZE] =
 			std::array::from_fn(|i| MaybeUninit::new(monitor[i].payout_probe()));
 		let mut coordinator = Coordinator::default();
@@ -63,7 +63,7 @@ mod test {
 	#[test]
 	fn drop_next() {
 		let mut generator = MonitorGenerator::default();
-		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate(false));
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate());
 		let mut sample: [_; SIZE] =
 			std::array::from_fn(|i| MaybeUninit::new(monitor[i].payout_probe()));
 		let mut coordinator = Coordinator::default();
@@ -79,7 +79,7 @@ mod test {
 	#[test]
 	fn full_drop() {
 		let mut generator = MonitorGenerator::default();
-		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate(false));
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate());
 		let mut sample: [_; SIZE] =
 			std::array::from_fn(|i| MaybeUninit::new(monitor[i].payout_probe()));
 		let mut coordinator = Coordinator::default();
@@ -94,7 +94,7 @@ mod test {
 	#[test]
 	fn partial_drop() {
 		let mut generator = MonitorGenerator::default();
-		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate(false));
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| generator.generate());
 		let mut sample: [_; SIZE] =
 			std::array::from_fn(|i| MaybeUninit::new(monitor[i].payout_probe()));
 		let mut coordinator = Coordinator::default();

@@ -2,12 +2,12 @@ use super::item::Item;
 use std::rc::Rc;
 
 #[derive(Debug)]
-pub struct Probe(Rc<Item>, bool);
+pub struct Probe(Rc<Item>);
 
 impl Probe {
-	pub(super) fn new(item: Rc<Item>, panic_on_drop: bool) -> Self {
+	pub(super) fn new(item: Rc<Item>) -> Self {
 		assert!(!item.is_dropped());
-		Self(item, panic_on_drop)
+		Self(item)
 	}
 	pub fn id(&self) -> usize {
 		self.0.id()
@@ -20,9 +20,6 @@ impl Probe {
 
 impl Drop for Probe {
 	fn drop(&mut self) {
-		if self.1 {
-			panic!("Scheduled panic occur:{}", self.0.id());
-		}
 		self.0.mark_dropped();
 	}
 }
@@ -31,11 +28,11 @@ impl Drop for Probe {
 mod tests {
 	use super::super::item::Item;
 	use super::*;
-	use std::mem::{drop as consume, ManuallyDrop};
-	use std::panic::{catch_unwind, AssertUnwindSafe};
+	use std::mem::{ManuallyDrop, drop as consume};
+	use std::panic::{AssertUnwindSafe, catch_unwind};
 	#[test]
 	fn new() {
-		let fixture = Probe::new(Rc::new(Item::new(42)), false);
+		let fixture = Probe::new(Rc::new(Item::new(42)));
 		assert_eq!(fixture.0.id(), 42);
 		assert_eq!(fixture.0.is_dropped(), false);
 	}
@@ -45,18 +42,18 @@ mod tests {
 	fn invalid_new() {
 		let item = Item::new(42);
 		item.mark_dropped();
-		let _ = Probe::new(Rc::new(item), false);
+		let _ = Probe::new(Rc::new(item));
 	}
 
 	#[test]
 	fn id() {
-		let fixture = Probe::new(Rc::new(Item::new(42)), false);
+		let fixture = Probe::new(Rc::new(Item::new(42)));
 		assert_eq!(fixture.id(), 42);
 	}
 
 	#[test]
 	fn is_dropped() {
-		let fixture = ManuallyDrop::new(Probe::new(Rc::new(Item::new(42)), false));
+		let fixture = ManuallyDrop::new(Probe::new(Rc::new(Item::new(42))));
 		assert_eq!(fixture.is_dropped(), false);
 		fixture.0.mark_dropped();
 		assert_eq!(fixture.is_dropped(), true);
@@ -65,16 +62,8 @@ mod tests {
 	#[test]
 	fn drop() {
 		let item = Rc::new(Item::new(42));
-		let probe = Probe::new(item.clone(), false);
+		let probe = Probe::new(item.clone());
 		consume(probe);
 		assert_eq!(item.is_dropped(), true);
-	}
-
-	#[test]
-	fn panic_on_drop() {
-		let item = Rc::new(Item::new(42));
-		let probe = Probe::new(item.clone(), true);
-
-		assert!(catch_unwind(AssertUnwindSafe(|| std::mem::drop(probe))).is_err());
 	}
 }

@@ -3,11 +3,11 @@ use super::probe::Probe;
 use std::cell::Cell;
 use std::rc::Rc;
 #[derive(Debug)]
-pub struct Monitor(Rc<Item>, Cell<bool>, bool);
+pub struct Monitor(Rc<Item>, Cell<bool>);
 
 impl Monitor {
-	pub(super) fn new(item: Item, panic_on_drop: bool) -> Self {
-		Self(Rc::new(item), Cell::new(false), panic_on_drop)
+	pub(super) fn new(item: Item) -> Self {
+		Self(Rc::new(item), Cell::new(false))
 	}
 
 	pub fn payout_probe(&self) -> Probe {
@@ -15,15 +15,7 @@ impl Monitor {
 			panic!("Probe is already paid out");
 		}
 		self.1.set(true);
-		Probe::new(self.0.clone(), self.2)
-	}
-
-	pub fn payout_probe_override_behaviour(&self, panic_on_drop: bool) -> Probe {
-		if self.1.get() {
-			panic!("Probe is already paid out");
-		}
-		self.1.set(true);
-		Probe::new(self.0.clone(), panic_on_drop)
+		Probe::new(self.0.clone())
 	}
 
 	pub fn id(&self) -> usize {
@@ -44,7 +36,7 @@ mod tests {
 		let mut generator = MonitorGenerator::default();
 
 		for i in 0..10 {
-			let fixture = generator.generate(false);
+			let fixture = generator.generate();
 			assert_eq!(fixture.id(), i);
 			assert!(!fixture.is_dropped());
 		}
@@ -55,16 +47,16 @@ mod tests {
 		let mut generator = MonitorGenerator::default();
 
 		for i in 0..10 {
-			let fixture = generator.generate(false);
+			let fixture = generator.generate();
 			let specimen = fixture.payout_probe();
 			assert_eq!(specimen.id(), i);
-			assert_eq!(specimen.is_dropped(), false);
+			assert!(!specimen.is_dropped());
 		}
 	}
 
 	#[test]
 	fn is_dropped() {
-		let fixture = Monitor::new(Item::new(42), false);
+		let fixture = Monitor::new(Item::new(42));
 
 		assert!(!fixture.is_dropped());
 
@@ -80,21 +72,8 @@ mod tests {
 	#[test]
 	#[should_panic]
 	fn duplicate_probe() {
-		let fixture = Monitor::new(Item::new(42), false);
+		let fixture = Monitor::new(Item::new(42));
 		let _ = fixture.payout_probe();
 		fixture.payout_probe();
-	}
-
-	#[test]
-	#[should_panic]
-	fn payout_probe_override_behaviour_a() {
-		let fixture = Monitor::new(Item::new(42), false);
-		let _ = fixture.payout_probe_override_behaviour(true);
-	}
-
-	#[test]
-	fn payout_probe_override_behaviour_b() {
-		let fixture = Monitor::new(Item::new(42), true);
-		let _ = fixture.payout_probe_override_behaviour(false);
 	}
 }

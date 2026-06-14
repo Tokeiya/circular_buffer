@@ -2,10 +2,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
-use crate::circular_buffer::CircularBuffer;
-use crate::drop_gurd::DropGuard;
 use crate::Iter;
 use crate::IterMut;
+use crate::circular_buffer::CircularBuffer;
+use crate::drop_gurd::DropGuard;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
@@ -106,6 +106,10 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
+
+	fn clear(&mut self) {
+		todo!()
+	}
 }
 
 impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
@@ -141,9 +145,9 @@ mod tests {
 	use crate::index_coordinator::IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;
-	use std::panic::{catch_unwind, AssertUnwindSafe};
+	use std::panic::{AssertUnwindSafe, catch_unwind};
 	use std::rc::Rc;
-	
+
 	const SIZE: usize = 8;
 	type Fixture = Buffer<u8, Pow2IndexCoordinator<SIZE>, SIZE>;
 
@@ -342,7 +346,7 @@ mod tests {
 	#[test]
 	fn drop_check() {
 		let mut factory = MonitorGenerator::default();
-		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate(false));
+		let monitor: [Monitor; SIZE] = std::array::from_fn(|_| factory.generate());
 
 		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 		for m in monitor.as_slice().iter() {
@@ -358,7 +362,7 @@ mod tests {
 		const NUM: usize = 12;
 
 		let mut factory = MonitorGenerator::default();
-		let monitor: [Monitor; NUM] = std::array::from_fn(|_| factory.generate(false));
+		let monitor: [Monitor; NUM] = std::array::from_fn(|_| factory.generate());
 
 		let mut fixture = Buffer::<Probe, Pow2IndexCoordinator<SIZE>, SIZE>::default();
 		for m in monitor.iter() {

@@ -70,6 +70,10 @@ impl<T, const N: usize> CircularBuffer<T> for Expected<T, N> {
 	fn len(&self) -> usize {
 		self.storage.len()
 	}
+
+	fn clear(&mut self) {
+		self.storage.clear();
+	}
 }
 
 #[cfg(test)]

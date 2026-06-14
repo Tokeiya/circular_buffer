@@ -24,6 +24,8 @@ pub trait CircularBuffer<T>: Index<usize, Output = T> + IndexMut<usize> {
 	fn is_empty(&self) -> bool {
 		self.len() == 0
 	}
+
+	fn clear(&mut self);
 }
 
 #[cfg(test)]
@@ -58,27 +60,31 @@ mod tests {
 			Self: 'a;
 
 		fn capacity(&self) -> usize {
-			todo!()
+			unimplemented!()
 		}
 
 		fn enqueue(&mut self, _: usize) {
-			todo!()
+			unimplemented!()
 		}
 
 		fn dequeue(&mut self) -> Option<usize> {
-			todo!()
+			unimplemented!()
 		}
 
 		fn iter(&self) -> Self::Iter<'_> {
-			todo!()
+			unimplemented!()
 		}
 
 		fn iter_mut(&mut self) -> Self::MutIter<'_> {
-			todo!()
+			unimplemented!()
 		}
 
 		fn len(&self) -> usize {
 			self.0
+		}
+
+		fn clear(&mut self) {
+			unimplemented!()
 		}
 	}
 
