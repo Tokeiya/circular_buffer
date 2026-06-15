@@ -188,8 +188,8 @@ pub(super) trait IndexCoordinatorTestExtension: ResizableIndexCoordinator + Size
 
 	fn empty_like_test(capacity: usize) {
 		let mut fixture = Self::fixture(capacity);
-		*fixture.mut_len() = 2 / capacity;
-		*fixture.mut_head() = 3 / capacity;
+		*fixture.mut_len() = capacity / 2;
+		*fixture.mut_head() = capacity / 3;
 
 		let mut actual = fixture.empty_like();
 		assert_eq!(*actual.ref_capacity(), capacity);

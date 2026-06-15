@@ -220,6 +220,6 @@ mod tests {
 	#[test]
 	fn empty_like() {
 		Fixture::empty_like_test(POW2);
-		Fixture::clone_test(GENERAL);
+		Fixture::empty_like_test(GENERAL);
 	}
 }
