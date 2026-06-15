@@ -10,6 +10,7 @@ impl Probe {
 		Self(item, None)
 	}
 
+	#[allow(dead_code)]
 	pub(super) fn new_with_behaviour<F: FnOnce(Rc<Item>) + 'static>(
 		item: Rc<Item>,
 		callback: F,
@@ -52,7 +53,7 @@ mod tests {
 	use super::super::item::Item;
 	use super::*;
 	use std::cell::Cell;
-	use std::mem::{ManuallyDrop, drop as consume};
+	use std::mem::{drop as consume, ManuallyDrop};
 	#[test]
 	fn new() {
 		let fixture = Probe::new(Rc::new(Item::new(42)));

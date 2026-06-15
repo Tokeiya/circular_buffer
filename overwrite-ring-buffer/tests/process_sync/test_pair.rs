@@ -189,4 +189,11 @@ where
 		assert_eq!(self.actual.len(), self.expected.len());
 		self.expected.len()
 	}
+
+	pub fn clear(&mut self) {
+		self.actual.clear();
+		self.expected.clear();
+
+		self.assert();
+	}
 }
