@@ -2,10 +2,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
-use crate::Iter;
-use crate::IterMut;
 use crate::circular_buffer::CircularBuffer;
 use crate::drop_gurd::DropGuard;
+use crate::Iter;
+use crate::IterMut;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
@@ -145,9 +145,9 @@ mod tests {
 	use crate::index_coordinator::IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::cell::Cell;
-	use std::panic::{AssertUnwindSafe, catch_unwind};
+	use std::panic::{catch_unwind, AssertUnwindSafe};
 	use std::rc::Rc;
-
+	
 	const SIZE: usize = 8;
 	type Fixture = Buffer<u8, Pow2IndexCoordinator<SIZE>, SIZE>;
 
@@ -381,16 +381,20 @@ mod tests {
 
 #[cfg(test)]
 mod alt_tests {
-	use crate::
+	use crate::circular_buffer::CircularBuffer;
+	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 	use crate::fixed::{Buffer, Pow2IndexCoordinator};
+	use crate::index_coordinator::IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::assert_matches;
 	use std::cell::Cell;
 	use std::mem::MaybeUninit;
-	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
+	use std::ops::Index;
+	use std::ops::IndexMut;
+	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
 	use std::rc::Rc;
 	use std::sync::{LazyLock, Mutex};
-
+	
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator<CAPACITY>, CAPACITY>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator<CAPACITY>, CAPACITY>;
 	type DropCounter = Rc<Cell<usize>>;
@@ -460,7 +464,7 @@ mod alt_tests {
 			should_panic(|| _ = UsizeFixture::index(target, n));
 
 			assert_eq!(target.capacity(), CAPACITY);
-			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
+			assert_eq!(target.coordinator.capacity(), CAPACITY)
 		}
 
 		let mut fixture = usize_fixture();
@@ -501,7 +505,7 @@ mod alt_tests {
 			should_panic(|| _ = UsizeFixture::index_mut(target, n));
 
 			assert_eq!(target.capacity(), CAPACITY);
-			assert_eq!(target.coordinator.ref_capacity(), &CAPACITY)
+			assert_eq!(target.coordinator.capacity(), CAPACITY)
 		}
 
 		for i in 1..=CAPACITY {
