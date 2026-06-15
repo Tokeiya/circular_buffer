@@ -1,8 +1,8 @@
+use crate::resizable::ResizableIndexCoordinator;
 use crate::CircularBuffer;
 use crate::DropGuard;
 use crate::Iter;
 use crate::IterMut;
-use crate::resizable::ResizableIndexCoordinator;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 #[cfg(test)]
@@ -111,7 +111,13 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	}
 
 	fn clear(&mut self) {
-		todo!()
+		let new_coordinator = self.coordinator.empty_like();
+		let mut guard = DropGuard::new(
+			&mut self.storage,
+			std::mem::replace(&mut self.coordinator, new_coordinator),
+		);
+
+		while guard.drop_next() {}
 	}
 }
 
@@ -136,14 +142,14 @@ impl<T, C: ResizableIndexCoordinator> Drop for Buffer<T, C> {
 mod tests {
 	use super::*;
 	use crate::index_coordinator::IndexCoordinator;
-	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
+	use crate::resizable::Pow2IndexCoordinator;
 	use crate::test_shared::{Monitor, MonitorGenerator, Probe};
 	use std::assert_matches;
 	use std::mem::MaybeUninit;
-	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
+	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
 	use std::sync::{LazyLock, Mutex};
-
+	
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator>;
 	type DropCounter = Rc<Cell<usize>>;
@@ -172,6 +178,7 @@ mod tests {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	fn create_monitor(size: usize, generator: Option<&mut MonitorGenerator>) -> Vec<Monitor> {
 		match generator {
 			None => {
@@ -183,6 +190,7 @@ mod tests {
 	}
 
 	static BLOCKER: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
+	//noinspection DuplicatedCode
 	fn should_panic(f: impl FnOnce()) {
 		let _token = BLOCKER.lock().unwrap();
 		let recent = take_hook();
@@ -278,6 +286,7 @@ mod tests {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn index_mut_drop_test() {
 		let (mut fixture, _) = probe_fixture();
@@ -304,6 +313,7 @@ mod tests {
 		assert_eq!(fixture.capacity(), CAPACITY);
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn dequeue() {
 		let mut generator = MonitorGenerator::default();
@@ -328,6 +338,7 @@ mod tests {
 		assert_matches!(fixture.dequeue(), None);
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn iter() {
 		let mut fixture = usize_fixture();
@@ -340,6 +351,7 @@ mod tests {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn iter_mut() {
 		let mut fixture = usize_fixture();
@@ -356,6 +368,7 @@ mod tests {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn len() {
 		let mut fixture = usize_fixture();
@@ -371,6 +384,7 @@ mod tests {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn drop() {
 		let (mut fixture, cnt) = probe_fixture();
@@ -386,6 +400,7 @@ mod tests {
 		assert_eq!(cnt.take(), CAPACITY);
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn clear() {
 		let (mut fixture, _) = probe_fixture();

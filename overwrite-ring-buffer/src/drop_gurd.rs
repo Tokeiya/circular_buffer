@@ -15,7 +15,7 @@ impl<'a, T: 'a, C: IndexCoordinator> DropGuard<'a, T, C> {
 
 	pub(crate) fn drop_next(&mut self) -> bool {
 		if let Ok(idx) = self.coordinator.head_index() {
-			_ = self.coordinator.dequeue_index();
+			self.coordinator.dequeue_index().unwrap();
 			unsafe {
 				self.storage[idx].assume_init_drop();
 			}
@@ -35,10 +35,10 @@ impl<'a, T: 'a, C: IndexCoordinator> Drop for DropGuard<'a, T, C> {
 #[cfg(test)]
 mod test {
 	use super::*;
-	use crate::fixed::Pow2IndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
+	use crate::fixed::Pow2IndexCoordinator;
 	use crate::test_shared::*;
-
+	
 	const SIZE: usize = 8;
 	type Coordinator = Pow2IndexCoordinator<SIZE>;
 

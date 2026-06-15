@@ -1,6 +1,6 @@
 use crate::error::*;
-use crate::index_coordinator::IndexCoordinator;
 use crate::index_coordinator::sealed::Sealed;
+use crate::index_coordinator::IndexCoordinator;
 use crate::resizable::index_coordinator::ResizableIndexCoordinator;
 #[derive(Clone, Debug)]
 pub struct Pow2IndexCoordinator {
@@ -104,14 +104,21 @@ impl IndexCoordinator for Pow2IndexCoordinator {
 }
 
 impl ResizableIndexCoordinator for Pow2IndexCoordinator {
-	//noinspection DuplicatedCode
+	fn empty_like(&self) -> Self {
+		Self {
+			capacity: self.capacity,
+			len: 0,
+			head: 0,
+			mask: self.mask,
+		}
+	}
 }
 
 #[cfg(test)]
 pub(crate) mod ext_impl {
-	use crate::resizable::Pow2IndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
-
+	use crate::resizable::Pow2IndexCoordinator;
+	
 	impl IndexCoordinatorTestExtension for Pow2IndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
 			Pow2IndexCoordinator::try_new(capacity).unwrap()
@@ -136,7 +143,7 @@ mod tests {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use std::assert_matches;
-
+	
 	const CAPACITY: usize = 8;
 	type Fixture = Pow2IndexCoordinator;
 
@@ -204,5 +211,10 @@ mod tests {
 	#[test]
 	fn clone() {
 		Fixture::clone_test(CAPACITY);
+	}
+
+	#[test]
+	fn empty_like() {
+		Fixture::empty_like_test(CAPACITY);
 	}
 }

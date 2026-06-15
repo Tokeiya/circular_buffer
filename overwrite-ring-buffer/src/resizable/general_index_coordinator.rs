@@ -1,7 +1,7 @@
 use super::index_coordinator::ResizableIndexCoordinator;
 use crate::error::*;
-use crate::index_coordinator::IndexCoordinator;
 use crate::index_coordinator::sealed::Sealed;
+use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone, Debug)]
 pub struct GeneralIndexCoordinator {
@@ -101,13 +101,21 @@ impl IndexCoordinator for GeneralIndexCoordinator {
 	}
 }
 
-impl ResizableIndexCoordinator for GeneralIndexCoordinator {}
+impl ResizableIndexCoordinator for GeneralIndexCoordinator {
+	fn empty_like(&self) -> Self {
+		Self {
+			capacity: self.capacity,
+			len: 0,
+			head: 0,
+		}
+	}
+}
 
 #[cfg(test)]
 pub(crate) mod ext_impl {
-	use crate::resizable::GeneralIndexCoordinator;
 	use crate::resizable::index_coordinator_tests::IndexCoordinatorTestExtension;
-
+	use crate::resizable::GeneralIndexCoordinator;
+	
 	impl IndexCoordinatorTestExtension for GeneralIndexCoordinator {
 		fn fixture(capacity: usize) -> Self {
 			Self {
@@ -136,7 +144,7 @@ mod test {
 	use super::super::index_coordinator_tests::IndexCoordinatorTestExtension;
 	use super::*;
 	use crate::IndexCoordinator;
-
+	
 	const CAPACITY: usize = 10;
 	type Fixture = GeneralIndexCoordinator;
 
@@ -206,5 +214,10 @@ mod test {
 	#[test]
 	fn clone() {
 		Fixture::clone_test(CAPACITY);
+	}
+
+	#[test]
+	fn empty_like() {
+		Fixture::empty_like_test(CAPACITY);
 	}
 }

@@ -87,7 +87,14 @@ impl IndexCoordinator for CoordinatorSelector {
 	}
 }
 
-impl ResizableIndexCoordinator for CoordinatorSelector {}
+impl ResizableIndexCoordinator for CoordinatorSelector {
+	fn empty_like(&self) -> Self {
+		match self {
+			CoordinatorSelector::General(g) => Self::General(g.empty_like()),
+			CoordinatorSelector::Pow2(p) => Self::Pow2(p.empty_like()),
+		}
+	}
+}
 
 #[cfg(test)]
 mod tests {
@@ -207,6 +214,12 @@ mod tests {
 	#[test]
 	fn clone() {
 		Fixture::clone_test(POW2);
+		Fixture::clone_test(GENERAL);
+	}
+
+	#[test]
+	fn empty_like() {
+		Fixture::empty_like_test(POW2);
 		Fixture::clone_test(GENERAL);
 	}
 }
