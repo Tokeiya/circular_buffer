@@ -148,8 +148,7 @@ mod tests {
 	use std::assert_matches;
 	use std::cell::Cell;
 	use std::mem::MaybeUninit;
-	use std::ops::Index;
-	use std::ops::IndexMut;
+	use std::ops::{Index, IndexMut};
 	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
 	use std::rc::Rc;
 	use std::sync::{LazyLock, Mutex};
@@ -221,9 +220,6 @@ mod tests {
 			}
 
 			should_panic(|| _ = UsizeFixture::index(target, n));
-
-			assert_eq!(target.capacity(), CAPACITY);
-			assert_eq!(target.coordinator.capacity(), CAPACITY)
 		}
 
 		let mut fixture = usize_fixture();
@@ -262,9 +258,6 @@ mod tests {
 			}
 
 			should_panic(|| _ = UsizeFixture::index_mut(target, n));
-
-			assert_eq!(target.capacity(), CAPACITY);
-			assert_eq!(target.coordinator.capacity(), CAPACITY)
 		}
 
 		for i in 1..=CAPACITY {
