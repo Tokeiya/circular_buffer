@@ -195,5 +195,6 @@ where
 		self.expected.clear();
 
 		self.assert();
+		assert_eq!(self.len(), 0);
 	}
 }
