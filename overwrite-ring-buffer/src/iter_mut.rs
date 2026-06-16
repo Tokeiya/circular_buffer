@@ -2,13 +2,47 @@ use super::CircularBuffer;
 use super::IndexCoordinator;
 use std::iter::FusedIterator;
 use std::marker::PhantomData;
+
+/// A mutable iterator over the elements of a circular buffer.
+///
+/// This iterator yields unique mutable references to the initialized elements
+/// currently represented by the coordinator.
+///
+/// Elements are yielded in logical order, from the front of the buffer to the
+/// back of the buffer.
+///
+/// The iterator owns a snapshot of the index coordinator. Advancing the
+/// iterator updates only this local coordinator state and does not modify the
+/// original buffer's coordinator.
+///
+/// # Safety invariants
+///
+/// This iterator is created from a mutable borrow of the original buffer.
+/// The raw pointer stored in this iterator must point to the beginning of the
+/// buffer's backing storage and must remain valid for the lifetime `'a`.
+///
+/// The coordinator must only yield physical indices that refer to initialized
+/// elements, and each element must be yielded at most once. This is required to
+/// uphold the uniqueness guarantee of `&'a mut T`.
 pub struct IterMut<'a, T, C> {
+	// Pointer to the first slot of the backing storage.
 	head_ptr: *mut std::mem::MaybeUninit<T>,
+
+	// A local snapshot of the buffer's logical index state.
 	coordinator: C,
-	_phantom: PhantomData<&'a T>,
+
+	// Ties this iterator to the mutable borrow of the original buffer.
+	_phantom: PhantomData<&'a mut T>,
 }
 
 impl<'a, T, C> IterMut<'a, T, C> {
+	/// Creates a new mutable iterator.
+	///
+	/// The mutable buffer reference is used to tie the iterator lifetime to the
+	/// exclusive borrow of the original buffer.
+	///
+	/// The caller must provide a pointer to the beginning of the backing
+	/// storage and a coordinator that describes the initialized elements.
 	pub(super) fn new<B: CircularBuffer<T>>(
 		_: &'a mut B,
 		head_pointer: *mut std::mem::MaybeUninit<T>,
@@ -25,11 +59,19 @@ impl<'a, T, C> IterMut<'a, T, C> {
 impl<'a, T: 'a, C: IndexCoordinator> Iterator for IterMut<'a, T, C> {
 	type Item = &'a mut T;
 
+	/// Returns the next element from the logical front of the buffer.
 	fn next(&mut self) -> Option<Self::Item> {
 		if self.coordinator.is_empty() {
 			None
 		} else {
 			let ret = unsafe {
+				// SAFETY:
+				// The coordinator is expected to point only to initialized
+				// elements. `head_index` returns the physical index of the
+				// current logical front element.
+				//
+				// After this reference is created, the coordinator is advanced
+				// so that the same element will not be yielded again.
 				let uninit_ref = &mut *self.head_ptr.add(self.coordinator.head_index().unwrap());
 				Some(uninit_ref.assume_init_mut())
 			};
@@ -39,12 +81,14 @@ impl<'a, T: 'a, C: IndexCoordinator> Iterator for IterMut<'a, T, C> {
 		}
 	}
 
+	/// Returns the exact number of remaining elements.
 	fn size_hint(&self) -> (usize, Option<usize>) {
 		(self.coordinator.len(), Some(self.coordinator.len()))
 	}
 }
 
 impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
+	/// Returns the next element from the logical back of the buffer.
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.coordinator.is_empty() {
 			None
@@ -52,9 +96,17 @@ impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
 			let ret = unsafe {
 				let index = self.coordinator.tail_index().unwrap();
 
+				// SAFETY:
+				// The coordinator is expected to point only to initialized
+				// elements. `tail_index` returns the physical index of the
+				// current logical back element.
+				//
+				// After this reference is created, the coordinator is moved
+				// backward so that the same element will not be yielded again.
 				let uninit_ref = &mut *self.head_ptr.add(index);
 				Some(uninit_ref.assume_init_mut())
 			};
+
 			self.coordinator.pop_index().unwrap();
 			ret
 		}
@@ -64,20 +116,20 @@ impl<'a, T: 'a, C: IndexCoordinator> DoubleEndedIterator for IterMut<'a, T, C> {
 impl<'a, T: 'a, C: IndexCoordinator> FusedIterator for IterMut<'a, T, C> {}
 
 impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
+	/// Returns the number of remaining elements.
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
-
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::CircularBuffer;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 	use crate::iter::Iter;
+	use crate::CircularBuffer;
 	use std::mem::MaybeUninit;
 	use std::ops::{Index, IndexMut};
-
+	
 	pub struct Dummy;
 
 	fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {

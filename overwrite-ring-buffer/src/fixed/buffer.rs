@@ -116,6 +116,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 }
 
 impl<T, C: FixedIndexCoordinator<N>, const N: usize> Buffer<T, C, N> {
+	#[allow(dead_code)]
 	#[cfg(test)]
 	fn new_with_probe(probe: Rc<Cell<usize>>) -> Self {
 		let mut s = Self::default();

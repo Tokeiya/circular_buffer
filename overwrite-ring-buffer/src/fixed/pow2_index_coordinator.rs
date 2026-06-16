@@ -1,7 +1,7 @@
 use crate::error::*;
 use crate::fixed::index_coordinator::FixedIndexCoordinator;
-use crate::index_coordinator::IndexCoordinator;
 use crate::index_coordinator::sealed::Sealed;
+use crate::index_coordinator::IndexCoordinator;
 
 #[derive(Clone)]
 pub struct Pow2IndexCoordinator<const N: usize> {
@@ -107,9 +107,9 @@ impl<const N: usize> FixedIndexCoordinator<N> for Pow2IndexCoordinator<N> {}
 
 #[cfg(test)]
 pub(super) mod test_extensions {
-	use crate::fixed::Pow2IndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-
+	use crate::fixed::Pow2IndexCoordinator;
+	
 	impl<const N: usize> IndexCoordinatorTestExtensions<N> for Pow2IndexCoordinator<N> {
 		fn mut_len(&mut self) -> &mut usize {
 			&mut self.len
@@ -129,8 +129,7 @@ pub(super) mod test_extensions {
 mod tests {
 	use super::super::index_coordinator_test as tests;
 	use super::*;
-	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
-
+	
 	const BASE: usize = 8;
 
 	type Fixture = Pow2IndexCoordinator<BASE>;

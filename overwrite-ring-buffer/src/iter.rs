@@ -2,12 +2,27 @@ pub use super::IndexCoordinator;
 use std::iter::FusedIterator;
 use std::mem::MaybeUninit;
 
+/// An immutable iterator over the elements of a circular buffer.
+///
+/// This iterator yields shared references to the initialized elements currently
+/// represented by the coordinator.
+///
+/// Elements are yielded in logical order, from the front of the buffer to the
+/// back of the buffer.
+///
+/// The iterator owns a snapshot of the index coordinator. Advancing the
+/// iterator updates only this local coordinator state and does not modify the
+/// original buffer.
 pub struct Iter<'a, T, C: IndexCoordinator> {
 	buff: &'a [MaybeUninit<T>],
 	coordinator: C,
 }
 
 impl<'a, T, C: IndexCoordinator> Iter<'a, T, C> {
+	/// Creates a new immutable iterator.
+	///
+	/// The provided coordinator must describe only initialized elements within
+	/// `buff`.
 	pub(crate) fn new(buff: &'a [MaybeUninit<T>], coordinator: C) -> Self {
 		Self { buff, coordinator }
 	}
@@ -16,17 +31,25 @@ impl<'a, T, C: IndexCoordinator> Iter<'a, T, C> {
 impl<'a, T, C: IndexCoordinator> Iterator for Iter<'a, T, C> {
 	type Item = &'a T;
 
+	/// Returns the next element from the logical front of the buffer.
 	fn next(&mut self) -> Option<Self::Item> {
 		if self.coordinator.len() == 0 {
 			None
 		} else {
+			// SAFETY:
+			// The coordinator is expected to point only to initialized elements.
+			// `head_index` returns the physical index of the current logical
+			// front element, and the returned reference is tied to the lifetime
+			// of the backing buffer.
 			let item =
 				unsafe { self.buff[self.coordinator.head_index().unwrap()].assume_init_ref() };
+
 			self.coordinator.dequeue_index().unwrap();
 			Some(item)
 		}
 	}
 
+	/// Returns the exact number of remaining elements.
 	fn size_hint(&self) -> (usize, Option<usize>) {
 		let len = self.coordinator.len();
 		(len, Some(len))
@@ -34,18 +57,26 @@ impl<'a, T, C: IndexCoordinator> Iterator for Iter<'a, T, C> {
 }
 
 impl<'a, T, C: IndexCoordinator> ExactSizeIterator for Iter<'a, T, C> {
+	/// Returns the number of remaining elements.
 	fn len(&self) -> usize {
 		self.coordinator.len()
 	}
 }
 
 impl<'a, T, C: IndexCoordinator> DoubleEndedIterator for Iter<'a, T, C> {
+	/// Returns the next element from the logical back of the buffer.
 	fn next_back(&mut self) -> Option<Self::Item> {
 		if self.coordinator.len() == 0 {
 			None
 		} else {
+			// SAFETY:
+			// The coordinator is expected to point only to initialized elements.
+			// `tail_index` returns the physical index of the current logical
+			// back element, and the returned reference is tied to the lifetime
+			// of the backing buffer.
 			let item =
 				unsafe { self.buff[self.coordinator.tail_index().unwrap()].assume_init_ref() };
+
 			self.coordinator.pop_index().unwrap();
 			Some(item)
 		}
@@ -53,14 +84,13 @@ impl<'a, T, C: IndexCoordinator> DoubleEndedIterator for Iter<'a, T, C> {
 }
 
 impl<'a, T, C: IndexCoordinator> FusedIterator for Iter<'a, T, C> {}
-
 #[cfg(test)]
 mod test {
 	use super::*;
-	use crate::fixed::GeneralIndexCoordinator;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
+	use crate::fixed::GeneralIndexCoordinator;
 	use std::array::from_fn;
-
+	
 	const SIZE: usize = 8;
 	const MASK: usize = SIZE - 1;
 
