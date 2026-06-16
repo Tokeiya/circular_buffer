@@ -42,36 +42,36 @@ use overwrite_ring_buffer::*;
 
 ```rust
 use overwrite_ring_buffer::{
-    CircularBuffer,
-    fixed::{Buffer, Pow2IndexCoordinator},
+	CircularBuffer,
+	fixed::{Buffer, Pow2IndexCoordinator},
 };
 
 const CAPACITY: usize = 4;
 
 fn main() {
-    let mut buffer: Buffer<i32, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
-
-    buffer.enqueue(10);
-    buffer.enqueue(20);
-    buffer.enqueue(30);
-    buffer.enqueue(40);
-
-    assert_eq!(buffer.len(), 4);
-    assert_eq!(buffer.capacity(), 4);
-
-    assert_eq!(buffer[0], 10);
-    assert_eq!(buffer[1], 20);
-    assert_eq!(buffer[2], 30);
-    assert_eq!(buffer[3], 40);
-
-    // The buffer is full, so this overwrites the oldest value: 10.
-    buffer.enqueue(50);
-
-    assert_eq!(buffer.len(), 4);
-    assert_eq!(buffer[0], 20);
-    assert_eq!(buffer[1], 30);
-    assert_eq!(buffer[2], 40);
-    assert_eq!(buffer[3], 50);
+	let mut buffer: Buffer<i32, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
+	
+	buffer.enqueue(10);
+	buffer.enqueue(20);
+	buffer.enqueue(30);
+	buffer.enqueue(40);
+	
+	assert_eq!(buffer.len(), 4);
+	assert_eq!(buffer.capacity(), 4);
+	
+	assert_eq!(buffer[0], 10);
+	assert_eq!(buffer[1], 20);
+	assert_eq!(buffer[2], 30);
+	assert_eq!(buffer[3], 40);
+	
+	// The buffer is full, so this overwrites the oldest value: 10.
+	buffer.enqueue(50);
+	
+	assert_eq!(buffer.len(), 4);
+	assert_eq!(buffer[0], 20);
+	assert_eq!(buffer[1], 30);
+	assert_eq!(buffer[2], 40);
+	assert_eq!(buffer[3], 50);
 }
 ```
 
@@ -81,23 +81,23 @@ fn main() {
 
 ```rust
 use overwrite_ring_buffer::{
-    CircularBuffer,
-    fixed::{Buffer, Pow2IndexCoordinator},
+	CircularBuffer,
+	fixed::{Buffer, Pow2IndexCoordinator},
 };
 
 const CAPACITY: usize = 4;
 
 fn main() {
-    let mut buffer: Buffer<&str, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
-
-    buffer.enqueue("a");
-    buffer.enqueue("b");
-    buffer.enqueue("c");
-
-    assert_eq!(buffer.dequeue(), Some("a"));
-    assert_eq!(buffer.dequeue(), Some("b"));
-    assert_eq!(buffer.dequeue(), Some("c"));
-    assert_eq!(buffer.dequeue(), None);
+	let mut buffer: Buffer<&str, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
+	
+	buffer.enqueue("a");
+	buffer.enqueue("b");
+	buffer.enqueue("c");
+	
+	assert_eq!(buffer.dequeue(), Some("a"));
+	assert_eq!(buffer.dequeue(), Some("b"));
+	assert_eq!(buffer.dequeue(), Some("c"));
+	assert_eq!(buffer.dequeue(), None);
 }
 ```
 
@@ -107,24 +107,24 @@ Items are iterated from the oldest to the newest.
 
 ```rust
 use overwrite_ring_buffer::{
-    CircularBuffer,
-    fixed::{Buffer, Pow2IndexCoordinator},
+	CircularBuffer,
+	fixed::{Buffer, Pow2IndexCoordinator},
 };
 
 const CAPACITY: usize = 4;
 
 fn main() {
-    let mut buffer: Buffer<i32, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
-
-    buffer.enqueue(1);
-    buffer.enqueue(2);
-    buffer.enqueue(3);
-    buffer.enqueue(4);
-    buffer.enqueue(5);
-
-    let values: Vec<_> = buffer.iter().copied().collect();
-
-    assert_eq!(values, vec![2, 3, 4, 5]);
+	let mut buffer: Buffer<i32, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
+	
+	buffer.enqueue(1);
+	buffer.enqueue(2);
+	buffer.enqueue(3);
+	buffer.enqueue(4);
+	buffer.enqueue(5);
+	
+	let values: Vec<_> = buffer.iter().copied().collect();
+	
+	assert_eq!(values, vec![2, 3, 4, 5]);
 }
 ```
 
@@ -132,24 +132,24 @@ fn main() {
 
 ```rust
 use overwrite_ring_buffer::{
-    CircularBuffer,
-    fixed::{Buffer, Pow2IndexCoordinator},
+	CircularBuffer,
+	fixed::{Buffer, Pow2IndexCoordinator},
 };
 
 const CAPACITY: usize = 4;
 
 fn main() {
-    let mut buffer: Buffer<i32, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
-
-    buffer.enqueue(1);
-    buffer.enqueue(2);
-    buffer.enqueue(3);
-
-    for value in buffer.iter_mut() {
-        *value *= 10;
-    }
-
-    assert_eq!(buffer.iter().copied().collect::<Vec<_>>(), vec![10, 20, 30]);
+	let mut buffer: Buffer<i32, Pow2IndexCoordinator<CAPACITY>, CAPACITY> = Buffer::default();
+	
+	buffer.enqueue(1);
+	buffer.enqueue(2);
+	buffer.enqueue(3);
+	
+	for value in buffer.iter_mut() {
+		*value *= 10;
+	}
+	
+	assert_eq!(buffer.iter().copied().collect::<Vec<_>>(), vec![10, 20, 30]);
 }
 ```
 
@@ -159,23 +159,23 @@ Use `resizable::Buffer` when the capacity is known at runtime.
 
 ```rust
 use overwrite_ring_buffer::{
-    CircularBuffer,
-    resizable::{Buffer, Pow2IndexCoordinator},
+	CircularBuffer,
+	resizable::{Buffer, Pow2IndexCoordinator},
 };
 
 fn main() -> overwrite_ring_buffer::Result<()> {
-    let coordinator = Pow2IndexCoordinator::try_new(4)?;
-    let mut buffer = Buffer::new(coordinator);
-
-    buffer.enqueue(10);
-    buffer.enqueue(20);
-    buffer.enqueue(30);
-    buffer.enqueue(40);
-    buffer.enqueue(50);
-
-    assert_eq!(buffer.iter().copied().collect::<Vec<_>>(), vec![20, 30, 40, 50]);
-
-    Ok(())
+	let coordinator = Pow2IndexCoordinator::try_new(4)?;
+	let mut buffer = Buffer::new(coordinator);
+	
+	buffer.enqueue(10);
+	buffer.enqueue(20);
+	buffer.enqueue(30);
+	buffer.enqueue(40);
+	buffer.enqueue(50);
+	
+	assert_eq!(buffer.iter().copied().collect::<Vec<_>>(), vec![20, 30, 40, 50]);
+	
+	Ok(())
 }
 ```
 
@@ -187,9 +187,9 @@ For fixed-size buffers:
 
 ```rust
 use overwrite_ring_buffer::fixed::{
-    Buffer,
-    GeneralIndexCoordinator,
-    Pow2IndexCoordinator,
+	Buffer,
+	GeneralIndexCoordinator,
+	Pow2IndexCoordinator,
 };
 
 // Optimized for power-of-two capacities.
@@ -203,19 +203,19 @@ For runtime-sized buffers:
 
 ```rust
 use overwrite_ring_buffer::resizable::{
-    Buffer,
-    GeneralIndexCoordinator,
-    Pow2IndexCoordinator,
+	Buffer,
+	GeneralIndexCoordinator,
+	Pow2IndexCoordinator,
 };
 
 fn main() -> overwrite_ring_buffer::Result<()> {
-    let pow2 = Buffer::<i32, _>::new(Pow2IndexCoordinator::try_new(8)?);
-    let general = Buffer::<i32, _>::new(GeneralIndexCoordinator::try_new(10)?);
-
-    assert_eq!(pow2.capacity(), 8);
-    assert_eq!(general.capacity(), 10);
-
-    Ok(())
+	let pow2 = Buffer::<i32, _>::new(Pow2IndexCoordinator::try_new(8)?);
+	let general = Buffer::<i32, _>::new(GeneralIndexCoordinator::try_new(10)?);
+	
+	assert_eq!(pow2.capacity(), 8);
+	assert_eq!(general.capacity(), 10);
+	
+	Ok(())
 }
 ```
 
@@ -248,13 +248,14 @@ The central trait is `CircularBuffer<T>`:
 
 ```rust
 pub trait CircularBuffer<T> {
-    fn capacity(&self) -> usize;
-    fn enqueue(&mut self, item: T);
-    fn dequeue(&mut self) -> Option<T>;
-    fn iter(&self) -> Self::Iter<'_>;
-    fn iter_mut(&mut self) -> Self::MutIter<'_>;
-    fn len(&self) -> usize;
-    fn is_empty(&self) -> bool;
+	fn capacity(&self) -> usize;
+	fn enqueue(&mut self, item: T);
+	fn dequeue(&mut self) -> Option<T>;
+	fn iter(&self) -> Self::Iter<'_>;
+	fn iter_mut(&mut self) -> Self::MutIter<'_>;
+	fn len(&self) -> usize;
+	fn is_empty(&self) -> bool;
+	fn clear(&mut self);
 }
 ```
 
