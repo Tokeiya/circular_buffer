@@ -53,12 +53,12 @@ mod tests {
 	use super::super::item::Item;
 	use super::*;
 	use std::cell::Cell;
-	use std::mem::{drop as consume, ManuallyDrop};
+	use std::mem::{ManuallyDrop, drop as consume};
 	#[test]
 	fn new() {
 		let fixture = Probe::new(Rc::new(Item::new(42)));
 		assert_eq!(fixture.0.id(), 42);
-		assert_eq!(fixture.0.is_dropped(), false);
+		assert!(!fixture.0.is_dropped());
 	}
 
 	#[test]
@@ -73,10 +73,10 @@ mod tests {
 			i.mark_dropped();
 		});
 
-		assert_eq!(item.is_dropped(), false);
+		assert!(!item.is_dropped());
 		std::mem::drop(fixture);
-		assert_eq!(item.is_dropped(), true);
-		assert_eq!(observer.get(), true);
+		assert!(item.is_dropped());
+		assert!(observer.get());
 	}
 
 	#[test]
@@ -96,9 +96,9 @@ mod tests {
 	#[test]
 	fn is_dropped() {
 		let fixture = ManuallyDrop::new(Probe::new(Rc::new(Item::new(42))));
-		assert_eq!(fixture.is_dropped(), false);
+		assert!(!fixture.is_dropped());
 		fixture.0.mark_dropped();
-		assert_eq!(fixture.is_dropped(), true);
+		assert!(fixture.is_dropped());
 	}
 
 	#[test]
@@ -106,6 +106,6 @@ mod tests {
 		let item = Rc::new(Item::new(42));
 		let probe = Probe::new(item.clone());
 		consume(probe);
-		assert_eq!(item.is_dropped(), true);
+		assert!(item.is_dropped());
 	}
 }

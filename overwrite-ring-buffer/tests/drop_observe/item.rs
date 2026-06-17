@@ -34,13 +34,13 @@ impl Item {
 #[cfg(test)]
 mod tests {
 	use super::super::item::Item;
-	
+
 	#[test]
 	fn new() {
 		for i in 0..128 {
 			let fixture = Item::new(i);
 			assert_eq!(fixture.id, i);
-			assert_eq!(fixture.flag.get(), false);
+			assert!(!fixture.flag.get());
 		}
 	}
 
@@ -55,16 +55,16 @@ mod tests {
 	#[test]
 	fn is_dropped() {
 		let fixture = Item::new(0);
-		assert_eq!(fixture.is_dropped(), false);
+		assert!(!fixture.is_dropped());
 		fixture.flag.set(true);
-		assert_eq!(fixture.is_dropped(), true);
+		assert!(fixture.is_dropped());
 	}
 
 	#[test]
 	fn mark_dropped() {
 		let fixture = Item::new(0);
 		fixture.mark_dropped();
-		assert_eq!(fixture.flag.get(), true);
+		assert!(fixture.flag.get());
 	}
 
 	#[test]

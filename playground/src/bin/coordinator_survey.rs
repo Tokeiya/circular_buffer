@@ -1,5 +1,5 @@
-use overwrite_ring_buffer::fixed::Pow2IndexCoordinator;
 use overwrite_ring_buffer::IndexCoordinator;
+use overwrite_ring_buffer::fixed::Pow2IndexCoordinator;
 
 fn main() {
 	let mut coordinator = Pow2IndexCoordinator::<16>::default();

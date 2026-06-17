@@ -26,19 +26,11 @@ mod benchmark {
 	const MASK: usize = 63;
 
 	fn process<T: CircularBuffer<usize>>(mut buffer: T) {
-		let mut accum = 0;
-
 		for i in 0..ITERATIONS {
 			buffer.enqueue(i);
-
-			// if i & MASK == 0 {
-			// 	for idx in 0..buffer.len() {
-			// 		accum += buffer[idx];
-			// 	}
-			// }
 		}
 
-		accum = buffer.iter().sum::<usize>();
+		let accum = buffer.iter().sum::<usize>();
 
 		black_box(accum);
 	}

@@ -1,8 +1,8 @@
-use overwrite_ring_buffer::fixed::{Buffer, Pow2IndexCoordinator};
 use overwrite_ring_buffer::CircularBuffer;
+use overwrite_ring_buffer::fixed::{Buffer, Pow2IndexCoordinator};
 use playground::*;
 use std::array::from_fn;
-use std::panic::{catch_unwind, AssertUnwindSafe};
+use std::panic::{AssertUnwindSafe, catch_unwind};
 
 fn main() {
 	let mut generator = MonitorGenerator::default();

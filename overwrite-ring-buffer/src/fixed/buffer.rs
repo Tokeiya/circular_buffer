@@ -108,7 +108,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 	}
 
 	fn clear(&mut self) {
-		let recent_coordinator = std::mem::replace(&mut self.coordinator, C::default());
+		let recent_coordinator = std::mem::take(&mut self.coordinator);
 		let mut guard = DropGuard::new(&mut self.storage, recent_coordinator);
 
 		while guard.drop_next() {}

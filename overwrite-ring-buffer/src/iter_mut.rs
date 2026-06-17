@@ -51,7 +51,7 @@ impl<'a, T, C> IterMut<'a, T, C> {
 		Self {
 			head_ptr: head_pointer,
 			coordinator,
-			_phantom: PhantomData::default(),
+			_phantom: PhantomData,
 		}
 	}
 }
@@ -124,12 +124,12 @@ impl<'a, T: 'a, C: IndexCoordinator> ExactSizeIterator for IterMut<'a, T, C> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::CircularBuffer;
 	use crate::fixed::index_coordinator_test::IndexCoordinatorTestExtensions;
 	use crate::iter::Iter;
-	use crate::CircularBuffer;
 	use std::mem::MaybeUninit;
 	use std::ops::{Index, IndexMut};
-	
+
 	pub struct Dummy;
 
 	fn expected_virtual_to_real(capacity: usize, index: usize, head: usize) -> usize {
