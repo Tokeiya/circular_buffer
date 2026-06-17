@@ -3,13 +3,13 @@ use std::cell::Cell;
 type Flag = Cell<bool>;
 
 #[derive(Debug)]
-pub(super) struct Item {
+pub struct Item {
 	id: usize,
 	flag: Flag,
 }
 
 impl Item {
-	pub fn new(id: usize) -> Self {
+	pub(super) fn new(id: usize) -> Self {
 		Self {
 			id,
 			flag: Flag::new(false),

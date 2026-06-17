@@ -1,23 +1,26 @@
-struct A;
-struct B;
-
-impl Drop for A {
-	fn drop(&mut self) {
-		println!("drop A");
-		panic!("panic in A::drop");
-	}
-}
-
-impl Drop for B {
-	fn drop(&mut self) {
-		println!("drop B");
-		panic!("panic in B::drop");
-	}
-}
+use overwrite_ring_buffer::fixed::{Buffer, Pow2IndexCoordinator};
+use overwrite_ring_buffer::CircularBuffer;
+use playground::*;
+use std::array::from_fn;
+use std::panic::{catch_unwind, AssertUnwindSafe};
 
 fn main() {
-	let _a = A;
-	let _b = B;
-	
-	panic!("first panic");
+	let mut generator = MonitorGenerator::default();
+	let monitor: [Monitor; 16] = from_fn(|_| generator.generate());
+	let mut buffer = Buffer::<Probe, Pow2IndexCoordinator<16>, 16>::default();
+
+	for elem in monitor.iter() {
+		if elem.id() != 8 && elem.id() != 7 {
+			buffer.enqueue(elem.payout_probe_with_behaviour(|item| {
+				println!("{} dropped", item.id());
+				item.mark_dropped();
+			}));
+		} else {
+			buffer.enqueue(elem.payout_probe_with_behaviour(|item| {
+				panic!("{} Scheduled", item.id());
+			}))
+		}
+	}
+
+	_ = catch_unwind(AssertUnwindSafe(|| drop(buffer)));
 }

@@ -1,4 +1,4 @@
-use crate::drop_observe::Probe;
+huse crate::drop_observe::Probe;
 use std::borrow::Borrow;
 pub struct Iter<A, E> {
 	actual: A,

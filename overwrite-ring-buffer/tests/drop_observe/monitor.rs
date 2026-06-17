@@ -18,6 +18,18 @@ impl Monitor {
 		Probe::new(self.0.clone())
 	}
 
+	pub fn payout_probe_with_behaviour<F: FnOnce(Rc<Item>) + 'static>(
+		&self,
+		behaviour: F,
+	) -> Probe {
+		if self.1.get() {
+			panic!("Probe is already paid out");
+		}
+
+		self.1.set(true);
+		Probe::new_with_behaviour(self.0.clone(), behaviour)
+	}
+
 	pub fn id(&self) -> usize {
 		self.0.id()
 	}
