@@ -132,7 +132,8 @@ fn iter_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut T
 }
 
 fn clear_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut TestPair<A, E>) {
-	pair.clear()
+	pair.clear();
+	assert_eq!(pair.len(), 0);
 }
 
 pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(

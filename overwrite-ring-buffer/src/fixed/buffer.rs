@@ -2,10 +2,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
-use crate::circular_buffer::CircularBuffer;
-use crate::drop_gurd::DropGuard;
 use crate::Iter;
 use crate::IterMut;
+use crate::circular_buffer::CircularBuffer;
+use crate::drop_gurd::DropGuard;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
@@ -153,10 +153,11 @@ mod tests {
 	use std::cell::Cell;
 	use std::mem::MaybeUninit;
 	use std::ops::{Index, IndexMut};
-	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
+	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
+	use std::ptr::drop_in_place;
 	use std::rc::Rc;
 	use std::sync::{LazyLock, Mutex};
-	
+
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator<CAPACITY>, CAPACITY>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator<CAPACITY>, CAPACITY>;
 	type DropCounter = Rc<Cell<usize>>;
@@ -285,6 +286,7 @@ mod tests {
 		}
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn index_mut_drop_test() {
 		let (mut fixture, _) = probe_fixture();
@@ -311,6 +313,7 @@ mod tests {
 		assert_eq!(fixture.capacity(), CAPACITY);
 	}
 
+	//noinspection DuplicatedCode
 	#[test]
 	fn dequeue() {
 		let mut generator = MonitorGenerator::default();
@@ -393,6 +396,42 @@ mod tests {
 		assert_eq!(cnt.take(), CAPACITY);
 	}
 
+	//noinspection DuplicatedCode
+	#[test]
+	fn drop_panic() {
+		let mut generator = MonitorGenerator::default();
+		let monitor: [Monitor; CAPACITY] = std::array::from_fn(|_| generator.generate());
+		let mut fixture = ProbeFixture::default();
+
+		for elem in monitor.iter() {
+			if elem.id() == 5 {
+				fixture.enqueue(elem.payout_probe_with_behaviour(|item| {
+					panic!("Scheduled panic on drop for item with id {}", item.id())
+				}));
+			} else {
+				fixture.enqueue(elem.payout_probe());
+			}
+		}
+
+		let result = catch_unwind(AssertUnwindSafe(|| std::mem::drop(fixture)));
+		assert!(result.is_err(), "Expected panic, but none occurred");
+
+		for elem in monitor.iter() {
+			if elem.id() == 5 {
+				assert!(
+					!elem.is_dropped(),
+					"Item with id 5 should not be dropped due to panic"
+				);
+			} else {
+				assert!(
+					elem.is_dropped(),
+					"Item with id {} should be dropped",
+					elem.id()
+				);
+			}
+		}
+	}
+
 	#[test]
 	fn clear() {
 		let (mut fixture, _) = probe_fixture();
@@ -405,5 +444,40 @@ mod tests {
 		fixture.clear();
 
 		assert!(init.iter().all(|x| x.is_dropped()));
+	}
+
+	#[test]
+	fn clear_panic() {
+		let mut generator = MonitorGenerator::default();
+		let monitor: [Monitor; CAPACITY] = std::array::from_fn(|_| generator.generate());
+		let mut fixture = ProbeFixture::default();
+
+		for elem in monitor.iter() {
+			if elem.id() == 5 {
+				fixture.enqueue(elem.payout_probe_with_behaviour(|item| {
+					panic!("Scheduled panic on drop for item with id {}", item.id())
+				}));
+			} else {
+				fixture.enqueue(elem.payout_probe());
+			}
+		}
+
+		let result = catch_unwind(AssertUnwindSafe(|| fixture.clear()));
+		assert!(result.is_err(), "Expected panic, but none occurred");
+
+		for elem in monitor.iter() {
+			if elem.id() == 5 {
+				assert!(
+					!elem.is_dropped(),
+					"Item with id 5 should not be dropped due to panic"
+				);
+			} else {
+				assert!(
+					elem.is_dropped(),
+					"Item with id {} should be dropped",
+					elem.id()
+				);
+			}
+		}
 	}
 }

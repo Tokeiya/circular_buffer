@@ -29,7 +29,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-overwrite-ring-buffer = "0.18.0"
+overwrite-ring-buffer = "0.19.2"
 ```
 
 Then import it in Rust as:
