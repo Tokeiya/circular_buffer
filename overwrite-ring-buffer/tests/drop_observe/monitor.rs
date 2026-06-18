@@ -18,6 +18,7 @@ impl Monitor {
 		Probe::new(self.0.clone())
 	}
 
+	#[allow(dead_code)]
 	pub fn payout_probe_with_behaviour<F: FnOnce(Rc<Item>) + 'static>(
 		&self,
 		behaviour: F,

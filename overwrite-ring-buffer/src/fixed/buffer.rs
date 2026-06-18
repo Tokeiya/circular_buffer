@@ -2,10 +2,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
-use crate::Iter;
-use crate::IterMut;
 use crate::circular_buffer::CircularBuffer;
 use crate::drop_gurd::DropGuard;
+use crate::Iter;
+use crate::IterMut;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
@@ -153,11 +153,10 @@ mod tests {
 	use std::cell::Cell;
 	use std::mem::MaybeUninit;
 	use std::ops::{Index, IndexMut};
-	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
-	use std::ptr::drop_in_place;
+	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
 	use std::rc::Rc;
 	use std::sync::{LazyLock, Mutex};
-
+	
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator<CAPACITY>, CAPACITY>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator<CAPACITY>, CAPACITY>;
 	type DropCounter = Rc<Cell<usize>>;
