@@ -1,6 +1,6 @@
 [package]
 name = "overwrite-ring-buffer"
-version = "0.20.3"
+version = "0.20.4"
 edition = "2024"
 description = "A fixed-size and resizable overwrite ring buffer for Rust."
 license = "MIT"
@@ -11,8 +11,8 @@ readme = "readme.md"
 
 
 [dev-dependencies]
-rand = "0.10.1"
+rand = "0.10.2"
 rand_chacha = "0.10.0"
 
 [dependencies]
-thiserror = "2.0.18"
+thiserror = "2.0.19"
