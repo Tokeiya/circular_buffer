@@ -195,6 +195,10 @@ mod tests {
 		fn clear(&mut self) {
 			unimplemented!()
 		}
+		
+		fn empty_like(&self) -> Self {
+			unimplemented!()
+		}
 	}
 
 	const SIZE: usize = 8;

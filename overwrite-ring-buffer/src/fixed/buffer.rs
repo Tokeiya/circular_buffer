@@ -2,10 +2,10 @@
 use std::{cell::Cell, rc::Rc};
 
 use super::FixedIndexCoordinator;
-use crate::circular_buffer::CircularBuffer;
-use crate::drop_gurd::DropGuard;
 use crate::Iter;
 use crate::IterMut;
+use crate::circular_buffer::CircularBuffer;
+use crate::drop_gurd::DropGuard;
 use std::mem::MaybeUninit;
 use std::ops::{Index, IndexMut};
 
@@ -107,6 +107,10 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 		self.coordinator.len()
 	}
 
+	fn empty_like(&self) -> Self {
+		todo!()
+	}
+
 	fn clear(&mut self) {
 		let recent_coordinator = std::mem::take(&mut self.coordinator);
 		let mut guard = DropGuard::new(&mut self.storage, recent_coordinator);
@@ -153,7 +157,7 @@ mod tests {
 	use std::cell::Cell;
 	use std::mem::MaybeUninit;
 	use std::ops::{Index, IndexMut};
-	use std::panic::{catch_unwind, set_hook, take_hook, AssertUnwindSafe};
+	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
 	use std::rc::Rc;
 	use std::sync::{LazyLock, Mutex};
 	

@@ -92,6 +92,10 @@ pub trait CircularBuffer<T>: Index<usize, Output = T> + IndexMut<usize> {
 	fn is_empty(&self) -> bool {
 		self.len() == 0
 	}
+	
+	/// Returns an empty buffer with the same capacity as `self`.
+	fn empty_like(&self)->Self;
+	
 
 	/// Removes all elements from the buffer.
 	///
@@ -155,6 +159,10 @@ mod tests {
 		}
 
 		fn clear(&mut self) {
+			unimplemented!()
+		}
+		
+		fn empty_like(&self) -> Self {
 			unimplemented!()
 		}
 	}

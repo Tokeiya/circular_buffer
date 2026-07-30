@@ -71,6 +71,10 @@ impl<T, const N: usize> CircularBuffer<T> for Expected<T, N> {
 		self.storage.len()
 	}
 
+	fn empty_like(&self) -> Self {
+		Self::default()
+	}
+
 	fn clear(&mut self) {
 		self.storage.clear();
 	}

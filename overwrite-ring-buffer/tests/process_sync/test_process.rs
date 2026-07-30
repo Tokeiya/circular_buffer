@@ -15,6 +15,7 @@ enum Process {
 	Index,
 	Iter,
 	Clear,
+	EmptyLike,
 }
 
 fn gen_rnd() -> (u64, ChaCha8Rng) {
@@ -136,6 +137,12 @@ fn clear_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut 
 	assert_eq!(pair.len(), 0);
 }
 
+fn empty_like_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(
+	pair: &mut TestPair<A, E>,
+) {
+	todo!()
+}
+
 pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
 	actual: A,
 	expected: E,
@@ -153,6 +160,7 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, cons
 		Process::Index,
 		Process::Iter,
 		Process::Clear,
+		Process::EmptyLike,
 	];
 
 	#[allow(unreachable_patterns)]

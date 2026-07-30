@@ -110,6 +110,10 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 		self.coordinator.len()
 	}
 
+	fn empty_like(&self) -> Self {
+		todo!()
+	}
+
 	fn clear(&mut self) {
 		let new_coordinator = self.coordinator.empty_like();
 		let mut guard = DropGuard::new(
@@ -149,7 +153,7 @@ mod tests {
 	use std::mem::MaybeUninit;
 	use std::panic::{AssertUnwindSafe, catch_unwind, set_hook, take_hook};
 	use std::sync::{LazyLock, Mutex};
-
+	
 	type ProbeFixture = Buffer<Probe, Pow2IndexCoordinator>;
 	type UsizeFixture = Buffer<usize, Pow2IndexCoordinator>;
 	type DropCounter = Rc<Cell<usize>>;
