@@ -197,4 +197,20 @@ where
 		self.assert();
 		assert_eq!(self.len(), 0);
 	}
+
+	pub fn empty_like(&self) -> (A, E) {
+		let a = self.actual.empty_like();
+		let e = self.expected.empty_like();
+
+		assert_eq!(a.len(), 0);
+		assert_eq!(e.len(), 0);
+		assert_eq!(a.capacity(), self.actual.capacity());
+		assert_eq!(e.capacity(), self.expected.capacity());
+		assert_eq!(self.actual.capacity(), self.expected.capacity());
+
+		assert_eq!(a.iter().count(), 0);
+		assert_eq!(e.iter().count(), 0);
+
+		(a, e)
+	}
 }

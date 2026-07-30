@@ -108,7 +108,7 @@ impl<T, C: FixedIndexCoordinator<N>, const N: usize> CircularBuffer<T> for Buffe
 	}
 
 	fn empty_like(&self) -> Self {
-		todo!()
+		Self::default()
 	}
 
 	fn clear(&mut self) {
@@ -482,5 +482,15 @@ mod tests {
 				);
 			}
 		}
+	}
+
+	#[test]
+	fn empty_like() {
+		let (fixture, _) = probe_fixture();
+
+		let act = fixture.empty_like();
+
+		assert_eq!(act.len(), 0);
+		assert_eq!(act.capacity(), CAPACITY);
 	}
 }

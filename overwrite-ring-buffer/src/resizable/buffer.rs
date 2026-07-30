@@ -111,7 +111,7 @@ impl<T, C: ResizableIndexCoordinator> CircularBuffer<T> for Buffer<T, C> {
 	}
 
 	fn empty_like(&self) -> Self {
-		todo!()
+		Self::new(self.coordinator.empty_like())
 	}
 
 	fn clear(&mut self) {
@@ -488,5 +488,15 @@ mod tests {
 				);
 			}
 		}
+	}
+
+	#[test]
+	fn empty_like() {
+		let (fixture, _) = probe_fixture();
+
+		let act = fixture.empty_like();
+
+		assert_eq!(act.len(), 0);
+		assert_eq!(act.capacity(), CAPACITY);
 	}
 }

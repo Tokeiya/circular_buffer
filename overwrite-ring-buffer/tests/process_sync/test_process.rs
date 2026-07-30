@@ -137,10 +137,8 @@ fn clear_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut 
 	assert_eq!(pair.len(), 0);
 }
 
-fn empty_like_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(
-	pair: &mut TestPair<A, E>,
-) {
-	todo!()
+fn empty_like_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &TestPair<A, E>) {
+	pair.empty_like();
 }
 
 pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
@@ -181,6 +179,7 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, cons
 			Process::Index => index_process(&mut pair),
 			Process::Iter => iter_process(&mut pair),
 			Process::Clear => clear_process(&mut pair),
+			Process::EmptyLike => empty_like_process(&pair),
 			_ => unreachable!(),
 		}
 	}
