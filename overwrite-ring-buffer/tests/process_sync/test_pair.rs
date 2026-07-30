@@ -25,6 +25,20 @@ where
 	exp_hash: HashMap<usize, Monitor>,
 }
 
+impl<A, E> TestPair<A, E>
+where
+	A: CircularBuffer<Probe>,
+	E: CircularBuffer<Probe>,
+{
+	pub fn actual(&self) -> &A {
+		&self.actual
+	}
+
+	pub fn expected(&self) -> &E {
+		&self.expected
+	}
+}
+
 impl<A, E> Drop for TestPair<A, E>
 where
 	A: CircularBuffer<Probe>,

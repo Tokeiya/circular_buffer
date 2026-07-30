@@ -143,8 +143,27 @@ fn empty_like_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const 
 	pair: &TestPair<A, E>,
 	rng: &mut impl Rng,
 ) {
+	let (ra, re) = (
+		pair.actual().iter().map(|x| x.id()).collect::<Vec<_>>(),
+		pair.expected().iter().map(|x| x.id()).collect::<Vec<_>>(),
+	);
+
 	let (a, e) = pair.empty_like();
 	sub_process_impl::<_, _, N>(a, e, rng);
+
+	assert_eq!(pair.actual().len(), ra.len());
+	assert_eq!(pair.expected().len(), re.len());
+
+	assert!(
+		ra.iter()
+			.zip(pair.actual().iter())
+			.all(|(&x, y)| x == y.id())
+	);
+	assert!(
+		re.iter()
+			.zip(pair.expected().iter())
+			.all(|(&x, y)| x == y.id())
+	);
 }
 
 fn sub_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
