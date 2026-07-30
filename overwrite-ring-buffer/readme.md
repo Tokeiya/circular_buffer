@@ -22,6 +22,7 @@ more important than preserving all historical values.
 * Immutable and mutable iteration
 * Power-of-two optimized index coordinators
 * General-purpose coordinators for arbitrary capacities
+* Creation of an empty buffer with matching configuration through `empty_like`
 
 ## Installation
 
@@ -179,6 +180,39 @@ fn main() -> overwrite_ring_buffer::Result<()> {
 }
 ```
 
+## Creating an empty buffer with the same configuration
+
+`empty_like` creates a new, empty buffer with the same concrete buffer type,
+capacity, and index coordinator configuration as the source buffer. It does not
+clone or move the stored elements, and the source buffer is left unchanged.
+
+```rust
+use overwrite_ring_buffer::{
+	CircularBuffer,
+	resizable::{Buffer, CoordinatorSelector},
+};
+
+fn main() -> overwrite_ring_buffer::Result<()> {
+	let coordinator = CoordinatorSelector::new(6)?;
+	let mut buffer = Buffer::new(coordinator);
+	
+	buffer.enqueue(10);
+	buffer.enqueue(20);
+	
+	let mut empty = buffer.empty_like();
+	
+	assert_eq!(empty.capacity(), buffer.capacity());
+	assert!(empty.is_empty());
+	assert_eq!(buffer.iter().copied().collect::<Vec<_>>(), vec![10, 20]);
+	
+	empty.enqueue(99);
+	assert_eq!(empty.dequeue(), Some(99));
+	assert_eq!(buffer.iter().copied().collect::<Vec<_>>(), vec![10, 20]);
+	
+	Ok(())
+}
+```
+
 ## Choosing an index coordinator
 
 This crate separates buffer storage from index coordination.
@@ -255,6 +289,7 @@ pub trait CircularBuffer<T> {
 	fn iter_mut(&mut self) -> Self::MutIter<'_>;
 	fn len(&self) -> usize;
 	fn is_empty(&self) -> bool;
+	fn empty_like(&self) -> Self;
 	fn clear(&mut self);
 }
 ```
@@ -262,7 +297,6 @@ pub trait CircularBuffer<T> {
 ## Notes
 
 This crate is intended for bounded, single-owner buffer use cases.
-
 It is not a lock-free queue and does not provide built-in synchronization. If you
 need shared access across threads, wrap the buffer in an appropriate synchronization
 primitive such as `Mutex` or `RwLock`.
