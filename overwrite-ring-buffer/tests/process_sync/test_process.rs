@@ -6,6 +6,8 @@ use rand::{Rng, RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 
 const ITERATION: usize = 8192;
+const SUB_ITERATION: usize = 256;
+
 #[derive(Eq, PartialEq)]
 enum Process {
 	Enqueue,
@@ -137,8 +139,53 @@ fn clear_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &mut 
 	assert_eq!(pair.len(), 0);
 }
 
-fn empty_like_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>>(pair: &TestPair<A, E>) {
-	pair.empty_like();
+fn empty_like_process<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
+	pair: &TestPair<A, E>,
+	rng: &mut impl Rng,
+) {
+	let (a, e) = pair.empty_like();
+	sub_process_impl::<_, _, N>(a, e, rng);
+}
+
+fn sub_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
+	actual: A,
+	expected: E,
+	rng: &mut impl Rng,
+) {
+	let mut pair = TestPair::<A, E>::new(actual, expected);
+	pair.assert();
+
+	let proc = [
+		Process::Enqueue,
+		Process::Dequeue,
+		Process::IterMut,
+		Process::IndexMut,
+		Process::Index,
+		Process::Iter,
+		Process::Clear,
+	];
+
+	#[allow(unreachable_patterns)]
+	for _ in 0..SUB_ITERATION {
+		match proc.choose(rng).unwrap() {
+			Process::Enqueue => {
+				for _ in 0..rng.random_range(0..=N) {
+					pair.enqueue()
+				}
+			}
+			Process::Dequeue => {
+				for _ in 0..rng.random_range(0..=N) {
+					pair.dequeue()
+				}
+			}
+			Process::IterMut => iter_mut_process(&mut pair, rng),
+			Process::IndexMut => index_mut_process(&mut pair, rng),
+			Process::Index => index_process(&mut pair),
+			Process::Iter => iter_process(&mut pair),
+			Process::Clear => clear_process(&mut pair),
+			_ => unreachable!(),
+		}
+	}
 }
 
 pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, const N: usize>(
@@ -179,7 +226,7 @@ pub fn all_process_impl<A: CircularBuffer<Probe>, E: CircularBuffer<Probe>, cons
 			Process::Index => index_process(&mut pair),
 			Process::Iter => iter_process(&mut pair),
 			Process::Clear => clear_process(&mut pair),
-			Process::EmptyLike => empty_like_process(&pair),
+			Process::EmptyLike => empty_like_process::<A, E, N>(&pair, &mut rng),
 			_ => unreachable!(),
 		}
 	}
